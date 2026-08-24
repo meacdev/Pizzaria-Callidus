@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "nome": "Coca-Cola 2L",
+    "descricao": "Refrigerante de cola original. Servido bem gelado.",
+    "preco": 14.00,
+    "imgURL": "https://exemplo.com/img/coca-cola-2l.jpg"
+  },
+  {
+    "id": 2,
+    "nome": "Guaraná Antarctica 1L",
+    "descricao": "Refrigerante de guaraná original. Servido bem gelado.",
+    "preco": 10.00,
+    "imgURL": "https://exemplo.com/img/guarana-1l.jpg"
+  },
+  {
+    "id": 3,
+    "nome": "Suco de Laranja Natural 500ml",
+    "descricao": "Suco de laranja espremido na hora, 100% natural e sem adição de açúcar.",
+    "preco": 12.00,
+    "imgURL": "https://exemplo.com/img/suco-laranja.jpg"
+  }
+]
