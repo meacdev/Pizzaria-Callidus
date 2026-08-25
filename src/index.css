@@ -364,28 +364,73 @@ a {
    SEÇÃO DE PIZZAS (PRODUTOS)
    ========================================= */
 
-.secao-pizzas {
-  padding-top: 22px;
-}
-
-.titulo-secao {
+.container-carrossel {
+  position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
 }
 
-.titulo-secao h2 {
-  margin: 0;
-  font-size: 25px;
+.carrossel-pizzas {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  padding: 0.5rem 0.25rem 1rem;
+}
+
+.carrossel-pizzas::-webkit-scrollbar {
+  display: none;
+}
+
+.item-carrossel {
+  flex: 0 0 280px;
+  scroll-snap-align: start;
+}
+
+.botao-carrossel {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+
+  background-color: var(--surface);
   color: var(--text);
+
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.titulo-secao span {
-  color: var(--muted);
-  font-size: 13px;
+.botao-carrossel:hover:not(:disabled) {
+  transform: scale(1.08);
+  background-color: var(--surface);
 }
 
+.botao-carrossel:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
 /* =========================================
    GRID & CARD
