@@ -22,13 +22,18 @@ export function filtrarPizzasPorTermo(
   });
 }
 
-// talvez usar no carrinho, mas isso com o luis...
-export function obterPizzasCarrinho(
-  pizzas:  Pizza[],
-  carrinho: readonly string[],
-): readonly Pizza[] {
-  const carrinhoSet = new Set(carrinho);
-  return pizzas.filter((pizza) => carrinhoSet.has(pizza.id));
+export interface ItemCarrinho {
+  readonly pizza: Pizza;
+  readonly quantidade: number;
+}
+
+export function obterItensCarrinho(
+  pizzas: Pizza[],
+  itensCarrinho: Readonly<Record<string, number>>,
+): readonly ItemCarrinho[] {
+  return pizzas
+    .filter((pizza) => (itensCarrinho[pizza.id] ?? 0) > 0)
+    .map((pizza) => ({ pizza, quantidade: itensCarrinho[pizza.id] }));
 }
 
 export function nomeCategoria(categoria: Pizza['categoria']): string {
