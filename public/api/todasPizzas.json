@@ -6,7 +6,7 @@
     "descricao": "Linguiça calabresa fatiada, rodelas de cebola, orégano e molho de tomate artesanal.",
     "precoBase": "45.00",
     "imgURL": "https://exemplo.com/img/calabresa.jpg",
-    "categoria": "Tradicional",
+    "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
       "M",
@@ -21,7 +21,7 @@
     "descricao": "Mussarela, rodelas de tomate fresco, manjericão e molho de tomate artesanal.",
     "precoBase": "42.00",
     "imgURL": "https://exemplo.com/img/margherita.jpg",
-    "categoria": "Tradicional",
+    "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
       "M",
@@ -36,7 +36,7 @@
     "descricao": "Creme de chocolate ao leite coberto com fatias de morango fresco.",
     "precoBase": "55.00",
     "imgURL": "https://exemplo.com/img/chocolate-morango.jpg",
-    "categoria": "Doce",
+    "categoria": "doce",
     "tamanhosDisponiveis": [
       "P",
       "M"
@@ -50,7 +50,7 @@
     "descricao": "Frango desfiado temperado, coberto com autêntico Catupiry, azeitonas e orégano.",
     "precoBase": "50.00",
     "imgURL": "https://exemplo.com/img/frango-catupiry.jpg",
-    "categoria": "Tradicional",
+    "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
       "M",
@@ -65,7 +65,7 @@
     "descricao": "Mussarela, presunto, ovos cozidos, cebola, ervilha, azeitona e molho de tomate.",
     "precoBase": "48.00",
     "imgURL": "https://exemplo.com/img/portuguesa.jpg",
-    "categoria": "Tradicional",
+    "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
       "M",
@@ -80,7 +80,7 @@
     "descricao": "Combinação perfeita de mussarela, provolone, gorgonzola e parmesão.",
     "precoBase": "52.00",
     "imgURL": "https://exemplo.com/img/quatro-queijos.jpg",
-    "categoria": "Especial",
+    "categoria": "artesanal",
     "tamanhosDisponiveis": [
       "P",
       "M",
@@ -95,7 +95,7 @@
     "descricao": "Fatias de pepperoni levemente apimentadas sobre uma generosa camada de mussarela.",
     "precoBase": "50.00",
     "imgURL": "https://exemplo.com/img/pepperoni.jpg",
-    "categoria": "Especial",
+    "categoria": "artesanal",
     "tamanhosDisponiveis": [
       "P",
       "M",
@@ -110,7 +110,7 @@
     "descricao": "Fatias de banana assadas, cobertas com açúcar, canela em pó e leite condensado.",
     "precoBase": "40.00",
     "imgURL": "https://exemplo.com/img/banana-canela.jpg",
-    "categoria": "Doce",
+    "categoria": "doce",
     "tamanhosDisponiveis": [
       "P",
       "M"
@@ -124,7 +124,7 @@
     "descricao": "Mussarela, brócolis, palmito, champignon, tomate cereja e cebola roxa.",
     "precoBase": "49.00",
     "imgURL": "https://exemplo.com/img/vegetariana.jpg",
-    "categoria": "Especial",
+    "categoria": "artesanal",
     "tamanhosDisponiveis": [
       "P",
       "M",

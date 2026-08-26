@@ -1,14 +1,123 @@
 [
   {
-    "id": "9788575227268",
-    "isbn": "978-85-7522-726-8",
-    "titulo": "Dominando o Android com Kotlin",
-    "slug": "dominando-o-android-com-kotlin",
-    "autor": "Nelson Glauber",
-    "categoria": "programacao",
-    "ano": "2019",
-    "paginas": "1064",
-    "preco": "159",
-    "descricao": "O Android é a plataforma do Google para dispositivos móveis que se tornou líder absoluta no mercado mundial, e a quantidade de recursos disponibilizada para os desenvolvedores permite criar uma envolvente e estimulante interação do usuário com o dispositivo. Dominando o Android com Kotlin apresenta por meio de exemplos práticos, desde conceitos mais básicos até as mais avançadas técnicas de desenvolvimento de aplicativos para a plataforma mobile do Google."
+    "id": "1",
+    "nome": "Combo Família",
+    "slug": "combo-familia",
+    "descricao": "1 pizza grande, refrigerante de 2L e sobremesa.",
+    "precoBase": "75.00",
+    "imgURL": "https://exemplo.com/img/combo-familia.jpg",
+    "categoria": "Família",
+    "itens": [
+      "Pizza G",
+      "Refrigerante 2L",
+      "Sobremesa"
+    ]
+  },
+  {
+    "id": "2",
+    "nome": "Combo Casal",
+    "slug": "combo-casal",
+    "descricao": "1 pizza média, refrigerante de 1L e sobremesa.",
+    "precoBase": "60.00",
+    "imgURL": "https://exemplo.com/img/combo-casal.jpg",
+    "categoria": "Casal",
+    "itens": [
+      "Pizza M",
+      "Refrigerante 1L",
+      "Sobremesa"
+    ]
+  },
+  {
+    "id": "3",
+    "nome": "Combo Individual",
+    "slug": "combo-individual",
+    "descricao": "1 pizza pequena acompanhada de refrigerante em lata.",
+    "precoBase": "42.00",
+    "imgURL": "https://exemplo.com/img/combo-individual.jpg",
+    "categoria": "Individual",
+    "itens": [
+      "Pizza P",
+      "Refrigerante Lata"
+    ]
+  },
+  {
+    "id": "4",
+    "nome": "Combo Duplo",
+    "slug": "combo-duplo",
+    "descricao": "2 pizzas médias acompanhadas de refrigerante de 2L.",
+    "precoBase": "85.00",
+    "imgURL": "https://exemplo.com/img/combo-duplo.jpg",
+    "categoria": "Promoção",
+    "itens": [
+      "2 Pizzas M",
+      "Refrigerante 2L"
+    ]
+  },
+  {
+    "id": "5",
+    "nome": "Combo Amigos",
+    "slug": "combo-amigos",
+    "descricao": "2 pizzas grandes e 2 refrigerantes de 2L.",
+    "precoBase": "115.00",
+    "imgURL": "https://exemplo.com/img/combo-amigos.jpg",
+    "categoria": "Família",
+    "itens": [
+      "2 Pizzas G",
+      "2 Refrigerantes 2L"
+    ]
+  },
+  {
+    "id": "6",
+    "nome": "Combo Especial",
+    "slug": "combo-especial",
+    "descricao": "Pizza grande especial, refrigerante de 2L e sobremesa premium.",
+    "precoBase": "95.00",
+    "imgURL": "https://exemplo.com/img/combo-especial.jpg",
+    "categoria": "Especial",
+    "itens": [
+      "Pizza G Especial",
+      "Refrigerante 2L",
+      "Sobremesa Premium"
+    ]
+  },
+  {
+    "id": "7",
+    "nome": "Combo Econômico",
+    "slug": "combo-economico",
+    "descricao": "Pizza média e refrigerante em lata por um preço promocional.",
+    "precoBase": "52.00",
+    "imgURL": "https://exemplo.com/img/combo-economico.jpg",
+    "categoria": "Promoção",
+    "itens": [
+      "Pizza M",
+      "Refrigerante Lata"
+    ]
+  },
+  {
+    "id": "8",
+    "nome": "Combo Doce",
+    "slug": "combo-doce",
+    "descricao": "Pizza doce média acompanhada de duas sobremesas.",
+    "precoBase": "68.00",
+    "imgURL": "https://exemplo.com/img/combo-doce.jpg",
+    "categoria": "Doce",
+    "itens": [
+      "Pizza Doce M",
+      "2 Sobremesas"
+    ]
+  },
+  {
+    "id": "9",
+    "nome": "Combo Festa",
+    "slug": "combo-festa",
+    "descricao": "3 pizzas grandes, 2 refrigerantes de 2L e uma sobremesa grande.",
+    "precoBase": "145.00",
+    "imgURL": "https://exemplo.com/img/combo-festa.jpg",
+    "categoria": "Família",
+    "itens": [
+      "3 Pizzas G",
+      "2 Refrigerantes 2L",
+      "Sobremesa Grande"
+    ]
   }
 ]

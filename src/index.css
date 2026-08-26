@@ -105,7 +105,7 @@ a {
 }
 
 .conteudo {
-  width: min(1180px, 100%);
+  width: min(1200px, 100%);
   margin: 0 auto;
   flex: 1;
 }
@@ -118,16 +118,14 @@ a {
 .cabecalho {
   height: 76px;
   background: var(--surface);
-
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 max(24px, calc((100% - 1180px) / 2));
   position: sticky;
   top: 0;
   z-index: 20;
-
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
@@ -139,13 +137,16 @@ a {
 
 .marca {
   display: flex;
-  align-items: center;
   gap: 10px;
   text-decoration: none;
+  /* margin-left: -120px;
+  margin-top: -95px; */
 }
 
 .marca-icone img {
-  width: 60px;
+  width: 150px;
+  background: var(--surface-light);
+  border: solid 3px var(--text);
   border-radius: 12px;
   /* Sombra vermelha translúcida */
   box-shadow: 0 6px 20px rgba(255, 42, 42, 0.3); 
@@ -159,15 +160,15 @@ a {
 .navegacao {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 20px;
 }
 
 .navegacao a {
-  padding: 10px 11px;
+  padding: 10px 18px;
   border-radius: 9px;
   text-decoration: none;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -216,7 +217,7 @@ a {
 .tag {
   display: inline-block;
   color: var(--primary);
-  font-size: 12px;
+  font-size: 19px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -229,29 +230,25 @@ a {
 
 .hero-pizzaria {
   margin: 28px 28px 10px;
-  border-radius: 26px;
-  
-  /* Hero com superfície escura e brilho sutil */
-  background:
-    radial-gradient(
-      circle at 90% 20%,
-      rgba(255, 199, 44, 0.15),
-      transparent 35%
-    ),
-    var(--surface);
-
   color: var(--text);
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
   gap: 35px;
+}
+
+.hero-imagem {
+  border: 3px solid var(--text);
+  max-width: 100%;
+  border-radius: 22px;
   overflow: hidden;
-  border: 1px solid rgba(255, 42, 42, 0.1); /* Borda suave */
-  box-shadow: var(--shadow);
 }
 
 .hero-conteudo {
-  max-width: 720px;
+  display: flex;
+  margin-left: 40px;
+  margin-top: -80px;
+  max-width: 1020px;
 }
 
 .hero-pizzaria h1 {
@@ -268,7 +265,31 @@ a {
   max-width: 650px;
 }
 
+/* =========================================
+   INFO DO HERO
+   ========================================= */
 
+.hero-info {
+  display: flex;
+  margin-left:20px;
+  margin-top: 40px;
+  flex-direction: column;
+}
+
+.hero-info-status
+  {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-top: -10px;
+    margin-left: 2px;
+  }
+
+  .hero-info-status p {
+    font-size: 20px;
+    font-weight: 600;
+  }
 /* =========================================
    AÇÕES DO HERO
    ========================================= */
@@ -364,7 +385,7 @@ a {
    SEÇÃO DE PIZZAS (PRODUTOS)
    ========================================= */
 
-.container-carrossel {
+.container-carrossel{
   position: relative;
   width: 100%;
   display: flex;
@@ -402,7 +423,7 @@ a {
   width: 42px;
   height: 42px;
   flex-shrink: 0;
-  border: none;
+  border-color: var(--line);
   border-radius: 50%;
 
   background-color: var(--surface);
@@ -436,7 +457,7 @@ a {
    GRID & CARD
    ========================================= */
 
-.grade-pizzas {
+.grade-pizzas, .grade-combos {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
