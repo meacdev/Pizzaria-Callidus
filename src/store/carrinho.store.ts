@@ -2,28 +2,74 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface CarrinhoState {
-  readonly itens: readonly string[];
-  readonly alternarCarrinho: (Id: string) => void;
-  readonly estaNosCarrinho: (Id: string) => boolean;
+  readonly itens: Readonly<Record<string, number>>;
+  readonly alternarCarrinho: (id: string) => void;
+  readonly aumentarQuantidade: (id: string) => void;
+  readonly diminuirQuantidade: (id: string) => void;
+  readonly removerItem: (id: string) => void;
+  readonly obterQuantidade: (id: string) => number;
+  readonly estaNosCarrinho: (id: string) => boolean;
   readonly limparCarrinho: () => void;
 }
 
 export const useCarrinhoStore = create<CarrinhoState>()(
   persist(
     (set, get) => ({
-      itens: [],
-      alternarCarrinho: (Id) => {
+      itens: {},
+
+      alternarCarrinho: (id) => {
         const atuais = get().itens;
-        const existe = atuais.includes(Id);
-        set({
-          itens: existe
-            ? atuais.filter((id) => id !== Id)
-            : [...atuais, Id],
-        });
+        if (atuais[id]) {
+          const { [id]: _removido, ...resto } = atuais;
+          set({ itens: resto });
+        } else {
+          set({ itens: { ...atuais, [id]: 1 } });
+        }
       },
-      estaNosCarrinho: (Id) => get().itens.includes(Id),
-      limparCarrinho: () => set({ itens: [] }),
+
+      aumentarQuantidade: (id) => {
+        const atuais = get().itens;
+        const quantidadeAtual = atuais[id] ?? 0;
+        set({ itens: { ...atuais, [id]: quantidadeAtual + 1 } });
+      },
+
+      diminuirQuantidade: (id) => {
+        const atuais = get().itens;
+        const quantidadeAtual = atuais[id] ?? 0;
+        if (quantidadeAtual <= 1) {
+          const { [id]: _removido, ...resto } = atuais;
+          set({ itens: resto });
+          return;
+        }
+        set({ itens: { ...atuais, [id]: quantidadeAtual - 1 } });
+      },
+
+      removerItem: (id) => {
+        const atuais = get().itens;
+        const { [id]: _removido, ...resto } = atuais;
+        set({ itens: resto });
+      },
+
+      obterQuantidade: (id) => get().itens[id] ?? 0,
+
+      estaNosCarrinho: (id) => Boolean(get().itens[id]),
+
+      limparCarrinho: () => set({ itens: {} }),
     }),
-    { name: 'pizzaria-carrinho' },
+    {
+      name: 'pizzaria-carrinho',
+      version: 1,
+      migrate: (estadoPersistido) => {
+        const estado = estadoPersistido as { itens?: unknown };
+        if (Array.isArray(estado?.itens)) {
+          const itens: Record<string, number> = {};
+          for (const id of estado.itens as string[]) {
+            itens[id] = (itens[id] ?? 0) + 1;
+          }
+          return { ...estado, itens };
+        }
+        return estado as CarrinhoState;
+      },
+    },
   ),
 );
