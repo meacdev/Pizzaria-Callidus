@@ -1,7 +1,7 @@
 import { type UseFormRegister } from 'react-hook-form';
 import type { Customization } from '../types/customization';
 import { Campo } from './Campo';
-import styles from '../CustomizationPage.module.css';
+import styles from '../pages/CustomizationPage.module.css';
 
 interface CampoHorarioProps {
     label: string;

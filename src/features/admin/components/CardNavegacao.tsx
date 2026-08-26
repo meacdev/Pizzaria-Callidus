@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import styles from '../CustomizationPage.module.css';
+import styles from '../pages/CustomizationPage.module.css';
 
 interface CardNavegacaoProps {
     icone: string;

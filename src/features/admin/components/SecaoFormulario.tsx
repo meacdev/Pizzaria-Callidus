@@ -1,4 +1,4 @@
-import styles from '../CustomizationPage.module.css';
+import styles from '../pages/CustomizationPage.module.css';
 
 interface SecaoFormularioProps {
     titulo: string;
