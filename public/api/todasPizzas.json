@@ -12,7 +12,25 @@
       "M",
       "G"
     ],
-    "permiteBorda": true
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "calabresa",
+        "nome": "Calabresa"
+      },
+      {
+        "id": "cebola",
+        "nome": "Cebola"
+      },
+      {
+        "id": "oregano",
+        "nome": "Orégano"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
   },
   {
     "id": "2",
@@ -27,7 +45,25 @@
       "M",
       "G"
     ],
-    "permiteBorda": true
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "tomate",
+        "nome": "Tomate"
+      },
+      {
+        "id": "manjericao",
+        "nome": "Manjericão"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
   },
   {
     "id": "3",
@@ -41,7 +77,17 @@
       "P",
       "M"
     ],
-    "permiteBorda": false
+    "permiteBorda": false,
+    "ingredientes": [
+      {
+        "id": "chocolate",
+        "nome": "Chocolate ao leite"
+      },
+      {
+        "id": "morango",
+        "nome": "Morango"
+      }
+    ]
   },
   {
     "id": "4",
@@ -56,7 +102,25 @@
       "M",
       "G"
     ],
-    "permiteBorda": true
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "frango",
+        "nome": "Frango desfiado"
+      },
+      {
+        "id": "catupiry",
+        "nome": "Catupiry"
+      },
+      {
+        "id": "azeitona",
+        "nome": "Azeitona"
+      },
+      {
+        "id": "oregano",
+        "nome": "Orégano"
+      }
+    ]
   },
   {
     "id": "5",
@@ -71,7 +135,37 @@
       "M",
       "G"
     ],
-    "permiteBorda": true
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "presunto",
+        "nome": "Presunto"
+      },
+      {
+        "id": "ovo",
+        "nome": "Ovo"
+      },
+      {
+        "id": "cebola",
+        "nome": "Cebola"
+      },
+      {
+        "id": "ervilha",
+        "nome": "Ervilha"
+      },
+      {
+        "id": "azeitona",
+        "nome": "Azeitona"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
   },
   {
     "id": "6",
@@ -86,7 +180,25 @@
       "M",
       "G"
     ],
-    "permiteBorda": true
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "provolone",
+        "nome": "Provolone"
+      },
+      {
+        "id": "gorgonzola",
+        "nome": "Gorgonzola"
+      },
+      {
+        "id": "parmesao",
+        "nome": "Parmesão"
+      }
+    ]
   },
   {
     "id": "7",
@@ -101,7 +213,21 @@
       "M",
       "G"
     ],
-    "permiteBorda": true
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "pepperoni",
+        "nome": "Pepperoni"
+      },
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
   },
   {
     "id": "8",
@@ -115,7 +241,25 @@
       "P",
       "M"
     ],
-    "permiteBorda": false
+    "permiteBorda": false,
+    "ingredientes": [
+      {
+        "id": "banana",
+        "nome": "Banana"
+      },
+      {
+        "id": "acucar",
+        "nome": "Açúcar"
+      },
+      {
+        "id": "canela",
+        "nome": "Canela"
+      },
+      {
+        "id": "leite-condensado",
+        "nome": "Leite condensado"
+      }
+    ]
   },
   {
     "id": "9",
@@ -130,6 +274,32 @@
       "M",
       "G"
     ],
-    "permiteBorda": true
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "brocolis",
+        "nome": "Brócolis"
+      },
+      {
+        "id": "palmito",
+        "nome": "Palmito"
+      },
+      {
+        "id": "champignon",
+        "nome": "Champignon"
+      },
+      {
+        "id": "tomate-cereja",
+        "nome": "Tomate cereja"
+      },
+      {
+        "id": "cebola-roxa",
+        "nome": "Cebola roxa"
+      }
+    ]
   }
 ]

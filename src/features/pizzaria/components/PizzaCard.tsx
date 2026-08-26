@@ -1,5 +1,4 @@
 import { Link } from 'react-router';
-import { useCarrinhoStore } from '../../../store/carrinho.store';
 import type { Pizza } from '../types/pizza';
 import { nomeCategoria } from '../utils/pizza.utils';
 
@@ -20,10 +19,6 @@ function obterDescricaoCard(pizza: Pizza, compacto: boolean): string {
 }
 
 export function PizzaCard({ pizza, compacto = false }: PizzaCardProps) {
-  const alternarCarrinho = useCarrinhoStore((state) => state.alternarCarrinho);
-  const estaNosCarrinho = useCarrinhoStore((state) => state.estaNosCarrinho(pizza.id));
-  const textoBotaoCarrinho = estaNosCarrinho ? '★ No carrinho' : '☆ Adicionar ao carrinho';
-
   return (
     <article className="card">
       <Link className="thumb" to={`/pizza/${pizza.slug}`} aria-label={`Ver ${pizza.nome}`}>
@@ -39,9 +34,6 @@ export function PizzaCard({ pizza, compacto = false }: PizzaCardProps) {
           <strong className="preco">{formatarPreco(pizza.precoBase)}</strong>
           <div className="card-acoes">
             <Link className="link-leia-mais" to={`/pizza/${pizza.slug}`}>Detalhes</Link>
-            <button type="button" className="botao-carrinho" onClick={() => alternarCarrinho(pizza.id)} aria-pressed={estaNosCarrinho}>
-              {textoBotaoCarrinho}
-            </button>
           </div>
         </div>
       </div>
