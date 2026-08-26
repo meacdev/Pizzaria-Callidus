@@ -8,6 +8,8 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 import { CardapioPage } from '../features/pizzaria/pages/CardapioPage';
 import { CategoriaPage } from '../features/pizzaria/pages/CategoriaPage';
 import { CarrinhoPage } from '../features/pizzaria/pages/CarrinhoPage';
+import { CheckoutPage } from '../features/pizzaria/pages/CheckoutPage';
+import { PagamentoPage } from '../features/pizzaria/pages/PagamentoPage';
 import { PizzaDetalhePage } from '../features/pizzaria/pages/PizzaDetalhePage';
 
 // Admin
@@ -26,6 +28,8 @@ export const router = createBrowserRouter([
       { path: 'categoria', Component: CategoriaPage },
       { path: 'pizza/:slug', Component: PizzaDetalhePage },
       { path: 'carrinho', Component: CarrinhoPage },
+      { path: 'checkout', Component: CheckoutPage },
+      { path: 'pagamento', Component: PagamentoPage },
       { path: '*', Component: NotFoundPage },
     ],
   },

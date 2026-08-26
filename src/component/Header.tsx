@@ -3,7 +3,9 @@ import { useCarrinhoStore } from '../store/carrinho.store';
 import logo from '../assets/logo.png';
 
 export function Header() {
-  const totalCarrinho = useCarrinhoStore((state) => state.itens.length);
+  const totalCarrinho = useCarrinhoStore((state) =>
+    Object.values(state.itens).reduce((soma, quantidade) => soma + quantidade, 0),
+  );
 
   return (
     <header className="cabecalho">
