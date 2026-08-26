@@ -1,15 +1,22 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
 import { useCustomization } from '../../../context/CustomizationContext';
 import type { Customization } from '../types/customization';
+import { SecaoFormulario } from '../components/SecaoFormulario';
+import { Campo } from '../components/Campo';
+import { CampoColor } from '../components/CampoColor';
+import { CampoCheckbox } from '../components/CampoCheckbox';
+import { CampoHorario } from '../components/CampoHorario';
+import { CampoNumero } from '../components/CampoNumero';
+import { BotaoSalvar } from '../components/BotaoSalvar';
+import { AvisoSucesso } from '../components/AvisoSucesso';
+import { CardNavegacao } from '../components/CardNavegacao';
 import styles from './CustomizationPage.module.css';
 
 export function CustomizationPage() {
     const { customization, updateCustomization } = useCustomization();
     const { register, handleSubmit } = useForm<Customization>({ defaultValues: customization });
     const [salvo, setSalvo] = useState(false);
-    const navigate = useNavigate();
 
     const onSubmit = (data: Customization) => {
         updateCustomization(data);
@@ -22,100 +29,69 @@ export function CustomizationPage() {
             <h1 style={{ marginTop: 0 }}>Customização da Loja</h1>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <fieldset className={styles.secao}>
-                    <legend className={styles.tituloSecao}>Identidade</legend>
-                    <div className={styles.campo}>
-                        <label className={styles.label}>URL do logotipo</label>
+                {/* Identidade */}
+                <SecaoFormulario titulo="Identidade">
+                    <Campo label="URL do logotipo">
                         <input className={styles.input} {...register('logoUrl')} placeholder="https://..." />
-                    </div>
-                    <div className={styles.campo}>
-                        <label className={styles.label}>Nome da pizzaria</label>
+                    </Campo>
+                    <Campo label="Nome da pizzaria">
                         <input className={styles.input} {...register('nomePizzaria', { required: true })} />
-                    </div>
-                    <div className={styles.campo}>
-                        <label className={styles.label}>Endereço</label>
+                    </Campo>
+                    <Campo label="Endereço">
                         <input className={styles.input} {...register('endereco')} />
-                    </div>
-                </fieldset>
+                    </Campo>
+                </SecaoFormulario>
 
-                <fieldset className={styles.secao}>
-                    <legend className={styles.tituloSecao}>Tema</legend>
+                {/* Tema */}
+                <SecaoFormulario titulo="Tema">
                     <div className={styles.linha}>
-                        <div className={styles.campo}>
-                            <label className={styles.label}>Cor primária</label>
-                            <input className={styles.input} type="color" {...register('corPrimaria')} />
-                        </div>
-                        <div className={styles.campo}>
-                            <label className={styles.label}>Cor secundária</label>
-                            <input className={styles.input} type="color" {...register('corSecundaria')} />
-                        </div>
+                        <CampoColor label="Cor primária" register={register} name="corPrimaria" />
+                        <CampoColor label="Cor secundária" register={register} name="corSecundaria" />
                     </div>
-                </fieldset>
+                </SecaoFormulario>
 
-                <fieldset className={styles.secao}>
-                    <legend className={styles.tituloSecao}>Funcionamento</legend>
+                {/* Funcionamento */}
+                <SecaoFormulario titulo="Funcionamento">
                     <div className={styles.linha}>
-                        <div className={styles.campo}>
-                            <label className={styles.label}>Abertura</label>
-                            <input className={styles.input} type="time" {...register('horarioAbertura')} />
-                        </div>
-                        <div className={styles.campo}>
-                            <label className={styles.label}>Fechamento</label>
-                            <input className={styles.input} type="time" {...register('horarioFechamento')} />
-                        </div>
+                        <CampoHorario label="Abertura" register={register} name="horarioAbertura" />
+                        <CampoHorario label="Fechamento" register={register} name="horarioFechamento" />
                     </div>
-                </fieldset>
+                </SecaoFormulario>
 
-                <fieldset className={styles.secao}>
-                    <legend className={styles.tituloSecao}>Pagamento</legend>
-                    <label className={styles.campoCheckbox}>
-                        <input type="checkbox" {...register('formasPagamento.dinheiro')} />
-                        Dinheiro
-                    </label>
-                    <label className={styles.campoCheckbox}>
-                        <input type="checkbox" {...register('formasPagamento.cartao')} />
-                        Cartão
-                    </label>
-                    <label className={styles.campoCheckbox}>
-                        <input type="checkbox" {...register('formasPagamento.pix')} />
-                        Pix
-                    </label>
-                </fieldset>
+                {/* Pagamento */}
+                <SecaoFormulario titulo="Pagamento">
+                    <CampoCheckbox label="Dinheiro" register={register} name="formasPagamento.dinheiro" />
+                    <CampoCheckbox label="Cartão" register={register} name="formasPagamento.cartao" />
+                    <CampoCheckbox label="Pix" register={register} name="formasPagamento.pix" />
+                </SecaoFormulario>
 
-                <fieldset className={styles.secao}>
-                    <legend className={styles.tituloSecao}>Entrega</legend>
+                {/* Entrega */}
+                <SecaoFormulario titulo="Entrega">
                     <div className={styles.linha}>
-                        <div className={styles.campo}>
-                            <label className={styles.label}>Taxa de entrega (R$)</label>
-                            <input className={styles.input} type="number" step="0.01" min="0" {...register('taxaEntrega', { valueAsNumber: true })} />
-                        </div>
-                        <div className={styles.campo}>
-                            <label className={styles.label}>Raio de entrega (km)</label>
-                            <input className={styles.input} type="number" step="0.1" min="0" {...register('raioEntregaKm', { valueAsNumber: true })} />
-                        </div>
-                        <div className={styles.campo}>
-                            <label className={styles.label}>Tempo médio de preparo (min)</label>
-                            <input className={styles.input} type="number" min="0" {...register('tempoPreparoMinutos', { valueAsNumber: true })} />
-                        </div>
+                        <CampoNumero label="Taxa de entrega (R$)" register={register} name="taxaEntrega" step="0.01" />
+                        <CampoNumero label="Raio de entrega (km)" register={register} name="raioEntregaKm" step="0.1" />
+                        <CampoNumero label="Tempo médio de preparo (min)" register={register} name="tempoPreparoMinutos" />
                     </div>
-                </fieldset>
+                </SecaoFormulario>
 
-                <button className={styles.botaoSalvar} type="submit">Salvar alterações</button>
-                {salvo && <p className={styles.aviso}>Alterações salvas com sucesso!</p>}
+                <BotaoSalvar>Salvar alterações</BotaoSalvar>
+                {salvo && <AvisoSucesso mensagem="Alterações salvas com sucesso!" />}
             </form>
 
+            {/* Cards de navegação */}
             <div className={styles.secaoNavegacao}>
-                <button className={styles.cardNavegacao} onClick={() => navigate('/admin/cardapio')}>
-                    <div className={styles.cardIcon}>🍕</div>
-                    <h3 className={styles.cardTitulo}>Gestão de Cardápio</h3>
-                    <p className={styles.cardDesc}>Adicione, edite ou remova pizzas, bebidas e combos do cardápio.</p>
-                </button>
-
-                <button className={styles.cardNavegacao} onClick={() => navigate('/admin/pedidos')}>
-                    <div className={styles.cardIcon}>📦</div>
-                    <h3 className={styles.cardTitulo}>Gestão de Pedidos</h3>
-                    <p className={styles.cardDesc}>Acompanhe pedidos em tempo real, status e histórico de vendas.</p>
-                </button>
+                <CardNavegacao
+                    icone="🍕"
+                    titulo="Gestão de Cardápio"
+                    descricao="Adicione, edite ou remova pizzas, bebidas e combos do cardápio."
+                    rota="/admin/cardapio"
+                />
+                <CardNavegacao
+                    icone="📦"
+                    titulo="Gestão de Pedidos"
+                    descricao="Acompanhe pedidos em tempo real, status e histórico de vendas."
+                    rota="/admin/pedidos"
+                />
             </div>
         </div>
     );
