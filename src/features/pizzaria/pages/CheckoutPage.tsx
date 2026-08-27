@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Loading } from '../../../component/Loading';
-import { MensagemErro } from '../../../component/MensagemErro';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { usePedidoStore } from '../../../store/pedido.store';
 import { ResumoPedido } from '../components/ResumoPedido';
-import { usePizzas } from '../hooks/usePizzas';
 import {
   DADOS_CHECKOUT_INICIAIS,
   ESTADOS_BRASILEIROS,
@@ -18,27 +15,33 @@ import {
   type FormaPagamento,
 } from '../types/checkout';
 import { mascararCep, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
-import { obterItensCarrinho } from '../utils/pizza.utils';
 
 export function CheckoutPage() {
   const navigate = useNavigate();
-  const carrinho = useCarrinhoStore((state) => state.itens);
-  const limparCarrinho = useCarrinhoStore((state) => state.limparCarrinho);
-  const definirPedido = usePedidoStore((state) => state.definirPedido);
-  const { data: pizzas = [], isLoading, isError } = usePizzas();
 
-  const [dados, setDados] = useState<DadosCheckout>(DADOS_CHECKOUT_INICIAIS);
-  const [erros, setErros] = useState<ErrosCheckout>({});
-
-  if (isLoading) return <Loading mensagem="Carregando seu checkout..." />;
-  if (isError) return <MensagemErro mensagem="Não foi possível carregar os itens do carrinho." />;
-
-  const itensCarrinho = obterItensCarrinho(pizzas, carrinho);
+  const carrinho = useCarrinhoStore(
+    (state) => state.itens,
+  );
+  const limparCarrinho = useCarrinhoStore(
+    (state) => state.limparCarrinho,
+  );
+  const definirPedido = usePedidoStore(
+    (state) => state.definirPedido,
+  );
+  const itensCarrinho = carrinho;
   const total = itensCarrinho.reduce(
-    (soma, item) => soma + Number(item.pizza.precoBase) * item.quantidade,
+    (soma, item) =>
+      soma +
+      item.precoUnitario *
+      item.quantidade,
     0,
   );
-
+  const [dados, setDados] =
+    useState<DadosCheckout>(
+      DADOS_CHECKOUT_INICIAIS,
+    );
+  const [erros, setErros] =
+    useState<ErrosCheckout>({});
   function limparErro(campo: CampoCheckout) {
     setErros((atuais) => {
       if (!atuais[campo]) return atuais;
@@ -86,12 +89,25 @@ export function CheckoutPage() {
 
     definirPedido({
       dados,
-      itens: itensCarrinho.map(({ pizza, quantidade }) => ({
-        pizzaId: pizza.id,
-        nome: pizza.nome,
-        quantidade,
-        precoUnitario: Number(pizza.precoBase),
-      })),
+      itens: itensCarrinho.map((item) => {
+        let nome = '';
+        if (item.tipo === 'pizza') {
+          nome = item.pizza.nome;
+        }
+        if (item.tipo === 'bebida') {
+          nome = item.bebida.nome;
+        }
+        if (item.tipo === 'combo') {
+          nome = item.combo.nome;
+        }
+        return {
+          id: item.id,
+          tipo: item.tipo,
+          nome,
+          quantidade: item.quantidade,
+          precoUnitario: item.precoUnitario,
+        };
+      }),
       total,
       criadoEm: new Date().toISOString(),
     });
@@ -344,12 +360,28 @@ export function CheckoutPage() {
         </form>
 
         <ResumoPedido
-          itens={itensCarrinho.map(({ pizza, quantidade }) => ({
-            id: pizza.id,
-            nome: pizza.nome,
-            precoUnitario: Number(pizza.precoBase),
-            quantidade,
-          }))}
+          itens={itensCarrinho.map((item) => {
+            let nome = '';
+
+            if (item.tipo === 'pizza') {
+              nome = item.pizza.nome;
+            }
+
+            if (item.tipo === 'bebida') {
+              nome = item.bebida.nome;
+            }
+
+            if (item.tipo === 'combo') {
+              nome = item.combo.nome;
+            }
+
+            return {
+              id: item.id,
+              nome,
+              precoUnitario: item.precoUnitario,
+              quantidade: item.quantidade,
+            };
+          })}
           total={total}
         />
       </div>
