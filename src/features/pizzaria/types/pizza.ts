@@ -3,17 +3,14 @@ export type TamanhosDisponiveis =
   | 'M'
   | 'G'
   | 'F';
-
 export type Categoria =
   | 'tradicional'
   | 'doce'
   | 'artesanal';
-
 export interface Ingrediente {
   readonly id: string;
   readonly nome: string;
 }
-
 export interface Pizza {
   readonly id: string;
   readonly nome: string;
