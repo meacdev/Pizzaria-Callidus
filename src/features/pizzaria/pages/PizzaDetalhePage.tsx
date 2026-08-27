@@ -5,7 +5,6 @@ import { extras } from '../types/extras';
 
 export function PizzaDetalhePage() {
   const { slug } = useParams();
-
   const {
     data: pizza,
     isLoading,

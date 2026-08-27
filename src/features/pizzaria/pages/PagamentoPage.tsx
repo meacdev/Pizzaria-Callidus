@@ -35,7 +35,7 @@ export function PagamentoPage() {
       <div className="principal">
         <ResumoPedido
           itens={pedido.itens.map((item) => ({
-            id: item.pizzaId,
+            id: item.id,
             nome: item.nome,
             precoUnitario: item.precoUnitario,
             quantidade: item.quantidade,

@@ -15,12 +15,11 @@ export function ListaCombos({
   mensagemVazia = 'Nenhum combo encontrado.',
 }: ListaCombosProps) {
   return (
-    <section className="principal-secao-combos">
+    <section className="principal secao-combos">
       <div className="titulo-secao">
         <h2>{titulo}</h2>
         <span>{combos.length} combo(s)</span>
       </div>
-
       {combos.length === 0 ? (
         <p className="mensagem-vazia">
           {mensagemVazia}

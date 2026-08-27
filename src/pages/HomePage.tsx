@@ -2,17 +2,20 @@ import { Link } from 'react-router';
 import { Loading } from '../component/Loading';
 import { MensagemErro } from '../component/MensagemErro';
 import { ListaCombos } from '../features/pizzaria/components/ListaCombos';
+import { ListaBebidas } from '../features/pizzaria/components/ListaBebidas';
 import { CarrosselPizza } from '../features/pizzaria/components/CarrosselPizza';
 import { usePizzas } from '../features/pizzaria/hooks/usePizzas';
 import { useCombos } from '../features/pizzaria/hooks/useCombo';
+import { useBebidas } from '../features/pizzaria/hooks/useBebidas';
 import banner from '../assets/banner.jpg';
 import logo from '../assets/logo.png';
 
 export function HomePage() {
   const { data: pizzas = [], isLoading, isError } = usePizzas();
+  const { data: bebidas = [], isLoading: isLoadingBebidas, isError: isErrorBebidas } = useBebidas();
   const { data: combos = [], isLoading: isLoadingCombos, isError: isErrorCombos } = useCombos();
-  if (isLoading || isLoadingCombos) return <Loading mensagem="Carregando..." />;
-  if (isError || isErrorCombos) return <MensagemErro mensagem="Não foi possível carregar a página inicial." />;
+  if (isLoading || isLoadingCombos || isLoadingBebidas) return <Loading mensagem="Carregando..." />;
+  if (isError || isErrorCombos || isErrorBebidas) return <MensagemErro mensagem="Não foi possível carregar a página inicial." />;
 
   return (
     <>
@@ -33,7 +36,9 @@ export function HomePage() {
         </div>
       </section>
       <CarrosselPizza titulo="Destaques" pizzas={pizzas.slice(0, 6)} compacto />
-      <ListaCombos titulo="Combos" combos={combos.slice(0, 6)}  compacto />
+      <ListaCombos titulo="Combos mais vendidos" combos={combos.slice(0, 6)}  compacto />
+      <ListaBebidas titulo="Bebidas" bebidas={bebidas.slice(0, 6)} />
+
     </>
   );
 }

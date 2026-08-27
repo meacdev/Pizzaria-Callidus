@@ -1,5 +1,4 @@
 import { Link } from 'react-router';
-import { useCarrinhoStore } from '../../../store/carrinho.store';
 import type { Combo } from '../types/combo';
 import { nomeCategoriaCombo } from '../utils/combo.utils';
 
@@ -10,7 +9,6 @@ interface ComboCardProps {
 
 function formatarPreco(preco: string): string {
   const valor = Number(preco);
-
   if (Number.isNaN(valor)) {
     return `R$ ${preco}`;
   }
@@ -25,7 +23,11 @@ function obterDescricaoCard(
   combo: Combo,
   compacto: boolean,
 ): string {
-  if (!compacto || combo.descricao.length <= 130) {
+
+  if (
+    !compacto ||
+    combo.descricao.length <= 130
+  ) {
     return combo.descricao;
   }
 
@@ -37,81 +39,62 @@ export function ComboCard({
   compacto = false,
 }: ComboCardProps) {
 
-  const alternarCarrinho = useCarrinhoStore(
-    (state) => state.alternarCarrinho,
-  );
-
-  const estaNosCarrinho = useCarrinhoStore(
-    (state) => state.estaNosCarrinho(combo.id),
-  );
-
-  const textoBotaoCarrinho = estaNosCarrinho
-    ? '★ No carrinho'
-    : '☆ Adicionar ao carrinho';
-
   return (
-    <article className="card">
+    <Link
+      to={`/combo/${combo.slug}`}
+      className="card card-produto-link"
+      aria-label={`Ver ${combo.nome}`}
+    >
 
-      <Link
-        className="thumb"
-        to={`/combo/${combo.slug}`}
-        aria-label={`Ver ${combo.nome}`}
-      >
+      <div className="thumb">
+
         <img
-          src={`/imagens/pizzas/combo.jpg`}
-          alt={`Capa do combo ${combo.nome}`}
+          src="/imagens/pizzas/combo.jpg"
+          alt={`Combo ${combo.nome}`}
           loading="lazy"
         />
-      </Link>
+
+      </div>
 
       <div className="detalhes">
 
         <header>
+
           <p className="categoria">
-            {nomeCategoriaCombo(combo.categoria)}
+            {nomeCategoriaCombo(
+              combo.categoria,
+            )}
           </p>
 
           <h3>
-            <Link to={`/combo/${combo.slug}`}>
-              {combo.nome}
-            </Link>
+            {combo.nome}
           </h3>
+
         </header>
 
         <p className="descricao-card">
-          {obterDescricaoCard(combo, compacto)}
+          {obterDescricaoCard(
+            combo,
+            compacto,
+          )}
         </p>
 
         <div className="card-rodape">
 
           <strong className="preco">
-            {formatarPreco(combo.precoBase)}
+            {formatarPreco(
+              combo.precoBase,
+            )}
           </strong>
 
-          <div className="card-acoes">
-
-            <Link
-              className="link-leia-mais"
-              to={`/combo/${combo.slug}`}
-            >
-              Detalhes
-            </Link>
-
-            <button
-              type="button"
-              className="botao-carrinho"
-              onClick={() => alternarCarrinho(combo.id)}
-              aria-pressed={estaNosCarrinho}
-            >
-              {textoBotaoCarrinho}
-            </button>
-
-          </div>
+          <span className="botao-carrinho">
+            Ver detalhes
+          </span>
 
         </div>
 
       </div>
 
-    </article>
+    </Link>
   );
 }

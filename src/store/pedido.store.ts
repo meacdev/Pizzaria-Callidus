@@ -3,12 +3,12 @@ import { persist } from 'zustand/middleware';
 import type { DadosCheckout } from '../features/pizzaria/types/checkout';
 
 export interface ItemPedido {
-  readonly pizzaId: string;
+  readonly id: string;
+  readonly tipo: 'pizza' | 'bebida' | 'combo';
   readonly nome: string;
   readonly quantidade: number;
   readonly precoUnitario: number;
 }
-
 export interface Pedido {
   readonly dados: DadosCheckout;
   readonly itens: readonly ItemPedido[];

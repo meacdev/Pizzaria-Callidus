@@ -8,6 +8,8 @@ import { CarrinhoPage } from '../features/pizzaria/pages/CarrinhoPage';
 import { CheckoutPage } from '../features/pizzaria/pages/CheckoutPage';
 import { PagamentoPage } from '../features/pizzaria/pages/PagamentoPage';
 import { PizzaDetalhePage } from '../features/pizzaria/pages/PizzaDetalhePage';
+import { BebidaDetalhePage } from '../features/pizzaria/pages/BebidaDetalhePage';
+import { ComboDetalhePage } from '../features/pizzaria/pages/ComboDetalhePage';
 
 export const router = createBrowserRouter([
   {
@@ -18,10 +20,13 @@ export const router = createBrowserRouter([
       { path: 'cardapio', Component: CardapioPage },
       { path: 'categoria', Component: CategoriaPage },
       { path: 'pizza/:slug', Component: PizzaDetalhePage },
+      { path: 'bebida/:id', Component: BebidaDetalhePage },
+      { path: 'combo/:slug', Component: ComboDetalhePage },
       { path: 'carrinho', Component: CarrinhoPage },
       { path: 'checkout', Component: CheckoutPage },
       { path: 'pagamento', Component: PagamentoPage },
       { path: '*', Component: NotFoundPage },
+
     ],
   },
-]);
+])

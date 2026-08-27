@@ -4,36 +4,47 @@ import type { ItemCarrinho } from '../features/pizzaria/types/itemCarrinho';
 
 interface CarrinhoState {
   readonly itens: readonly ItemCarrinho[];
+
   readonly adicionarAoCarrinho: (
     item: ItemCarrinho,
   ) => void;
+
   readonly aumentarQuantidade: (
     id: string,
   ) => void;
+
   readonly diminuirQuantidade: (
     id: string,
   ) => void;
+
   readonly removerItem: (
     id: string,
   ) => void;
+
   readonly obterQuantidade: (
     id: string,
   ) => number;
+
   readonly estaNosCarrinho: (
     id: string,
   ) => boolean;
+
   readonly limparCarrinho: () => void;
 }
 
 export const useCarrinhoStore = create<CarrinhoState>()(
   persist(
     (set, get) => ({
+
       itens: [],
+
       adicionarAoCarrinho: (novoItem) => {
         const atuais = get().itens;
+
         const itemExistente = atuais.find(
           (item) => item.id === novoItem.id,
         );
+
         if (itemExistente) {
           set({
             itens: atuais.map((item) =>
@@ -47,8 +58,10 @@ export const useCarrinhoStore = create<CarrinhoState>()(
                 : item,
             ),
           });
+
           return;
         }
+
         set({
           itens: [
             ...atuais,
@@ -56,10 +69,10 @@ export const useCarrinhoStore = create<CarrinhoState>()(
           ],
         });
       },
+
       aumentarQuantidade: (id) => {
-        const atuais = get().itens;
-        set({
-          itens: atuais.map((item) =>
+        set((state) => ({
+          itens: state.itens.map((item) =>
             item.id === id
               ? {
                   ...item,
@@ -67,12 +80,12 @@ export const useCarrinhoStore = create<CarrinhoState>()(
                 }
               : item,
           ),
-        });
+        }));
       },
+
       diminuirQuantidade: (id) => {
-        const atuais = get().itens;
-        set({
-          itens: atuais
+        set((state) => ({
+          itens: state.itens
             .map((item) =>
               item.id === id
                 ? {
@@ -84,36 +97,61 @@ export const useCarrinhoStore = create<CarrinhoState>()(
             .filter(
               (item) => item.quantidade > 0,
             ),
-        });
+        }));
       },
+
       removerItem: (id) => {
-        const atuais = get().itens;
-        set({
-          itens: atuais.filter(
+        set((state) => ({
+          itens: state.itens.filter(
             (item) => item.id !== id,
           ),
-        });
+        }));
       },
+
       obterQuantidade: (id) => {
         return get().itens
-          .filter((item) => item.pizza.id === id)
+          .filter((item) => {
+
+            if (item.tipo === 'pizza') {
+              return item.pizza.id === id;
+            }
+
+            if (item.tipo === 'bebida') {
+              return String(item.bebida.id) === id;
+            }
+
+            return item.combo.id === id;
+          })
           .reduce(
             (total, item) =>
               total + item.quantidade,
             0,
           );
       },
+
       estaNosCarrinho: (id) => {
-        return get().itens.some(
-          (item) => item.pizza.id === id,
-        );
+        return get().itens.some((item) => {
+
+          if (item.tipo === 'pizza') {
+            return item.pizza.id === id;
+          }
+
+          if (item.tipo === 'bebida') {
+            return String(item.bebida.id) === id;
+          }
+
+          return item.combo.id === id;
+        });
       },
+
       limparCarrinho: () => {
         set({
           itens: [],
         });
       },
+
     }),
+
     {
       name: 'pizzaria-carrinho',
     },

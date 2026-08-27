@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate} from 'react-router';
 import type { Pizza } from '../types/pizza';
 import type { Extra } from '../types/extras';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
@@ -6,6 +7,7 @@ import { useCarrinhoStore } from '../../../store/carrinho.store';
 interface PizzaPersonalizacaoProps {
     readonly pizza: Pizza;
     readonly extras: readonly Extra[];
+
 }
 
 const ADICIONAL_TAMANHO: Record<string, number> = {
@@ -26,7 +28,7 @@ export function PizzaPersonalizacao({
     pizza,
     extras,
 }: PizzaPersonalizacaoProps) {
-
+    const navigate = useNavigate();
     const adicionarAoCarrinho =
         useCarrinhoStore(
             (state) => state.adicionarAoCarrinho,
@@ -94,9 +96,9 @@ export function PizzaPersonalizacao({
         precoBorda;
 
     function handleAdicionarAoCarrinho() {
-
         adicionarAoCarrinho({
             id: crypto.randomUUID(),
+            tipo: 'pizza',
             pizza,
             quantidade: 1,
             tamanho: tamanhoSelecionado,
@@ -105,6 +107,7 @@ export function PizzaPersonalizacao({
             borda: bordaSelecionada,
             precoUnitario: precoFinal,
         });
+        navigate('/cardapio');
     }
 
     return (
