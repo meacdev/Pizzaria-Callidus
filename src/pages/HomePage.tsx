@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router';
 
 import { Loading } from '../component/Loading';
@@ -13,6 +14,7 @@ import { usePizzas } from '../features/pizzaria/hooks/usePizzas';
 import { useCombos } from '../features/pizzaria/hooks/useCombo';
 import { useBebidas } from '../features/pizzaria/hooks/useBebidas';
 
+import { useCustomizationStore } from '../context/customization.store';
 import banner from '../assets/banner.jpg';
 import logo from '../assets/logo.png';
 
