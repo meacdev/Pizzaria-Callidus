@@ -15,13 +15,16 @@ import { useBebidas } from '../features/pizzaria/hooks/useBebidas';
 import { useCustomizationStore } from '../context/customization.store';
 import { estaAberto } from '../features/admin/utils/customization.utils';
 
-import banner from '../assets/banner.jpg';
-import logo from '../assets/logo.png';
+import bannerPadrao from '../assets/banner.jpg';
+import logoPadrao from '../assets/logo.png';
 
 export function HomePage() {
   const customization = useCustomizationStore((state) => state.customization);
   const aberta = estaAberto(customization);
   const [mostrarInformacoes, setMostrarInformacoes] = useState(false);
+
+  const logoSrc = customization.logoUrl || logoPadrao;
+  const bannerSrc = customization.bannerUrl || bannerPadrao;
 
   const {
     data: pizzas = [],
@@ -64,10 +67,10 @@ export function HomePage() {
   return (
     <>
       <section className="hero-pizzaria">
-        <img className="hero-imagem" src={banner} alt="Banner da pizzaria" />
+        <img className="hero-imagem" src={bannerSrc} alt="Banner da pizzaria" />
         <div className="hero-conteudo">
           <Link className="marca" to="/" aria-label={`${customization.nomePizzaria} - início`}>
-            <span className="marca-icone"><img src={logo} alt="Logo" /></span>
+            <span className="marca-icone"><img src={logoSrc} alt="Logo" /></span>
           </Link>
           <div className="hero-info">
             <h1>{customization.nomePizzaria}</h1>
@@ -97,7 +100,7 @@ export function HomePage() {
         titulo="Bebidas"
         bebidas={bebidas.slice(0, 6)}
       />
-      <EstabelecimentoInfo aberto={mostrarInformacoes} onFechar={() => setMostrarInformacoes(false)} logo={logo} />
+      <EstabelecimentoInfo aberto={mostrarInformacoes} onFechar={() => setMostrarInformacoes(false)} logo={logoSrc} />
     </>
   );
 }

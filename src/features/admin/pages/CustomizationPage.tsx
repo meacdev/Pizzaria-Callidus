@@ -7,6 +7,7 @@ import { Campo } from '../components/Campo';
 import { CampoColor } from '../components/CampoColor';
 import { CampoCheckbox } from '../components/CampoCheckbox';
 import { CampoHorarioSemana } from '../components/CampoHorarioSemana';
+import { CampoImagem } from '../components/CampoImagem';
 import { CampoNumero } from '../components/CampoNumero';
 import { BotaoSalvar } from '../components/BotaoSalvar';
 import { AvisoSucesso } from '../components/AvisoSucesso';
@@ -15,8 +16,11 @@ import styles from './CustomizationPage.module.css';
 
 export function CustomizationPage() {
     const { customization, updateCustomization } = useCustomization();
-    const { register, handleSubmit } = useForm<Customization>({ defaultValues: customization });
+    const { register, handleSubmit, setValue, watch } = useForm<Customization>({ defaultValues: customization }); // + setValue, watch
     const [salvo, setSalvo] = useState(false);
+
+    const logoUrl = watch('logoUrl');   // novo
+    const bannerUrl = watch('bannerUrl'); // novo
 
     const onSubmit = (data: Customization) => {
         updateCustomization(data);
@@ -30,9 +34,18 @@ export function CustomizationPage() {
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <SecaoFormulario titulo="Identidade">
-                    <Campo label="URL do logotipo">
-                        <input className={styles.input} {...register('logoUrl')} placeholder="https://..." />
-                    </Campo>
+                    <CampoImagem
+                        label="Logotipo"
+                        valor={logoUrl}
+                        aoMudar={(dataUrl) => setValue('logoUrl', dataUrl, { shouldDirty: true })}
+                        larguraMaxima={400}
+                    />
+                    <CampoImagem
+                        label="Banner (topo da página inicial)"
+                        valor={bannerUrl}
+                        aoMudar={(dataUrl) => setValue('bannerUrl', dataUrl, { shouldDirty: true })}
+                        larguraMaxima={1600}
+                    />
                     <Campo label="Nome da pizzaria">
                         <input className={styles.input} {...register('nomePizzaria', { required: true })} />
                     </Campo>
