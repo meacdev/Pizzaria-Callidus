@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { MensagemErro } from '../../../component/MensagemErro';
-import { usePedidoStore } from '../../../store/pedido.store';
+import { STATUS_PEDIDO_LABEL, usePedidoStore } from '../../../store/pedido.store';
 import { ResumoPedido } from '../components/ResumoPedido';
 import { FORMAS_PAGAMENTO, type FormaPagamento } from '../types/checkout';
 import {

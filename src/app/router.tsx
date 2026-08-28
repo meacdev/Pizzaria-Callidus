@@ -16,22 +16,9 @@ import { ComboDetalhePage } from '../features/pizzaria/pages/ComboDetalhePage';
 // Admin
 import { LoginPage } from '../features/admin/pages/LoginPage';
 import { CustomizationPage } from '../features/admin/pages/CustomizationPage';
+import { PizzaAdminPage } from '../features/admin/pages/PizzaAdminPage';
+import { PedidosAdminPage } from '../features/admin/pages/PedidosAdminPage';
 import { ProtectedRoute } from '../features/admin/guards/ProtectedRoute';
-
-// Placeholders — seu amigo substitui por páginas reais depois
-const AdminCardapioPage = () => (
-  <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
-    <h1>Gestão de Cardápio</h1>
-    <p>Página em construção. Substitua esse placeholder pelo componente real.</p>
-  </div>
-);
-
-const AdminPedidosPage = () => (
-  <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
-    <h1>Gestão de Pedidos</h1>
-    <p>Página em construção. Substitua esse placeholder pelo componente real.</p>
-  </div>
-);
 
 export const router = createBrowserRouter([
   {
@@ -67,7 +54,7 @@ export const router = createBrowserRouter([
         path: 'cardapio',
         element: (
           <ProtectedRoute>
-            <AdminCardapioPage />
+            <PizzaAdminPage />
           </ProtectedRoute>
         ),
       },
@@ -75,7 +62,7 @@ export const router = createBrowserRouter([
         path: 'pedidos',
         element: (
           <ProtectedRoute>
-            <AdminPedidosPage />
+            <PedidosAdminPage />
           </ProtectedRoute>
         ),
       },
