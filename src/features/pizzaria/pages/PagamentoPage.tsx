@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { MensagemErro } from '../../../component/MensagemErro';
-import { STATUS_PEDIDO_LABEL, usePedidoStore } from '../../../store/pedido.store';
+import { usePedidoStore } from '../../../store/pedido.store';
 import { ResumoPedido } from '../components/ResumoPedido';
 import { FORMAS_PAGAMENTO, type FormaPagamento } from '../types/checkout';
 import {
@@ -22,6 +22,7 @@ import {
   validarDadosCartao,
 } from '../utils/pagamento.utils';
 import { gerarPedidoPayload } from '../utils/pedido.utils';
+import { useCustomizationStore } from '../../../context/customization.store';
 
 const DURACAO_PIX_SEGUNDOS = 5 * 60;
 
@@ -41,6 +42,7 @@ function formatarTempo(segundos: number): string {
 export function PagamentoPage() {
   const pedido = usePedidoStore((state) => state.pedido);
   const limparPedido = usePedidoStore((state) => state.limparPedido);
+  const customization = useCustomizationStore((state) => state.customization);
 
   const [estado, setEstado] = useState<EstadoPagamento>('formulario');
   const [dadosCartao, setDadosCartao] = useState<DadosCartao>(DADOS_CARTAO_INICIAIS);
@@ -354,7 +356,7 @@ export function PagamentoPage() {
           )}
         </div>
 
-        <ResumoPedido itens={itensResumo} total={pedido.total} />
+        <ResumoPedido itens={itensResumo} total={pedido.total} taxaEntrega={customization.taxaEntrega} />
       </div>
     </>
   );
