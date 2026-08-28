@@ -3,7 +3,6 @@ import { Link } from 'react-router';
 
 import { Loading } from '../component/Loading';
 import { MensagemErro } from '../component/MensagemErro';
-
 import { ListaCombos } from '../features/pizzaria/components/ListaCombos';
 import { ListaBebidas } from '../features/pizzaria/components/ListaBebidas';
 import { CarrosselPizza } from '../features/pizzaria/components/CarrosselPizza';
