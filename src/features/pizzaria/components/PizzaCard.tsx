@@ -36,6 +36,7 @@ export function PizzaCard({
   compacto = false,
 }: PizzaCardProps) {
   return (<article className="card">
+
     <Link
       className="thumb"
       to={`/pizza/${pizza.slug}`}
@@ -84,6 +85,5 @@ export function PizzaCard({
     </div>
 
   </article>
-
   );
 }

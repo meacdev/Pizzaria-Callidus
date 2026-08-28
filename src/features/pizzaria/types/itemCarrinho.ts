@@ -17,9 +17,9 @@ export interface ItemCarrinhoPizza
   readonly pizza: Pizza;
   readonly tamanho: TamanhosDisponiveis;
   readonly ingredientesRemovidos:
-    readonly string[];
+  readonly string[];
   readonly extras:
-    readonly string[];
+  readonly string[];
   readonly borda: string | null;
 }
 
