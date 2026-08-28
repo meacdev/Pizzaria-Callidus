@@ -1,305 +1,123 @@
 [
   {
     "id": "1",
-    "nome": "Calabresa",
-    "slug": "calabresa",
-    "descricao": "Linguiça calabresa fatiada, rodelas de cebola, orégano e molho de tomate artesanal.",
-    "precoBase": "45.00",
-    "imgURL": "https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=1200&q=85",
-    "categoria": "tradicional",
-    "tamanhosDisponiveis": [
-      "P",
-      "M",
-      "G"
-    ],
-    "permiteBorda": true,
-    "ingredientes": [
-      {
-        "id": "calabresa",
-        "nome": "Calabresa"
-      },
-      {
-        "id": "cebola",
-        "nome": "Cebola"
-      },
-      {
-        "id": "oregano",
-        "nome": "Orégano"
-      },
-      {
-        "id": "molho-tomate",
-        "nome": "Molho de tomate"
-      }
+    "nome": "Combo Família",
+    "slug": "combo-familia",
+    "descricao": "1 pizza grande, refrigerante de 2L e sobremesa.",
+    "precoBase": "75.00",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
+    "categoria": "família",
+    "itens": [
+      "Pizza G",
+      "Refrigerante 2L",
+      "Sobremesa"
     ]
   },
   {
     "id": "2",
-    "nome": "Margherita",
-    "slug": "margherita",
-    "descricao": "Mussarela, rodelas de tomate fresco, manjericão e molho de tomate artesanal.",
-    "precoBase": "42.00",
-    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=85",
-    "categoria": "tradicional",
-    "tamanhosDisponiveis": [
-      "P",
-      "M",
-      "G"
-    ],
-    "permiteBorda": true,
-    "ingredientes": [
-      {
-        "id": "mussarela",
-        "nome": "Mussarela"
-      },
-      {
-        "id": "tomate",
-        "nome": "Tomate"
-      },
-      {
-        "id": "manjericao",
-        "nome": "Manjericão"
-      },
-      {
-        "id": "molho-tomate",
-        "nome": "Molho de tomate"
-      }
+    "nome": "Combo Casal",
+    "slug": "combo-casal",
+    "descricao": "1 pizza média, refrigerante de 1L e sobremesa.",
+    "precoBase": "60.00",
+    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
+    "categoria": "casal",
+    "itens": [
+      "Pizza M",
+      "Refrigerante 1L",
+      "Sobremesa"
     ]
   },
   {
     "id": "3",
-    "nome": "Chocolate com Morango",
-    "slug": "chocolate-com-morango",
-    "descricao": "Creme de chocolate ao leite coberto com fatias de morango fresco.",
-    "precoBase": "55.00",
-    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
-    "categoria": "doce",
-    "tamanhosDisponiveis": [
-      "P",
-      "M"
-    ],
-    "permiteBorda": false,
-    "ingredientes": [
-      {
-        "id": "chocolate",
-        "nome": "Chocolate ao leite"
-      },
-      {
-        "id": "morango",
-        "nome": "Morango"
-      }
+    "nome": "Combo Individual",
+    "slug": "combo-individual",
+    "descricao": "1 pizza pequena acompanhada de refrigerante em lata.",
+    "precoBase": "42.00",
+    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80",
+    "categoria": "individual",
+    "itens": [
+      "Pizza P",
+      "Refrigerante Lata"
     ]
   },
   {
     "id": "4",
-    "nome": "Frango com Catupiry",
-    "slug": "frango-com-catupiry",
-    "descricao": "Frango desfiado temperado, coberto com autêntico Catupiry, azeitonas e orégano.",
-    "precoBase": "50.00",
-    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=85",
-    "categoria": "tradicional",
-    "tamanhosDisponiveis": [
-      "P",
-      "M",
-      "G"
-    ],
-    "permiteBorda": true,
-    "ingredientes": [
-      {
-        "id": "frango",
-        "nome": "Frango desfiado"
-      },
-      {
-        "id": "catupiry",
-        "nome": "Catupiry"
-      },
-      {
-        "id": "azeitona",
-        "nome": "Azeitona"
-      },
-      {
-        "id": "oregano",
-        "nome": "Orégano"
-      }
+    "nome": "Combo Duplo",
+    "slug": "combo-duplo",
+    "descricao": "2 pizzas médias acompanhadas de refrigerante de 2L.",
+    "precoBase": "85.00",
+    "imgURL": "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=800&q=80",
+    "categoria": "promoção",
+    "itens": [
+      "2 Pizzas M",
+      "Refrigerante 2L"
     ]
   },
   {
     "id": "5",
-    "nome": "Portuguesa",
-    "slug": "portuguesa",
-    "descricao": "Mussarela, presunto, ovos cozidos, cebola, ervilha, azeitona e molho de tomate.",
-    "precoBase": "48.00",
-    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=85",
-    "categoria": "tradicional",
-    "tamanhosDisponiveis": [
-      "P",
-      "M",
-      "G"
-    ],
-    "permiteBorda": true,
-    "ingredientes": [
-      {
-        "id": "mussarela",
-        "nome": "Mussarela"
-      },
-      {
-        "id": "presunto",
-        "nome": "Presunto"
-      },
-      {
-        "id": "ovo",
-        "nome": "Ovo"
-      },
-      {
-        "id": "cebola",
-        "nome": "Cebola"
-      },
-      {
-        "id": "ervilha",
-        "nome": "Ervilha"
-      },
-      {
-        "id": "azeitona",
-        "nome": "Azeitona"
-      },
-      {
-        "id": "molho-tomate",
-        "nome": "Molho de tomate"
-      }
+    "nome": "Combo Amigos",
+    "slug": "combo-amigos",
+    "descricao": "2 pizzas grandes e 2 refrigerantes de 2L.",
+    "precoBase": "115.00",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
+    "categoria": "família",
+    "itens": [
+      "2 Pizzas G",
+      "2 Refrigerantes 2L"
     ]
   },
   {
     "id": "6",
-    "nome": "Quatro Queijos",
-    "slug": "quatro-queijos",
-    "descricao": "Combinação perfeita de mussarela, provolone, gorgonzola e parmesão.",
-    "precoBase": "52.00",
-    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=85",
-    "categoria": "artesanal",
-    "tamanhosDisponiveis": [
-      "P",
-      "M",
-      "G"
-    ],
-    "permiteBorda": true,
-    "ingredientes": [
-      {
-        "id": "mussarela",
-        "nome": "Mussarela"
-      },
-      {
-        "id": "provolone",
-        "nome": "Provolone"
-      },
-      {
-        "id": "gorgonzola",
-        "nome": "Gorgonzola"
-      },
-      {
-        "id": "parmesao",
-        "nome": "Parmesão"
-      }
+    "nome": "Combo Especial",
+    "slug": "combo-especial",
+    "descricao": "Pizza grande especial, refrigerante de 2L e sobremesa premium.",
+    "precoBase": "95.00",
+    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80",
+    "categoria": "especial",
+    "itens": [
+      "Pizza G Especial",
+      "Refrigerante 2L",
+      "Sobremesa Premium"
     ]
   },
   {
     "id": "7",
-    "nome": "Pepperoni",
-    "slug": "pepperoni",
-    "descricao": "Fatias de pepperoni levemente apimentadas sobre uma generosa camada de mussarela.",
-    "precoBase": "50.00",
-    "imgURL": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=1200&q=85",
-    "categoria": "artesanal",
-    "tamanhosDisponiveis": [
-      "P",
-      "M",
-      "G"
-    ],
-    "permiteBorda": true,
-    "ingredientes": [
-      {
-        "id": "pepperoni",
-        "nome": "Pepperoni"
-      },
-      {
-        "id": "mussarela",
-        "nome": "Mussarela"
-      },
-      {
-        "id": "molho-tomate",
-        "nome": "Molho de tomate"
-      }
+    "nome": "Combo Econômico",
+    "slug": "combo-economico",
+    "descricao": "Pizza média e refrigerante em lata por um preço promocional.",
+    "precoBase": "52.00",
+    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
+    "categoria": "promoção",
+    "itens": [
+      "Pizza M",
+      "Refrigerante Lata"
     ]
   },
   {
     "id": "8",
-    "nome": "Banana com Canela",
-    "slug": "banana-com-canela",
-    "descricao": "Fatias de banana assadas, cobertas com açúcar, canela em pó e leite condensado.",
-    "precoBase": "40.00",
-    "imgURL": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=85",
+    "nome": "Combo Doce",
+    "slug": "combo-doce",
+    "descricao": "Pizza doce média acompanhada de duas sobremesas.",
+    "precoBase": "68.00",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
     "categoria": "doce",
-    "tamanhosDisponiveis": [
-      "P",
-      "M"
-    ],
-    "permiteBorda": false,
-    "ingredientes": [
-      {
-        "id": "banana",
-        "nome": "Banana"
-      },
-      {
-        "id": "acucar",
-        "nome": "Açúcar"
-      },
-      {
-        "id": "canela",
-        "nome": "Canela"
-      },
-      {
-        "id": "leite-condensado",
-        "nome": "Leite condensado"
-      }
+    "itens": [
+      "Pizza Doce M",
+      "2 Sobremesas"
     ]
   },
   {
     "id": "9",
-    "nome": "Vegetariana",
-    "slug": "vegetariana",
-    "descricao": "Mussarela, brócolis, palmito, champignon, tomate cereja e cebola roxa.",
-    "precoBase": "49.00",
-    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=85",
-    "categoria": "artesanal",
-    "tamanhosDisponiveis": [
-      "P",
-      "M",
-      "G"
-    ],
-    "permiteBorda": true,
-    "ingredientes": [
-      {
-        "id": "mussarela",
-        "nome": "Mussarela"
-      },
-      {
-        "id": "brocolis",
-        "nome": "Brócolis"
-      },
-      {
-        "id": "palmito",
-        "nome": "Palmito"
-      },
-      {
-        "id": "champignon",
-        "nome": "Champignon"
-      },
-      {
-        "id": "tomate-cereja",
-        "nome": "Tomate cereja"
-      },
-      {
-        "id": "cebola-roxa",
-        "nome": "Cebola roxa"
-      }
+    "nome": "Combo Festa",
+    "slug": "combo-festa",
+    "descricao": "3 pizzas grandes, 2 refrigerantes de 2L e uma sobremesa grande.",
+    "precoBase": "145.00",
+    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
+    "categoria": "família",
+    "itens": [
+      "3 Pizzas G",
+      "2 Refrigerantes 2L",
+      "Sobremesa Grande"
     ]
   }
 ]
