@@ -1,0 +1,73 @@
+import { createBrowserRouter } from 'react-router';
+
+// Loja
+import { Layout } from '../component/Layout';
+import { HomePage } from '../pages/HomePage';
+import { NotFoundPage } from '../pages/NotFoundPage';
+import { CardapioPage } from '../features/pizzaria/pages/CardapioPage';
+import { CategoriaPage } from '../features/pizzaria/pages/CategoriaPage';
+import { CarrinhoPage } from '../features/pizzaria/pages/CarrinhoPage';
+import { CheckoutPage } from '../features/pizzaria/pages/CheckoutPage';
+import { PagamentoPage } from '../features/pizzaria/pages/PagamentoPage';
+import { PizzaDetalhePage } from '../features/pizzaria/pages/PizzaDetalhePage';
+import { BebidaDetalhePage } from '../features/pizzaria/pages/BebidaDetalhePage';
+import { ComboDetalhePage } from '../features/pizzaria/pages/ComboDetalhePage';
+import { AcompanhamentoPedidoPage } from '../features/pizzaria/pages/AcompanhamentoPedido';
+
+// Admin
+import { LoginPage } from '../features/admin/pages/LoginPage';
+import { CustomizationPage } from '../features/admin/pages/CustomizationPage';
+import { PizzaAdminPage } from '../features/admin/pages/PizzaAdminPage';
+import { PedidosAdminPage } from '../features/admin/pages/PedidosAdminPage';
+import { ProtectedRoute } from '../features/admin/guards/ProtectedRoute';
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Layout,
+    children: [
+      { index: true, Component: HomePage },
+      { path: 'cardapio', Component: CardapioPage },
+      { path: 'categoria', Component: CategoriaPage },
+      { path: 'pizza/:slug', Component: PizzaDetalhePage },
+      { path: 'bebida/:id', Component: BebidaDetalhePage },
+      { path: 'combo/:slug', Component: ComboDetalhePage },
+      { path: 'carrinho', Component: CarrinhoPage },
+      { path: 'checkout', Component: CheckoutPage },
+      { path: 'pagamento', Component: PagamentoPage },
+      { path: 'pedido/:id', Component: AcompanhamentoPedidoPage },
+      { path: '*', Component: NotFoundPage },
+
+    ],
+  },
+  {
+    path: 'admin',
+    children: [
+      { index: true, Component: LoginPage },
+      {
+        path: 'customizacao',
+        element: (
+          <ProtectedRoute>
+            <CustomizationPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'cardapio',
+        element: (
+          <ProtectedRoute>
+            <PizzaAdminPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'pedidos',
+        element: (
+          <ProtectedRoute>
+            <PedidosAdminPage />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+]);

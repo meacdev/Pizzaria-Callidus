@@ -1,0 +1,305 @@
+[
+  {
+    "id": "1",
+    "nome": "Calabresa",
+    "slug": "calabresa",
+    "descricao": "Linguiça calabresa fatiada, rodelas de cebola, orégano e molho de tomate artesanal.",
+    "precoBase": "45.00",
+    "imgURL": "https://exemplo.com/img/calabresa.jpg",
+    "categoria": "tradicional",
+    "tamanhosDisponiveis": [
+      "P",
+      "M",
+      "G"
+    ],
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "calabresa",
+        "nome": "Calabresa"
+      },
+      {
+        "id": "cebola",
+        "nome": "Cebola"
+      },
+      {
+        "id": "oregano",
+        "nome": "Orégano"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "nome": "Margherita",
+    "slug": "margherita",
+    "descricao": "Mussarela, rodelas de tomate fresco, manjericão e molho de tomate artesanal.",
+    "precoBase": "42.00",
+    "imgURL": "https://exemplo.com/img/margherita.jpg",
+    "categoria": "tradicional",
+    "tamanhosDisponiveis": [
+      "P",
+      "M",
+      "G"
+    ],
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "tomate",
+        "nome": "Tomate"
+      },
+      {
+        "id": "manjericao",
+        "nome": "Manjericão"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "nome": "Chocolate com Morango",
+    "slug": "chocolate-com-morango",
+    "descricao": "Creme de chocolate ao leite coberto com fatias de morango fresco.",
+    "precoBase": "55.00",
+    "imgURL": "https://exemplo.com/img/chocolate-morango.jpg",
+    "categoria": "doce",
+    "tamanhosDisponiveis": [
+      "P",
+      "M"
+    ],
+    "permiteBorda": false,
+    "ingredientes": [
+      {
+        "id": "chocolate",
+        "nome": "Chocolate ao leite"
+      },
+      {
+        "id": "morango",
+        "nome": "Morango"
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "nome": "Frango com Catupiry",
+    "slug": "frango-com-catupiry",
+    "descricao": "Frango desfiado temperado, coberto com autêntico Catupiry, azeitonas e orégano.",
+    "precoBase": "50.00",
+    "imgURL": "https://exemplo.com/img/frango-catupiry.jpg",
+    "categoria": "tradicional",
+    "tamanhosDisponiveis": [
+      "P",
+      "M",
+      "G"
+    ],
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "frango",
+        "nome": "Frango desfiado"
+      },
+      {
+        "id": "catupiry",
+        "nome": "Catupiry"
+      },
+      {
+        "id": "azeitona",
+        "nome": "Azeitona"
+      },
+      {
+        "id": "oregano",
+        "nome": "Orégano"
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "nome": "Portuguesa",
+    "slug": "portuguesa",
+    "descricao": "Mussarela, presunto, ovos cozidos, cebola, ervilha, azeitona e molho de tomate.",
+    "precoBase": "48.00",
+    "imgURL": "https://exemplo.com/img/portuguesa.jpg",
+    "categoria": "tradicional",
+    "tamanhosDisponiveis": [
+      "P",
+      "M",
+      "G"
+    ],
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "presunto",
+        "nome": "Presunto"
+      },
+      {
+        "id": "ovo",
+        "nome": "Ovo"
+      },
+      {
+        "id": "cebola",
+        "nome": "Cebola"
+      },
+      {
+        "id": "ervilha",
+        "nome": "Ervilha"
+      },
+      {
+        "id": "azeitona",
+        "nome": "Azeitona"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "nome": "Quatro Queijos",
+    "slug": "quatro-queijos",
+    "descricao": "Combinação perfeita de mussarela, provolone, gorgonzola e parmesão.",
+    "precoBase": "52.00",
+    "imgURL": "https://exemplo.com/img/quatro-queijos.jpg",
+    "categoria": "artesanal",
+    "tamanhosDisponiveis": [
+      "P",
+      "M",
+      "G"
+    ],
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "provolone",
+        "nome": "Provolone"
+      },
+      {
+        "id": "gorgonzola",
+        "nome": "Gorgonzola"
+      },
+      {
+        "id": "parmesao",
+        "nome": "Parmesão"
+      }
+    ]
+  },
+  {
+    "id": "7",
+    "nome": "Pepperoni",
+    "slug": "pepperoni",
+    "descricao": "Fatias de pepperoni levemente apimentadas sobre uma generosa camada de mussarela.",
+    "precoBase": "50.00",
+    "imgURL": "https://exemplo.com/img/pepperoni.jpg",
+    "categoria": "artesanal",
+    "tamanhosDisponiveis": [
+      "P",
+      "M",
+      "G"
+    ],
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "pepperoni",
+        "nome": "Pepperoni"
+      },
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "molho-tomate",
+        "nome": "Molho de tomate"
+      }
+    ]
+  },
+  {
+    "id": "8",
+    "nome": "Banana com Canela",
+    "slug": "banana-com-canela",
+    "descricao": "Fatias de banana assadas, cobertas com açúcar, canela em pó e leite condensado.",
+    "precoBase": "40.00",
+    "imgURL": "https://exemplo.com/img/banana-canela.jpg",
+    "categoria": "doce",
+    "tamanhosDisponiveis": [
+      "P",
+      "M"
+    ],
+    "permiteBorda": false,
+    "ingredientes": [
+      {
+        "id": "banana",
+        "nome": "Banana"
+      },
+      {
+        "id": "acucar",
+        "nome": "Açúcar"
+      },
+      {
+        "id": "canela",
+        "nome": "Canela"
+      },
+      {
+        "id": "leite-condensado",
+        "nome": "Leite condensado"
+      }
+    ]
+  },
+  {
+    "id": "9",
+    "nome": "Vegetariana",
+    "slug": "vegetariana",
+    "descricao": "Mussarela, brócolis, palmito, champignon, tomate cereja e cebola roxa.",
+    "precoBase": "49.00",
+    "imgURL": "https://exemplo.com/img/vegetariana.jpg",
+    "categoria": "artesanal",
+    "tamanhosDisponiveis": [
+      "P",
+      "M",
+      "G"
+    ],
+    "permiteBorda": true,
+    "ingredientes": [
+      {
+        "id": "mussarela",
+        "nome": "Mussarela"
+      },
+      {
+        "id": "brocolis",
+        "nome": "Brócolis"
+      },
+      {
+        "id": "palmito",
+        "nome": "Palmito"
+      },
+      {
+        "id": "champignon",
+        "nome": "Champignon"
+      },
+      {
+        "id": "tomate-cereja",
+        "nome": "Tomate cereja"
+      },
+      {
+        "id": "cebola-roxa",
+        "nome": "Cebola roxa"
+      }
+    ]
+  }
+]

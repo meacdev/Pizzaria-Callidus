@@ -1,0 +1,212 @@
+/* CustomizationPage.module.css */
+.container {
+    max-width: 640px;
+    margin: 3rem auto;
+    padding: 2.5rem;
+    color: #1a1a2e;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+}
+
+.secao {
+    border: 1px solid #e8e8ec;
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.75rem;
+    background: #fafafc;
+    transition: border-color 0.2s ease;
+}
+
+.secao:hover {
+    border-color: #d0d0d8;
+}
+
+.tituloSecao {
+    font-weight: 600;
+    padding: 0 0.75rem;
+    color: #1a1a2e;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-bottom: 1.25rem;
+}
+
+.campo:last-child {
+    margin-bottom: 0;
+}
+
+.linha {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.linha .campo {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #4a4a5a;
+    letter-spacing: 0.01em;
+}
+
+.input {
+    border: 1.5px solid #e0e0e6;
+    border-radius: 8px;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    color: #1a1a2e;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input::placeholder {
+    color: #a0a0b0;
+}
+
+.input:hover {
+    border-color: #c0c0cc;
+}
+
+.input:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.12);
+}
+
+.campoCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #3a3a4a;
+    user-select: none;
+    padding: 0.25rem 0;
+    transition: color 0.15s ease;
+}
+
+.campoCheckbox:hover {
+    color: #1a1a2e;
+}
+
+.campoCheckbox input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: #4361ee;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.botaoSalvar {
+    background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.25);
+    letter-spacing: 0.01em;
+}
+
+.botaoSalvar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(67, 97, 238, 0.35);
+}
+
+.botaoSalvar:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(67, 97, 238, 0.25);
+}
+
+.aviso {
+    color: #2a9d8f;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin: 0.75rem 0 0;
+}
+
+.aviso::before {
+    content: "✓";
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* Cards de navegação */
+.secaoNavegacao {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+}
+
+.cardNavegacao {
+    all: unset;
+    background: #ffffff;
+    border: 1.5px solid #e8e8ec;
+    border-radius: 14px;
+    padding: 1.75rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.cardNavegacao:hover {
+    border-color: #4361ee;
+    box-shadow: 0 8px 24px rgba(67, 97, 238, 0.12);
+    transform: translateY(-3px);
+}
+
+.cardNavegacao:active {
+    transform: translateY(-1px);
+}
+
+.cardIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.cardTitulo {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.cardDesc {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #6b7280;
+    line-height: 1.4;
+}

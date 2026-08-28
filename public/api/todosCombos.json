@@ -1,0 +1,123 @@
+[
+  {
+    "id": "1",
+    "nome": "Combo Família",
+    "slug": "combo-familia",
+    "descricao": "1 pizza grande, refrigerante de 2L e sobremesa.",
+    "precoBase": "75.00",
+    "imgURL": "https://exemplo.com/img/combo-familia.jpg",
+    "categoria": "família",
+    "itens": [
+      "Pizza G",
+      "Refrigerante 2L",
+      "Sobremesa"
+    ]
+  },
+  {
+    "id": "2",
+    "nome": "Combo Casal",
+    "slug": "combo-casal",
+    "descricao": "1 pizza média, refrigerante de 1L e sobremesa.",
+    "precoBase": "60.00",
+    "imgURL": "https://exemplo.com/img/combo-casal.jpg",
+    "categoria": "casal",
+    "itens": [
+      "Pizza M",
+      "Refrigerante 1L",
+      "Sobremesa"
+    ]
+  },
+  {
+    "id": "3",
+    "nome": "Combo Individual",
+    "slug": "combo-individual",
+    "descricao": "1 pizza pequena acompanhada de refrigerante em lata.",
+    "precoBase": "42.00",
+    "imgURL": "https://exemplo.com/img/combo-individual.jpg",
+    "categoria": "individual",
+    "itens": [
+      "Pizza P",
+      "Refrigerante Lata"
+    ]
+  },
+  {
+    "id": "4",
+    "nome": "Combo Duplo",
+    "slug": "combo-duplo",
+    "descricao": "2 pizzas médias acompanhadas de refrigerante de 2L.",
+    "precoBase": "85.00",
+    "imgURL": "https://exemplo.com/img/combo-duplo.jpg",
+    "categoria": "promoção",
+    "itens": [
+      "2 Pizzas M",
+      "Refrigerante 2L"
+    ]
+  },
+  {
+    "id": "5",
+    "nome": "Combo Amigos",
+    "slug": "combo-amigos",
+    "descricao": "2 pizzas grandes e 2 refrigerantes de 2L.",
+    "precoBase": "115.00",
+    "imgURL": "https://exemplo.com/img/combo-amigos.jpg",
+    "categoria": "família",
+    "itens": [
+      "2 Pizzas G",
+      "2 Refrigerantes 2L"
+    ]
+  },
+  {
+    "id": "6",
+    "nome": "Combo Especial",
+    "slug": "combo-especial",
+    "descricao": "Pizza grande especial, refrigerante de 2L e sobremesa premium.",
+    "precoBase": "95.00",
+    "imgURL": "https://exemplo.com/img/combo-especial.jpg",
+    "categoria": "especial",
+    "itens": [
+      "Pizza G Especial",
+      "Refrigerante 2L",
+      "Sobremesa Premium"
+    ]
+  },
+  {
+    "id": "7",
+    "nome": "Combo Econômico",
+    "slug": "combo-economico",
+    "descricao": "Pizza média e refrigerante em lata por um preço promocional.",
+    "precoBase": "52.00",
+    "imgURL": "https://exemplo.com/img/combo-economico.jpg",
+    "categoria": "promoção",
+    "itens": [
+      "Pizza M",
+      "Refrigerante Lata"
+    ]
+  },
+  {
+    "id": "8",
+    "nome": "Combo Doce",
+    "slug": "combo-doce",
+    "descricao": "Pizza doce média acompanhada de duas sobremesas.",
+    "precoBase": "68.00",
+    "imgURL": "https://exemplo.com/img/combo-doce.jpg",
+    "categoria": "doce",
+    "itens": [
+      "Pizza Doce M",
+      "2 Sobremesas"
+    ]
+  },
+  {
+    "id": "9",
+    "nome": "Combo Festa",
+    "slug": "combo-festa",
+    "descricao": "3 pizzas grandes, 2 refrigerantes de 2L e uma sobremesa grande.",
+    "precoBase": "145.00",
+    "imgURL": "https://exemplo.com/img/combo-festa.jpg",
+    "categoria": "família",
+    "itens": [
+      "3 Pizzas G",
+      "2 Refrigerantes 2L",
+      "Sobremesa Grande"
+    ]
+  }
+]
