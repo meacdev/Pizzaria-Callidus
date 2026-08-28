@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useEffect } from 'react';
 import { Link } from 'react-router';
 
 import { Loading } from '../component/Loading';
@@ -13,13 +12,15 @@ import { EstabelecimentoInfo } from '../features/pizzaria/components/Estabelecim
 import { usePizzas } from '../features/pizzaria/hooks/usePizzas';
 import { useCombos } from '../features/pizzaria/hooks/useCombo';
 import { useBebidas } from '../features/pizzaria/hooks/useBebidas';
-
 import { useCustomizationStore } from '../context/customization.store';
+import { estaAberto } from '../features/admin/utils/customization.utils';
+
 import banner from '../assets/banner.jpg';
 import logo from '../assets/logo.png';
 
 export function HomePage() {
-
+  const customization = useCustomizationStore((state) => state.customization);
+  const aberta = estaAberto(customization);
   const [mostrarInformacoes, setMostrarInformacoes] = useState(false);
 
   const {
@@ -63,57 +64,22 @@ export function HomePage() {
   return (
     <>
       <section className="hero-pizzaria">
-
-        <img
-          className="hero-imagem"
-          src={banner}
-          alt="Banner da pizzaria"
-        />
-
+        <img className="hero-imagem" src={banner} alt="Banner da pizzaria" />
         <div className="hero-conteudo">
-
-          <Link
-            className="marca"
-            to="/"
-            aria-label="Paradiso Pizza - início"
-          >
-            <span className="marca-icone">
-              <img src={logo} alt="Logo" />
-            </span>
+          <Link className="marca" to="/" aria-label={`${customization.nomePizzaria} - início`}>
+            <span className="marca-icone"><img src={logo} alt="Logo" /></span>
           </Link>
-
           <div className="hero-info">
-
-            <h1>Paradiso Pizza</h1>
-
+            <h1>{customization.nomePizzaria}</h1>
             <div className="hero-info-status">
-
-              <span className="tag">
-                Fechado
-              </span>
-
-              <span className="separador">
-                •
-              </span>
-
-              <span>
-                📍 Manaus - AM
-              </span>
-
-              <span className="separador">
-                •
-              </span>
-
-              <button
-                type="button"
-                className="link-informacoes"
-                onClick={() => setMostrarInformacoes(true)}
-              >
+              <span className="tag">{aberta ? 'Aberto' : 'Fechado'}</span>
+              <span className="separador">•</span>
+              <span>📍 {customization.endereco || 'Manaus - AM'}</span>
+              <span className="separador">•</span>
+              <button type="button" className="link-informacoes" onClick={() => setMostrarInformacoes(true)}>
                 Mais informações
               </button>
-
             </div>
-
           </div>
         </div>
       </section>
@@ -131,11 +97,7 @@ export function HomePage() {
         titulo="Bebidas"
         bebidas={bebidas.slice(0, 6)}
       />
-      <EstabelecimentoInfo
-        aberto={mostrarInformacoes}
-        onFechar={() => setMostrarInformacoes(false)}
-        logo={logo}
-      />
+      <EstabelecimentoInfo aberto={mostrarInformacoes} onFechar={() => setMostrarInformacoes(false)} logo={logo} />
     </>
   );
 }

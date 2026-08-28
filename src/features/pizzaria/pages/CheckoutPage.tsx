@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { usePedidoStore } from '../../../store/pedido.store';
 import { ResumoPedido } from '../components/ResumoPedido';
+import { useCustomizationStore } from '../../../context/customization.store';
 import {
   DADOS_CHECKOUT_INICIAIS,
   ESTADOS_BRASILEIROS,
@@ -29,13 +30,14 @@ export function CheckoutPage() {
     (state) => state.definirPedido,
   );
   const itensCarrinho = carrinho;
-  const total = itensCarrinho.reduce(
-    (soma, item) =>
-      soma +
-      item.precoUnitario *
-      item.quantidade,
-    0,
+  const customization = useCustomizationStore((state) => state.customization);
+
+  const subtotal = itensCarrinho.reduce(
+    (soma, item) => soma + item.precoUnitario * item.quantidade,
+    0
   );
+
+  const total = subtotal + customization.taxaEntrega;
   const [dados, setDados] =
     useState<DadosCheckout>(
       DADOS_CHECKOUT_INICIAIS,
@@ -91,15 +93,19 @@ export function CheckoutPage() {
       dados,
       itens: itensCarrinho.map((item) => {
         let nome = '';
+
         if (item.tipo === 'pizza') {
           nome = item.pizza.nome;
         }
+
         if (item.tipo === 'bebida') {
           nome = item.bebida.nome;
         }
+
         if (item.tipo === 'combo') {
           nome = item.combo.nome;
         }
+
         return {
           id: item.id,
           tipo: item.tipo,
@@ -110,8 +116,8 @@ export function CheckoutPage() {
       }),
       total,
       criadoEm: new Date().toISOString(),
+      atualizadoEm: new Date().toISOString(),
     });
-
     limparCarrinho();
     navigate('/pagamento');
   }

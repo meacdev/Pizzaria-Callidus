@@ -125,3 +125,59 @@
     background: #fdecec;
     color: #e5383b;
 }
+
+/* Dashboard de métricas */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.cardMetrica {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 1.25rem 1.5rem;
+    background: #f8f9fc;
+    border: 1px solid #eceef4;
+    border-left: 3px solid #4361ee;
+    border-radius: 12px;
+}
+
+.cardRotulo {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #6b7280;
+}
+
+.cardValor {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.2;
+}
+
+.cardDetalhe {
+    font-size: 0.8125rem;
+    color: #9295a6;
+}
+
+/* variações de cor por card, na ordem em que aparecem */
+.dashboard .cardMetrica:nth-child(1) {
+    border-left-color: #1a8a4a;
+}
+
+.dashboard .cardMetrica:nth-child(2) {
+    border-left-color: #b8720b;
+}
+
+.dashboard .cardMetrica:nth-child(3) {
+    border-left-color: #4361ee;
+}
+
+.dashboard .cardMetrica:nth-child(4) {
+    border-left-color: #1d63d6;
+}

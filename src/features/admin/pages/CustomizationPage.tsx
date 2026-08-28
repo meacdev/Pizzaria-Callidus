@@ -6,7 +6,7 @@ import { SecaoFormulario } from '../components/SecaoFormulario';
 import { Campo } from '../components/Campo';
 import { CampoColor } from '../components/CampoColor';
 import { CampoCheckbox } from '../components/CampoCheckbox';
-import { CampoHorario } from '../components/CampoHorario';
+import { CampoHorarioSemana } from '../components/CampoHorarioSemana';
 import { CampoNumero } from '../components/CampoNumero';
 import { BotaoSalvar } from '../components/BotaoSalvar';
 import { AvisoSucesso } from '../components/AvisoSucesso';
@@ -29,7 +29,6 @@ export function CustomizationPage() {
             <h1 style={{ marginTop: 0 }}>Customização da Loja</h1>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Identidade */}
                 <SecaoFormulario titulo="Identidade">
                     <Campo label="URL do logotipo">
                         <input className={styles.input} {...register('logoUrl')} placeholder="https://..." />
@@ -37,12 +36,27 @@ export function CustomizationPage() {
                     <Campo label="Nome da pizzaria">
                         <input className={styles.input} {...register('nomePizzaria', { required: true })} />
                     </Campo>
+                    <Campo label="Descrição curta">
+                        <input className={styles.input} {...register('descricaoCurta')} />
+                    </Campo>
                     <Campo label="Endereço">
                         <input className={styles.input} {...register('endereco')} />
                     </Campo>
                 </SecaoFormulario>
 
-                {/* Tema */}
+                {/* novo */}
+                <SecaoFormulario titulo="Contato">
+                    <Campo label="Telefone">
+                        <input className={styles.input} {...register('telefone')} placeholder="(92) 99123-4567" />
+                    </Campo>
+                    <Campo label="WhatsApp">
+                        <input className={styles.input} {...register('whatsapp')} placeholder="5592991234567" />
+                    </Campo>
+                    <Campo label="Instagram">
+                        <input className={styles.input} {...register('instagram')} placeholder="@minhapizzaria" />
+                    </Campo>
+                </SecaoFormulario>
+
                 <SecaoFormulario titulo="Tema">
                     <div className={styles.linha}>
                         <CampoColor label="Cor primária" register={register} name="corPrimaria" />
@@ -50,22 +64,16 @@ export function CustomizationPage() {
                     </div>
                 </SecaoFormulario>
 
-                {/* Funcionamento */}
                 <SecaoFormulario titulo="Funcionamento">
-                    <div className={styles.linha}>
-                        <CampoHorario label="Abertura" register={register} name="horarioAbertura" />
-                        <CampoHorario label="Fechamento" register={register} name="horarioFechamento" />
-                    </div>
+                    <CampoHorarioSemana register={register} /> {/* trocado */}
                 </SecaoFormulario>
 
-                {/* Pagamento */}
                 <SecaoFormulario titulo="Pagamento">
                     <CampoCheckbox label="Dinheiro" register={register} name="formasPagamento.dinheiro" />
                     <CampoCheckbox label="Cartão" register={register} name="formasPagamento.cartao" />
                     <CampoCheckbox label="Pix" register={register} name="formasPagamento.pix" />
                 </SecaoFormulario>
 
-                {/* Entrega */}
                 <SecaoFormulario titulo="Entrega">
                     <div className={styles.linha}>
                         <CampoNumero label="Taxa de entrega (R$)" register={register} name="taxaEntrega" step="0.01" />
@@ -78,20 +86,9 @@ export function CustomizationPage() {
                 {salvo && <AvisoSucesso mensagem="Alterações salvas com sucesso!" />}
             </form>
 
-            {/* Cards de navegação */}
             <div className={styles.secaoNavegacao}>
-                <CardNavegacao
-                    icone="🍕"
-                    titulo="Gestão de Cardápio"
-                    descricao="Adicione, edite ou remova pizzas, bebidas e combos do cardápio."
-                    rota="/admin/cardapio"
-                />
-                <CardNavegacao
-                    icone="📦"
-                    titulo="Gestão de Pedidos"
-                    descricao="Acompanhe pedidos em tempo real, status e histórico de vendas."
-                    rota="/admin/pedidos"
-                />
+                <CardNavegacao icone="🍕" titulo="Gestão de Cardápio" descricao="Adicione, edite ou remova pizzas, bebidas e combos do cardápio." rota="/admin/cardapio" />
+                <CardNavegacao icone="📦" titulo="Gestão de Pedidos" descricao="Acompanhe pedidos em tempo real, status e histórico de vendas." rota="/admin/pedidos" />
             </div>
         </div>
     );
