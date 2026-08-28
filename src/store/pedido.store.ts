@@ -53,12 +53,6 @@ interface PedidoState {
   readonly limparPedido: () => void;
 }
 
-interface PedidosAdminState {
-  readonly pedidos: readonly Pedido[];
-  readonly adicionarPedido: (pedido: Pedido) => void;
-  readonly atualizarStatus: (id: string, status: StatusPedido) => void;
-}
-
 export const usePedidoStore = create<PedidoState>()(
   persist(
     (set) => ({
