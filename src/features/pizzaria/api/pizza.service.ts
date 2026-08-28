@@ -1,5 +1,4 @@
 import type {
-  Categoria,
   Ingrediente,
   Pizza,
   TamanhosDisponiveis,
