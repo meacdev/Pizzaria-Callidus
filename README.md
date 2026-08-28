@@ -1,75 +1,47 @@
-# React + TypeScript + Vite
+# Pizzaria-Callidus
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Feito por Matheus Eduardo Amazonas Costa, Matheus Pantoja Viana, Luiz Davi Freitas Franco, Josafá Lucena Menezes, Luis Gustavo Monteiro da Silva, para o módulo de React do professor Emmerson Santa Rita no projeto Callidus Academy 2.0 de 2026.
 
-Currently, two official plugins are available:
+## Sobre o projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Este projeto é um Progressive Web App (PWA), baseada em recursos (*feature-based*), de venda de pizzas online que pode ser licenciado e customizado para diferentes pizzarias clientes.
 
-## React Compiler
+Utiliza-se Vite como build tool e servidor de desenvolvimento, aproveitando ES Modules nativos e Hot Module Replacement (HMR).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+> Para mais informações consulte [/docs](./docs)
 
-## Expanding the ESLint configuration
+### Domínio Público
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+O projeto está dispoível no Github Pages: https://meacdev.github.io/Pizzaria-Callidus/
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Como rodar localmente
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Pré-requisitos
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Node.js** ≥ 20.x
+- **npm**
+
+### Instalação
 
 ```
+git clone https://github.com/meacdev/Pizzaria-Callidus.git
+cd Pizzaria-Callidus
+npm install 
+```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Ambitente de desenvolvimento
+```
+npm run dev 
+```
+O service worker está funcionando em modo dev (`devOptions.enabled: true` no `vite.config.ts`), útil para testes.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Build de produção + preview do build
 
 ```
+npm run build
+npm run preview
+```
+
+### Persistência de dados
+
+A aplicação não depende de backend ou banco de dados externo: pedidos, customização e cardápio são persistidos no `localStorage` do navegador (via Zustand com o middleware `persist`). Não há variáveis de ambiente a configurar para rodar o projeto localmente.
