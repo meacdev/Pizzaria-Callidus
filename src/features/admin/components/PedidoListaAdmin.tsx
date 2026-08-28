@@ -4,9 +4,6 @@ import {
     type Pedido,
     type StatusPedido,
 } from '../../../store/pedido.store';
-import { Link } from 'react-router';
-import { usePedidosAdmin } from '../hooks/usePedidosAdmin';
-import { DashboardPedidos } from '../components/DashboardPedidos';
 import styles from '../pages/PedidosAdminPage.module.css';
 
 interface PedidoListaAdminProps {
