@@ -12,6 +12,7 @@ import { PagamentoPage } from '../features/pizzaria/pages/PagamentoPage';
 import { PizzaDetalhePage } from '../features/pizzaria/pages/PizzaDetalhePage';
 import { BebidaDetalhePage } from '../features/pizzaria/pages/BebidaDetalhePage';
 import { ComboDetalhePage } from '../features/pizzaria/pages/ComboDetalhePage';
+import { AcompanhamentoPedidoPage } from '../features/pizzaria/pages/AcompanhamentoPedido';
 
 // Admin
 import { LoginPage } from '../features/admin/pages/LoginPage';
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
       { path: 'carrinho', Component: CarrinhoPage },
       { path: 'checkout', Component: CheckoutPage },
       { path: 'pagamento', Component: PagamentoPage },
+      { path: 'pedido/:id', Component: AcompanhamentoPedidoPage },
       { path: '*', Component: NotFoundPage },
 
     ],
