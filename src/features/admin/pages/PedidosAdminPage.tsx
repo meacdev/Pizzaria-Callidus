@@ -1,10 +1,11 @@
 import { Link } from 'react-router';
 import { usePedidosAdmin } from '../hooks/usePedidosAdmin';
 import { PedidoListaAdmin } from '../components/PedidoListaAdmin';
+import { DashboardPedidos } from '../components/DashboardPedidos';
 import styles from './PedidosAdminPage.module.css';
 
 export function PedidosAdminPage() {
-    const { pedidos, atualizarStatus } = usePedidosAdmin();
+    const { pedidos, atualizarStatus, metricas } = usePedidosAdmin();
 
     return (
         <div className={styles.container}>
@@ -20,6 +21,8 @@ export function PedidosAdminPage() {
                 Acompanhe os pedidos recebidos e atualize o status de cada um. A alteração é
                 refletida na tela de acompanhamento do cliente.
             </p>
+
+            <DashboardPedidos metricas={metricas} /> {/* novo */}
 
             <PedidoListaAdmin pedidos={pedidos} onAtualizarStatus={atualizarStatus} />
         </div>
