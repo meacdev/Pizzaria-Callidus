@@ -1,6 +1,6 @@
 import type { Pizza } from '../types/pizza';
 
-const ENDPOINT = '/api/todasPizzas.json';
+const ENDPOINT = `${import.meta.env.BASE_URL}api/todasPizzas.json`;
 const STORAGE_KEY = 'pizzaria_pizzas';
 
 export async function buscarPizzas(): Promise<Pizza[]> {

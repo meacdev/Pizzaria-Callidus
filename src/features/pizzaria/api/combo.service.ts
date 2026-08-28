@@ -1,5 +1,6 @@
 import type { Combo } from '../types/combo';
-const ENDPOINT = '/api/todosCombos.json';
+
+const ENDPOINT = `${import.meta.env.BASE_URL}api/todosCombos.json`;
 
 export async function buscarCombos(): Promise<Combo[]> {
   const resposta = await fetch(ENDPOINT);

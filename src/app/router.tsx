@@ -21,53 +21,57 @@ import { PizzaAdminPage } from '../features/admin/pages/PizzaAdminPage';
 import { PedidosAdminPage } from '../features/admin/pages/PedidosAdminPage';
 import { ProtectedRoute } from '../features/admin/guards/ProtectedRoute';
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      Component: Layout,
+      children: [
+        { index: true, Component: HomePage },
+        { path: 'cardapio', Component: CardapioPage },
+        { path: 'categoria', Component: CategoriaPage },
+        { path: 'pizza/:slug', Component: PizzaDetalhePage },
+        { path: 'bebida/:id', Component: BebidaDetalhePage },
+        { path: 'combo/:slug', Component: ComboDetalhePage },
+        { path: 'carrinho', Component: CarrinhoPage },
+        { path: 'checkout', Component: CheckoutPage },
+        { path: 'pagamento', Component: PagamentoPage },
+        { path: 'pedido/:id', Component: AcompanhamentoPedidoPage },
+        { path: '*', Component: NotFoundPage },
+      ],
+    },
+    {
+      path: 'admin',
+      children: [
+        { index: true, Component: LoginPage },
+        {
+          path: 'customizacao',
+          element: (
+            <ProtectedRoute>
+              <CustomizationPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'cardapio',
+          element: (
+            <ProtectedRoute>
+              <PizzaAdminPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'pedidos',
+          element: (
+            <ProtectedRoute>
+              <PedidosAdminPage />
+            </ProtectedRoute>
+          ),
+        },
+      ],
+    },
+  ],
   {
-    path: '/',
-    Component: Layout,
-    children: [
-      { index: true, Component: HomePage },
-      { path: 'cardapio', Component: CardapioPage },
-      { path: 'categoria', Component: CategoriaPage },
-      { path: 'pizza/:slug', Component: PizzaDetalhePage },
-      { path: 'bebida/:id', Component: BebidaDetalhePage },
-      { path: 'combo/:slug', Component: ComboDetalhePage },
-      { path: 'carrinho', Component: CarrinhoPage },
-      { path: 'checkout', Component: CheckoutPage },
-      { path: 'pagamento', Component: PagamentoPage },
-      { path: 'pedido/:id', Component: AcompanhamentoPedidoPage },
-      { path: '*', Component: NotFoundPage },
-
-    ],
+    basename: import.meta.env.BASE_URL,
   },
-  {
-    path: 'admin',
-    children: [
-      { index: true, Component: LoginPage },
-      {
-        path: 'customizacao',
-        element: (
-          <ProtectedRoute>
-            <CustomizationPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'cardapio',
-        element: (
-          <ProtectedRoute>
-            <PizzaAdminPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'pedidos',
-        element: (
-          <ProtectedRoute>
-            <PedidosAdminPage />
-          </ProtectedRoute>
-        ),
-      },
-    ],
-  },
-]);
+);

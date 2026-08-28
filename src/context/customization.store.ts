@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { CUSTOMIZATION_PADRAO, type Customization } from '../features/admin/types/customization';
+import type { Customization } from '../features/admin/types/customization';
 import { getCustomization, saveCustomization } from '../features/admin/api/customization.service';
 
 interface CustomizationState {

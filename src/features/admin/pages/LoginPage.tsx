@@ -187,23 +187,23 @@ const Botao = styled.button<{ $loading?: boolean }>`
     }
 
     ${({ $loading }) =>
-        $loading &&
-        `
-        color: transparent;
-        
-        &::after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            top: 50%;
-            left: 50%;
-            margin-left: -9px;
-            margin-top: -9px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+    $loading &&
+    `
+    color: transparent;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        top: 50%;
+        left: 50%;
+        margin-left: -9px;
+        margin-top: -9px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: ${spin} 0.8s linear infinite;
         }
     `}
 `;
