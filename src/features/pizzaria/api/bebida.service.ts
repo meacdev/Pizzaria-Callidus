@@ -1,6 +1,6 @@
 import type { Bebida } from '../types/bebida';
 
-const ENDPOINT = '/api/todasBebidas.json';
+const ENDPOINT = `${import.meta.env.BASE_URL}api/todasBebidas.json`;
 
 export async function buscarBebidas(): Promise<Bebida[]> {
   const resposta = await fetch(ENDPOINT);
