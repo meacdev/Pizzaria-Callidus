@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate} from 'react-router';
+import { useNavigate } from 'react-router';
 import type { Pizza } from '../types/pizza';
 import type { Extra } from '../types/extras';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
@@ -115,7 +115,7 @@ export function PizzaPersonalizacao({
             <div className="personalizacao-imagem">
                 <img
                     src={pizza.imgURL}
-                    alt={`Pizza ${pizza.nome}`}
+                    alt={pizza.nome}
                 />
             </div>
             <div className="personalizacao-conteudo">

@@ -5,7 +5,7 @@
     "slug": "calabresa",
     "descricao": "Linguiça calabresa fatiada, rodelas de cebola, orégano e molho de tomate artesanal.",
     "precoBase": "45.00",
-    "imgURL": "https://exemplo.com/img/calabresa.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=1200&q=85",
     "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
@@ -38,7 +38,7 @@
     "slug": "margherita",
     "descricao": "Mussarela, rodelas de tomate fresco, manjericão e molho de tomate artesanal.",
     "precoBase": "42.00",
-    "imgURL": "https://exemplo.com/img/margherita.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=85",
     "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
@@ -71,7 +71,7 @@
     "slug": "chocolate-com-morango",
     "descricao": "Creme de chocolate ao leite coberto com fatias de morango fresco.",
     "precoBase": "55.00",
-    "imgURL": "https://exemplo.com/img/chocolate-morango.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
     "categoria": "doce",
     "tamanhosDisponiveis": [
       "P",
@@ -95,7 +95,7 @@
     "slug": "frango-com-catupiry",
     "descricao": "Frango desfiado temperado, coberto com autêntico Catupiry, azeitonas e orégano.",
     "precoBase": "50.00",
-    "imgURL": "https://exemplo.com/img/frango-catupiry.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=85",
     "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
@@ -128,7 +128,7 @@
     "slug": "portuguesa",
     "descricao": "Mussarela, presunto, ovos cozidos, cebola, ervilha, azeitona e molho de tomate.",
     "precoBase": "48.00",
-    "imgURL": "https://exemplo.com/img/portuguesa.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=85",
     "categoria": "tradicional",
     "tamanhosDisponiveis": [
       "P",
@@ -173,7 +173,7 @@
     "slug": "quatro-queijos",
     "descricao": "Combinação perfeita de mussarela, provolone, gorgonzola e parmesão.",
     "precoBase": "52.00",
-    "imgURL": "https://exemplo.com/img/quatro-queijos.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=85",
     "categoria": "artesanal",
     "tamanhosDisponiveis": [
       "P",
@@ -206,7 +206,7 @@
     "slug": "pepperoni",
     "descricao": "Fatias de pepperoni levemente apimentadas sobre uma generosa camada de mussarela.",
     "precoBase": "50.00",
-    "imgURL": "https://exemplo.com/img/pepperoni.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=1200&q=85",
     "categoria": "artesanal",
     "tamanhosDisponiveis": [
       "P",
@@ -235,7 +235,7 @@
     "slug": "banana-com-canela",
     "descricao": "Fatias de banana assadas, cobertas com açúcar, canela em pó e leite condensado.",
     "precoBase": "40.00",
-    "imgURL": "https://exemplo.com/img/banana-canela.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=85",
     "categoria": "doce",
     "tamanhosDisponiveis": [
       "P",
@@ -267,7 +267,7 @@
     "slug": "vegetariana",
     "descricao": "Mussarela, brócolis, palmito, champignon, tomate cereja e cebola roxa.",
     "precoBase": "49.00",
-    "imgURL": "https://exemplo.com/img/vegetariana.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=85",
     "categoria": "artesanal",
     "tamanhosDisponiveis": [
       "P",

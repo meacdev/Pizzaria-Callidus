@@ -5,7 +5,7 @@
     "slug": "combo-familia",
     "descricao": "1 pizza grande, refrigerante de 2L e sobremesa.",
     "precoBase": "75.00",
-    "imgURL": "https://exemplo.com/img/combo-familia.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
     "categoria": "família",
     "itens": [
       "Pizza G",
@@ -19,7 +19,7 @@
     "slug": "combo-casal",
     "descricao": "1 pizza média, refrigerante de 1L e sobremesa.",
     "precoBase": "60.00",
-    "imgURL": "https://exemplo.com/img/combo-casal.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
     "categoria": "casal",
     "itens": [
       "Pizza M",
@@ -33,7 +33,7 @@
     "slug": "combo-individual",
     "descricao": "1 pizza pequena acompanhada de refrigerante em lata.",
     "precoBase": "42.00",
-    "imgURL": "https://exemplo.com/img/combo-individual.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80",
     "categoria": "individual",
     "itens": [
       "Pizza P",
@@ -46,7 +46,7 @@
     "slug": "combo-duplo",
     "descricao": "2 pizzas médias acompanhadas de refrigerante de 2L.",
     "precoBase": "85.00",
-    "imgURL": "https://exemplo.com/img/combo-duplo.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=800&q=80",
     "categoria": "promoção",
     "itens": [
       "2 Pizzas M",
@@ -59,7 +59,7 @@
     "slug": "combo-amigos",
     "descricao": "2 pizzas grandes e 2 refrigerantes de 2L.",
     "precoBase": "115.00",
-    "imgURL": "https://exemplo.com/img/combo-amigos.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
     "categoria": "família",
     "itens": [
       "2 Pizzas G",
@@ -72,7 +72,7 @@
     "slug": "combo-especial",
     "descricao": "Pizza grande especial, refrigerante de 2L e sobremesa premium.",
     "precoBase": "95.00",
-    "imgURL": "https://exemplo.com/img/combo-especial.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80",
     "categoria": "especial",
     "itens": [
       "Pizza G Especial",
@@ -86,7 +86,7 @@
     "slug": "combo-economico",
     "descricao": "Pizza média e refrigerante em lata por um preço promocional.",
     "precoBase": "52.00",
-    "imgURL": "https://exemplo.com/img/combo-economico.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
     "categoria": "promoção",
     "itens": [
       "Pizza M",
@@ -99,7 +99,7 @@
     "slug": "combo-doce",
     "descricao": "Pizza doce média acompanhada de duas sobremesas.",
     "precoBase": "68.00",
-    "imgURL": "https://exemplo.com/img/combo-doce.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80",
     "categoria": "doce",
     "itens": [
       "Pizza Doce M",
@@ -112,7 +112,7 @@
     "slug": "combo-festa",
     "descricao": "3 pizzas grandes, 2 refrigerantes de 2L e uma sobremesa grande.",
     "precoBase": "145.00",
-    "imgURL": "https://exemplo.com/img/combo-festa.jpg",
+    "imgURL": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
     "categoria": "família",
     "itens": [
       "3 Pizzas G",

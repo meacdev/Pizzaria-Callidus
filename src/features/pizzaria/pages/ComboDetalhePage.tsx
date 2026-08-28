@@ -78,7 +78,7 @@ export function ComboDetalhePage() {
       <section className="produto-confirmacao">
         <div className="produto-confirmacao-imagem">
           <img
-            src="/imagens/pizzas/combo.jpg"
+            src={combo.imgURL}
             alt={`Combo ${combo.nome}`}
           />
         </div>

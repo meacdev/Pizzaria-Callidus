@@ -37,7 +37,7 @@ export function ItemCarrinho({
    * independentemente do tipo.
    */
   let nome = '';
-  let imagem = '/imagens/pizzas/pizzaSalgada.jpg';
+  let imagem = '';
   let link = '/cardapio';
   let categoria = '';
 

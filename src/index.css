@@ -6,13 +6,18 @@
   --primary: #ff2a2a;
   --primary-dark: #cc1b1b;
   --primary-light: #ff5c5c;
+  --primary-rgb: 255, 42, 42;
+
+  /* Cor secundária/base do tema (usada pelo painel administrativo) */
+  --secondary: #1a0d0a;
+  --secondary-rgb: 26, 13, 10;
 
   --text: #ffffff;
   --muted: #d7c9c4;
 
   --line: rgba(255, 255, 255, 0.12);
 
-  --background: #1a0d0a;
+  --background: var(--secondary);
   --surface: #281410;
   --surface-light: #3a1c15;
 
@@ -51,10 +56,16 @@
 }
 
 html {
+  color-scheme: dark;
   min-width: 320px;
   min-height: 100%;
   background: var(--background);
   scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--primary);
+  color: #ffffff;
 }
 
 body {
@@ -64,7 +75,7 @@ body {
 
   background:
     radial-gradient(circle at 15% 0%,
-      rgba(255, 42, 42, 0.06),
+      rgba(var(--primary-rgb), 0.06),
       transparent 32%),
     var(--background);
 
@@ -193,7 +204,7 @@ button {
   border-radius: 12px;
 
   box-shadow:
-    0 6px 20px rgba(255, 42, 42, 0.3);
+    0 6px 20px rgba(var(--primary-rgb), 0.3);
 }
 
 
@@ -233,7 +244,7 @@ button {
 
 .navegacao a:hover,
 .navegacao a.ativo {
-  background: rgba(255, 42, 42, 0.08);
+  background: rgba(var(--primary-rgb), 0.08);
 
   color: var(--primary);
 }
@@ -496,7 +507,7 @@ button {
 .botao-secundario:hover {
   background: var(--surface-light);
 
-  border-color: rgba(255, 42, 42, 0.3);
+  border-color: rgba(var(--primary-rgb), 0.3);
 }
 
 .botao-perigo {
@@ -519,7 +530,7 @@ button {
 
   height: 170px;
 
-  border: 1px solid rgba(255, 42, 42, 0.15);
+  border: 1px solid rgba(var(--primary-rgb), 0.15);
 
   border-radius: 22px;
 
@@ -533,7 +544,7 @@ button {
   background: rgba(0, 0, 0, 0.02);
 
   box-shadow:
-    inset 0 0 30px rgba(255, 42, 42, 0.03);
+    inset 0 0 30px rgba(var(--primary-rgb), 0.03);
 }
 
 .hero-estatistica strong {
@@ -703,7 +714,7 @@ button {
 .card:hover {
   transform: translateY(-4px);
 
-  border-color: rgba(255, 42, 42, 0.3);
+  border-color: rgba(var(--primary-rgb), 0.3);
 
   box-shadow:
     0 12px 35px rgba(0, 0, 0, 0.12);
@@ -1125,7 +1136,7 @@ button {
   border-color: var(--primary);
 
   box-shadow:
-    0 0 0 3px rgba(255, 42, 42, 0.15);
+    0 0 0 3px rgba(var(--primary-rgb), 0.15);
 }
 
 .campo-formulario input[aria-invalid="true"],
@@ -1186,7 +1197,7 @@ button {
 }
 
 .opcao-pagamento:hover {
-  border-color: rgba(255, 42, 42, 0.4);
+  border-color: rgba(var(--primary-rgb), 0.4);
 }
 
 .opcao-pagamento input[type="radio"] {
@@ -1201,7 +1212,7 @@ button {
 .opcao-pagamento-selecionada {
   border-color: var(--primary);
 
-  background: rgba(255, 42, 42, 0.08);
+  background: rgba(var(--primary-rgb), 0.08);
 }
 
 .opcao-pagamento-rotulo {
@@ -1460,7 +1471,7 @@ button {
   border-color: var(--primary);
 
   box-shadow:
-    0 0 0 3px rgba(255, 42, 42, 0.15);
+    0 0 0 3px rgba(var(--primary-rgb), 0.15);
 }
 
 .resumo-busca {
@@ -1825,7 +1836,7 @@ button {
 .personalizacao-opcao.selecionada {
   border-color: var(--primary);
 
-  background: rgba(255, 42, 42, 0.08);
+  background: rgba(var(--primary-rgb), 0.08);
 }
 
 .personalizacao-rodape {
@@ -3661,7 +3672,7 @@ button {
   border-color: var(--primary);
   color: #ffffff;
 
-  box-shadow: 0 5px 15px rgba(255, 42, 42, 0.25);
+  box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.25);
 }
 
 
@@ -3779,7 +3790,7 @@ button {
 
 .extra.selecionado {
   border-color: var(--primary);
-  background: rgba(255, 42, 42, 0.08);
+  background: rgba(var(--primary-rgb), 0.08);
 }
 
 .extra.selecionado>span:first-child {
@@ -3842,7 +3853,7 @@ button {
 
   transform: translateY(-2px);
 
-  box-shadow: 0 8px 20px rgba(255, 42, 42, 0.25);
+  box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.25);
 }
 
 

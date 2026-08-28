@@ -79,7 +79,7 @@ export function BebidaDetalhePage() {
 
                 <div className="produto-confirmacao-imagem">
                     <img
-                        src="/imagens/bebidas/bebida.jpg"
+                        src={bebida.imgURL}
                         alt={bebida.nome}
                     />
                 </div>
