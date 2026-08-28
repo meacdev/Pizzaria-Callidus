@@ -167,14 +167,23 @@ export function PagamentoPage() {
 
       <div className="principal checkout-layout">
         <div className="pagamento-conteudo">
-          {estado === 'processando' && (
-            <section className="estado estado-carregando" aria-live="polite">
-              <div className="spinner" aria-hidden="true" />
+          {estado === 'sucesso' && payloadGerado && (
+            <section className="pagamento-sucesso">
+              <div className="pagamento-sucesso-icone" aria-hidden="true">✓</div>
+              <h2>Pagamento confirmado</h2>
               <p>
-                {forma === 'pix' && 'Verificando o pagamento Pix...'}
-                {forma === 'cartao' && 'Processando pagamento no cartão...'}
-                {forma === 'dinheiro' && 'Confirmando pedido para pagamento na entrega...'}
+                Pagamento via <strong>{formaPagamentoInfo?.rotulo ?? forma}</strong> simulado com sucesso.
               </p>
+              <p className="pagamento-id">Pedido nº {payloadGerado.pedidoId}</p>
+
+              <div className="acoes-pagina">
+                <Link className="botao-secundario" to={`/pedido/${pedido.id}`}>
+                  Acompanhar pedido
+                </Link>
+                <Link className="botao-primario" to="/" onClick={handleFinalizar}>
+                  Voltar ao início
+                </Link>
+              </div>
             </section>
           )}
 

@@ -32,13 +32,15 @@ export interface ItemPedido {
   readonly quantidade: number;
   readonly precoUnitario: number;
 }
+
 export interface Pedido {
-  readonly id: string;
+  readonly id: string;                    
+  readonly status: StatusPedido;           
   readonly dados: DadosCheckout;
   readonly itens: readonly ItemPedido[];
   readonly total: number;
-  readonly status: StatusPedido;
   readonly criadoEm: string;
+  readonly atualizadoEm: string;          
 }
 
 export type NovoPedido = Omit<Pedido, 'id' | 'status'>;
@@ -49,6 +51,12 @@ interface PedidoState {
   readonly definirPedido: (pedido: NovoPedido) => void;
   readonly atualizarStatusPedido: (id: string, status: StatusPedido) => void;
   readonly limparPedido: () => void;
+}
+
+interface PedidosAdminState {
+  readonly pedidos: readonly Pedido[];
+  readonly adicionarPedido: (pedido: Pedido) => void;
+  readonly atualizarStatus: (id: string, status: StatusPedido) => void;
 }
 
 export const usePedidoStore = create<PedidoState>()(
