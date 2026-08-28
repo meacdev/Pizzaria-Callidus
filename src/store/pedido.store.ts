@@ -9,17 +9,28 @@ export interface ItemPedido {
   readonly quantidade: number;
   readonly precoUnitario: number;
 }
+export type StatusPedido = 'recebido' | 'preparo' | 'saiu-entrega' | 'entregue' | 'cancelado';
+
 export interface Pedido {
+  readonly id: string;                    
+  readonly status: StatusPedido;           
   readonly dados: DadosCheckout;
   readonly itens: readonly ItemPedido[];
   readonly total: number;
   readonly criadoEm: string;
+  readonly atualizadoEm: string;          
 }
 
 interface PedidoState {
   readonly pedido: Pedido | null;
   readonly definirPedido: (pedido: Pedido) => void;
   readonly limparPedido: () => void;
+}
+
+interface PedidosAdminState {
+  readonly pedidos: readonly Pedido[];
+  readonly adicionarPedido: (pedido: Pedido) => void;
+  readonly atualizarStatus: (id: string, status: StatusPedido) => void;
 }
 
 export const usePedidoStore = create<PedidoState>()(
