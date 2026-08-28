@@ -9,6 +9,7 @@ export interface HorarioDia {
 
 export interface Customization {
     logoUrl: string;
+    bannerUrl: string;
     corPrimaria: string;
     corSecundaria: string;
     nomePizzaria: string;
@@ -43,6 +44,7 @@ function horarioPadrao(ativo: boolean): HorarioDia {
 
 export const CUSTOMIZATION_PADRAO: Customization = {
     logoUrl: '',
+    bannerUrl: '',
     corPrimaria: '#ff2a2a',
     corSecundaria: '#1a0d0a',
     nomePizzaria: 'Paradiso Pizzaria',

@@ -338,22 +338,6 @@ export function PagamentoPage() {
             </section>
           )}
 
-          {estado === 'sucesso' && payloadGerado && (
-            <section className="pagamento-sucesso">
-              <div className="pagamento-sucesso-icone" aria-hidden="true">✓</div>
-              <h2>Pagamento confirmado</h2>
-              <p>
-                Pagamento via <strong>{formaPagamentoInfo?.rotulo ?? forma}</strong> simulado com sucesso.
-              </p>
-              <p className="pagamento-id">Pedido nº {payloadGerado.pedidoId}</p>
-
-            <div className="acoes-pagina">
-              <Link className="botao-primario" to="/" onClick={handleFinalizar}>
-                Voltar ao início
-              </Link>
-            </div>
-            </section>
-          )}
         </div>
 
         <ResumoPedido itens={itensResumo} total={pedido.total} taxaEntrega={customization.taxaEntrega} />
