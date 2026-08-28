@@ -9,6 +9,7 @@ interface ComboCardProps {
 
 function formatarPreco(preco: string): string {
   const valor = Number(preco);
+
   if (Number.isNaN(valor)) {
     return `R$ ${preco}`;
   }
@@ -23,11 +24,7 @@ function obterDescricaoCard(
   combo: Combo,
   compacto: boolean,
 ): string {
-
-  if (
-    !compacto ||
-    combo.descricao.length <= 130
-  ) {
+  if (!compacto || combo.descricao.length <= 130) {
     return combo.descricao;
   }
 
@@ -38,32 +35,24 @@ export function ComboCard({
   combo,
   compacto = false,
 }: ComboCardProps) {
-
   return (
     <Link
       to={`/combo/${combo.slug}`}
       className="card card-produto-link"
       aria-label={`Ver ${combo.nome}`}
-    >
-
-      <div className="thumb">
-
+    > <div className="thumb">
         <img
-          src="/imagens/pizzas/combo.jpg"
+          src={combo.imgURL}
           alt={`Combo ${combo.nome}`}
           loading="lazy"
-        />
-
-      </div>
+        /> </div>
 
       <div className="detalhes">
 
         <header>
 
           <p className="categoria">
-            {nomeCategoriaCombo(
-              combo.categoria,
-            )}
+            {nomeCategoriaCombo(combo.categoria)}
           </p>
 
           <h3>
@@ -73,18 +62,13 @@ export function ComboCard({
         </header>
 
         <p className="descricao-card">
-          {obterDescricaoCard(
-            combo,
-            compacto,
-          )}
+          {obterDescricaoCard(combo, compacto)}
         </p>
 
         <div className="card-rodape">
 
           <strong className="preco">
-            {formatarPreco(
-              combo.precoBase,
-            )}
+            {formatarPreco(combo.precoBase)}
           </strong>
 
           <span className="botao-carrinho">
@@ -94,7 +78,6 @@ export function ComboCard({
         </div>
 
       </div>
-
     </Link>
   );
 }

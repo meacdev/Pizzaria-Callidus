@@ -15,26 +15,20 @@ function formatarPreco(preco: number): string {
 export function BebidaCard({
   bebida,
 }: BebidaCardProps) {
-
   return (
     <Link
       to={`/bebida/${bebida.id}`}
       className="card card-produto-link"
       aria-label={`Ver ${bebida.nome}`}
-    >
-
-      <div className="thumb">
-        <img
-          src="/imagens/bebidas/bebida.jpg"
-          alt={bebida.nome}
-          loading="lazy"
-        />
-      </div>
+    > <div className="thumb"> <img
+      src={bebida.imgURL}
+      alt={bebida.nome}
+      loading="lazy"
+    /> </div>
 
       <div className="detalhes">
 
         <header>
-
           <p className="categoria">
             Bebida
           </p>
@@ -42,7 +36,6 @@ export function BebidaCard({
           <h3>
             {bebida.nome}
           </h3>
-
         </header>
 
         <p className="descricao-card">
@@ -62,7 +55,7 @@ export function BebidaCard({
         </div>
 
       </div>
-
     </Link>
+
   );
 }

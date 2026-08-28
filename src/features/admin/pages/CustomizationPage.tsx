@@ -70,12 +70,28 @@ export function CustomizationPage() {
                     </Campo>
                 </SecaoFormulario>
 
-                <SecaoFormulario titulo="Tema">
+                <SecaoFormulario titulo="Tema da Loja">
                     <div className={styles.linha}>
-                        <CampoColor label="Cor primária" register={register} name="corPrimaria" />
-                        <CampoColor label="Cor secundária" register={register} name="corSecundaria" />
+                        <CampoColor
+                            label="Cor de destaque"
+                            register={register}
+                            name="corPrimaria"
+                        />
+                        <CampoColor
+                            label="Cor de fundo"
+                            register={register}
+                            name="corSecundaria"
+                        />
                     </div>
+
+                    <p className={styles.descricaoTema}>
+                        A cor de destaque será usada nos botões, links e elementos
+                        principais. A cor de fundo definirá automaticamente os fundos,
+                        cards e superfícies da loja.
+                    </p>
+
                 </SecaoFormulario>
+
 
                 <SecaoFormulario titulo="Funcionamento">
                     <CampoHorarioSemana register={register} /> {/* trocado */}
