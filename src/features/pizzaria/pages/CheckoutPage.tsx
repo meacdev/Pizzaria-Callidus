@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { usePedidoStore } from '../../../store/pedido.store';
@@ -15,11 +15,11 @@ import {
   type FormaPagamento,
 } from '../types/checkout';
 import { mascararCep, mascararCpf, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
+import { buscarEnderecoPorCep } from '../api/cep.service';
 
 
 export function CheckoutPage() {
   const navigate = useNavigate();
-
   const carrinho = useCarrinhoStore(
     (state) => state.itens,
   );
@@ -44,6 +44,7 @@ export function CheckoutPage() {
     );
   const [erros, setErros] =
     useState<ErrosCheckout>({});
+  const [buscandoCep, setBuscandoCep] = useState(false);
   function limparErro(campo: CampoCheckout) {
     setErros((atuais) => {
       if (!atuais[campo]) return atuais;
@@ -61,6 +62,45 @@ export function CheckoutPage() {
     setDados((atuais) => ({ ...atuais, endereco: { ...atuais.endereco, [campo]: valor } }));
     limparErro(campo as CampoCheckout);
   }
+
+  useEffect(() => {
+    const cepLimpo = dados.endereco.cep.replace(/\D/g, '');
+
+    if (cepLimpo.length !== 8) return;
+
+    const controller = new AbortController();
+    setBuscandoCep(true);
+
+    buscarEnderecoPorCep(cepLimpo, controller.signal)
+      .then((endereco) => {
+        if (!endereco) {
+          setErros((atuais) => ({ ...atuais, cep: 'CEP não encontrado.' }));
+          return;
+        }
+
+        setDados((atuais) => ({
+          ...atuais,
+          endereco: {
+            ...atuais.endereco,
+            rua: endereco.rua || atuais.endereco.rua,
+            bairro: endereco.bairro || atuais.endereco.bairro,
+            cidade: endereco.cidade || atuais.endereco.cidade,
+          },
+        }));
+        setErros((atuais) => {
+          if (!atuais.cep) return atuais;
+          const { cep: _removido, ...resto } = atuais;
+          return resto;
+        });
+      })
+      .catch((erro) => {
+        if (erro instanceof DOMException && erro.name === 'AbortError') return;
+        setErros((atuais) => ({ ...atuais, cep: 'Não foi possível buscar o CEP agora.' }));
+      })
+      .finally(() => setBuscandoCep(false));
+
+    return () => controller.abort();
+  }, [dados.endereco.cep]);
 
   function selecionarFormaPagamento(formaPagamento: FormaPagamento) {
     setDados((atuais) => ({ ...atuais, formaPagamento }));
@@ -214,6 +254,8 @@ export function CheckoutPage() {
                   aria-describedby={erros.cep ? 'checkout-cep-erro' : undefined}
                 />
                 {erros.cep && <span id="checkout-cep-erro" className="erro-campo">{erros.cep}</span>}
+                {erros.cep && <span id="checkout-cep-erro" className="erro-campo">{erros.cep}</span>}
+              {buscandoCep && <span className="cep-status">Buscando endereço...</span>}
               </div>
 
               <div className="campo-formulario">
