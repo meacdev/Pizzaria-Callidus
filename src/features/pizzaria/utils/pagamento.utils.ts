@@ -70,6 +70,17 @@ export function gerarCodigoPixCopiaCola(semente: string, total: number): string 
   return `00020126580014BR.GOV.BCB.PIX0136${idCurto}5204000053039865405${valor}5802BR5920PARADISO PIZZARIA6009SAO PAULO6304FFFF`;
 }
 
+const QR_CODE_API_ENDPOINT = 'https://api.qrserver.com/v1/create-qr-code/';
+
+export function gerarUrlQrCodePix(codigoPix: string, tamanho = 200): string {
+  const parametros = new URLSearchParams({
+    size: `${tamanho}x${tamanho}`,
+    data: codigoPix,
+  });
+
+  return `${QR_CODE_API_ENDPOINT}?${parametros.toString()}`;
+}
+
 export function simularProcessamentoPagamento(delayMs = 1800): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, delayMs);

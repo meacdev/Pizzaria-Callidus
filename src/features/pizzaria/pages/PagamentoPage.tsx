@@ -14,6 +14,7 @@ import {
 import type { PedidoPayload } from '../types/pedidoPayload';
 import {
   gerarCodigoPixCopiaCola,
+  gerarUrlQrCodePix,
   mascararCvv,
   mascararNumeroCartao,
   mascararValidadeCartao,
@@ -191,7 +192,14 @@ export function PagamentoPage() {
 
           {estado === 'formulario' && forma === 'pix' && (
             <section className="pagamento-pix">
-              <div className="pagamento-pix-qrcode" role="img" aria-label="QR Code do Pix (simulado)" />
+              <div className="pagamento-pix-qrcode">
+                <img
+                  src={gerarUrlQrCodePix(codigoPix)}
+                  alt="QR Code do Pix (simulado)"
+                  width={200}
+                  height={200}
+                />
+              </div>
               <p className="pagamento-pix-instrucao">
                 Escaneie o QR Code com o app do seu banco ou copie o código abaixo.
               </p>

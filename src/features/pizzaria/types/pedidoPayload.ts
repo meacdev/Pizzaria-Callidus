@@ -22,7 +22,6 @@ export interface EnderecoPedidoPayload {
   readonly complemento: string;
   readonly bairro: string;
   readonly cidade: string;
-  readonly estado: string;
 }
 
 export interface PagamentoPedidoPayload {

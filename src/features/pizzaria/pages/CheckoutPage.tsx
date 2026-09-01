@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { usePedidoStore } from '../../../store/pedido.store';
@@ -6,7 +6,6 @@ import { ResumoPedido } from '../components/ResumoPedido';
 import { useCustomizationStore } from '../../../context/customization.store';
 import {
   DADOS_CHECKOUT_INICIAIS,
-  ESTADOS_BRASILEIROS,
   FORMAS_PAGAMENTO,
   type CampoCheckout,
   type DadosCheckout,
@@ -15,11 +14,12 @@ import {
   type ErrosCheckout,
   type FormaPagamento,
 } from '../types/checkout';
-import { mascararCep, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
+import { mascararCep, mascararCpf, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
+import { buscarEnderecoPorCep } from '../api/cep.service';
+
 
 export function CheckoutPage() {
   const navigate = useNavigate();
-
   const carrinho = useCarrinhoStore(
     (state) => state.itens,
   );
@@ -44,6 +44,7 @@ export function CheckoutPage() {
     );
   const [erros, setErros] =
     useState<ErrosCheckout>({});
+  const [buscandoCep, setBuscandoCep] = useState(false);
   function limparErro(campo: CampoCheckout) {
     setErros((atuais) => {
       if (!atuais[campo]) return atuais;
@@ -61,6 +62,45 @@ export function CheckoutPage() {
     setDados((atuais) => ({ ...atuais, endereco: { ...atuais.endereco, [campo]: valor } }));
     limparErro(campo as CampoCheckout);
   }
+
+  useEffect(() => {
+    const cepLimpo = dados.endereco.cep.replace(/\D/g, '');
+
+    if (cepLimpo.length !== 8) return;
+
+    const controller = new AbortController();
+    setBuscandoCep(true);
+
+    buscarEnderecoPorCep(cepLimpo, controller.signal)
+      .then((endereco) => {
+        if (!endereco) {
+          setErros((atuais) => ({ ...atuais, cep: 'CEP não encontrado.' }));
+          return;
+        }
+
+        setDados((atuais) => ({
+          ...atuais,
+          endereco: {
+            ...atuais.endereco,
+            rua: endereco.rua || atuais.endereco.rua,
+            bairro: endereco.bairro || atuais.endereco.bairro,
+            cidade: endereco.cidade || atuais.endereco.cidade,
+          },
+        }));
+        setErros((atuais) => {
+          if (!atuais.cep) return atuais;
+          const { cep: _removido, ...resto } = atuais;
+          return resto;
+        });
+      })
+      .catch((erro) => {
+        if (erro instanceof DOMException && erro.name === 'AbortError') return;
+        setErros((atuais) => ({ ...atuais, cep: 'Não foi possível buscar o CEP agora.' }));
+      })
+      .finally(() => setBuscandoCep(false));
+
+    return () => controller.abort();
+  }, [dados.endereco.cep]);
 
   function selecionarFormaPagamento(formaPagamento: FormaPagamento) {
     setDados((atuais) => ({ ...atuais, formaPagamento }));
@@ -214,6 +254,23 @@ export function CheckoutPage() {
                   aria-describedby={erros.cep ? 'checkout-cep-erro' : undefined}
                 />
                 {erros.cep && <span id="checkout-cep-erro" className="erro-campo">{erros.cep}</span>}
+                {erros.cep && <span id="checkout-cep-erro" className="erro-campo">{erros.cep}</span>}
+              {buscandoCep && <span className="cep-status">Buscando endereço...</span>}
+              </div>
+
+              <div className="campo-formulario">
+                <label htmlFor="checkout-cpf">CPF</label>
+                <input
+                  id="checkout-cpf"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="000.000.000-00"
+                  value={dados.cliente.cpf}
+                  onChange={(e) => atualizarCliente('cpf', mascararCpf(e.target.value))}
+                  aria-invalid={Boolean(erros.cpf)}
+                  aria-describedby={erros.cpf ? 'checkout-cpf-erro' : undefined}
+                />
+                {erros.cpf && <span id="checkout-cpf-erro" className="erro-campo">{erros.cpf}</span>}
               </div>
 
               <div className="campo-formulario campo-formulario-largo">
@@ -280,24 +337,6 @@ export function CheckoutPage() {
                   aria-describedby={erros.cidade ? 'checkout-cidade-erro' : undefined}
                 />
                 {erros.cidade && <span id="checkout-cidade-erro" className="erro-campo">{erros.cidade}</span>}
-              </div>
-
-              <div className="campo-formulario">
-                <label htmlFor="checkout-estado">Estado</label>
-                <select
-                  id="checkout-estado"
-                  autoComplete="address-level1"
-                  value={dados.endereco.estado}
-                  onChange={(e) => atualizarEndereco('estado', e.target.value)}
-                  aria-invalid={Boolean(erros.estado)}
-                  aria-describedby={erros.estado ? 'checkout-estado-erro' : undefined}
-                >
-                  <option value="">Selecione</option>
-                  {ESTADOS_BRASILEIROS.map((estado) => (
-                    <option key={estado.sigla} value={estado.sigla}>{estado.nome}</option>
-                  ))}
-                </select>
-                {erros.estado && <span id="checkout-estado-erro" className="erro-campo">{erros.estado}</span>}
               </div>
             </div>
           </fieldset>

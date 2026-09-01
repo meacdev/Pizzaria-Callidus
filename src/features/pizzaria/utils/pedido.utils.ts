@@ -30,7 +30,6 @@ export function gerarPedidoPayload(
       complemento: pedido.dados.endereco.complemento,
       bairro: pedido.dados.endereco.bairro,
       cidade: pedido.dados.endereco.cidade,
-      estado: pedido.dados.endereco.estado,
     },
     itens: pedido.itens.map((item) => ({
       id: item.id,
