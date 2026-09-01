@@ -6,7 +6,6 @@ import { ResumoPedido } from '../components/ResumoPedido';
 import { useCustomizationStore } from '../../../context/customization.store';
 import {
   DADOS_CHECKOUT_INICIAIS,
-  ESTADOS_BRASILEIROS,
   FORMAS_PAGAMENTO,
   type CampoCheckout,
   type DadosCheckout,
@@ -296,24 +295,6 @@ export function CheckoutPage() {
                   aria-describedby={erros.cidade ? 'checkout-cidade-erro' : undefined}
                 />
                 {erros.cidade && <span id="checkout-cidade-erro" className="erro-campo">{erros.cidade}</span>}
-              </div>
-
-              <div className="campo-formulario">
-                <label htmlFor="checkout-estado">Estado</label>
-                <select
-                  id="checkout-estado"
-                  autoComplete="address-level1"
-                  value={dados.endereco.estado}
-                  onChange={(e) => atualizarEndereco('estado', e.target.value)}
-                  aria-invalid={Boolean(erros.estado)}
-                  aria-describedby={erros.estado ? 'checkout-estado-erro' : undefined}
-                >
-                  <option value="">Selecione</option>
-                  {ESTADOS_BRASILEIROS.map((estado) => (
-                    <option key={estado.sigla} value={estado.sigla}>{estado.nome}</option>
-                  ))}
-                </select>
-                {erros.estado && <span id="checkout-estado-erro" className="erro-campo">{erros.estado}</span>}
               </div>
             </div>
           </fieldset>

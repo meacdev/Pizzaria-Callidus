@@ -88,7 +88,6 @@ export function validarFormularioCheckout(dados: DadosCheckout): ErrosCheckout {
   if (campoObrigatorio(endereco.numero)) erros.numero = 'Informe o número.';
   if (campoObrigatorio(endereco.bairro)) erros.bairro = 'Informe o bairro.';
   if (campoObrigatorio(endereco.cidade)) erros.cidade = 'Informe a cidade.';
-  if (campoObrigatorio(endereco.estado)) erros.estado = 'Selecione o estado.';
 
   if (!dados.formaPagamento) {
     erros.formaPagamento = 'Selecione uma forma de pagamento.';
