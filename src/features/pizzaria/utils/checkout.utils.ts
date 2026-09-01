@@ -18,8 +18,36 @@ export function mascararCep(valor: string): string {
   return digitos.replace(/^(\d{5})(\d*)/, '$1-$2');
 }
 
+export function mascararCpf(valor: string): string {
+  const digitos = valor.replace(/\D/g, '').slice(0, 11);
+  return digitos
+    .replace(/^(\d{3})(\d)/, '$1.$2')
+    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+}
+
 function campoObrigatorio(valor: string): boolean {
   return valor.trim().length === 0;
+}
+
+function calcularDigitoVerificadorCpf(base: string, pesoInicial: number): number {
+  const soma = base
+    .split('')
+    .reduce((acumulado, digito, indice) => acumulado + Number(digito) * (pesoInicial - indice), 0);
+  const resto = soma % 11;
+  return resto < 2 ? 0 : 11 - resto;
+}
+
+export function validarCPF(cpf: string): boolean {
+  const digitos = cpf.replace(/\D/g, '');
+
+  if (digitos.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(digitos)) return false; // ex: 111.111.111-11
+
+  const primeiroDigito = calcularDigitoVerificadorCpf(digitos.slice(0, 9), 10);
+  const segundoDigito = calcularDigitoVerificadorCpf(digitos.slice(0, 9) + primeiroDigito, 11);
+
+  return digitos.slice(9) === `${primeiroDigito}${segundoDigito}`;
 }
 
 export function validarFormularioCheckout(dados: DadosCheckout): ErrosCheckout {
@@ -42,6 +70,12 @@ export function validarFormularioCheckout(dados: DadosCheckout): ErrosCheckout {
     erros.telefone = 'Informe um telefone para contato.';
   } else if (!REGEX_TELEFONE.test(cliente.telefone.trim())) {
     erros.telefone = 'Informe um telefone válido, com DDD. Ex: (92) 91234-5678';
+  }
+
+  if (campoObrigatorio(cliente.cpf)) {
+    erros.cpf = 'Informe seu CPF.';
+  } else if (!validarCPF(cliente.cpf)) {
+    erros.cpf = 'CPF inválido.';
   }
 
   if (campoObrigatorio(endereco.cep)) {

@@ -15,7 +15,8 @@ import {
   type ErrosCheckout,
   type FormaPagamento,
 } from '../types/checkout';
-import { mascararCep, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
+import { mascararCep, mascararCpf, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
+
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -214,6 +215,21 @@ export function CheckoutPage() {
                   aria-describedby={erros.cep ? 'checkout-cep-erro' : undefined}
                 />
                 {erros.cep && <span id="checkout-cep-erro" className="erro-campo">{erros.cep}</span>}
+              </div>
+
+              <div className="campo-formulario">
+                <label htmlFor="checkout-cpf">CPF</label>
+                <input
+                  id="checkout-cpf"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="000.000.000-00"
+                  value={dados.cliente.cpf}
+                  onChange={(e) => atualizarCliente('cpf', mascararCpf(e.target.value))}
+                  aria-invalid={Boolean(erros.cpf)}
+                  aria-describedby={erros.cpf ? 'checkout-cpf-erro' : undefined}
+                />
+                {erros.cpf && <span id="checkout-cpf-erro" className="erro-campo">{erros.cpf}</span>}
               </div>
 
               <div className="campo-formulario campo-formulario-largo">

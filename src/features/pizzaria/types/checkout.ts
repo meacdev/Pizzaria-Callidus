@@ -4,6 +4,7 @@ export interface DadosCliente {
   readonly nome: string;
   readonly email: string;
   readonly telefone: string;
+  readonly cpf: string;
 }
 
 export interface EnderecoEntrega {
@@ -28,9 +29,11 @@ export type CampoCheckout =
   | 'nome'
   | 'email'
   | 'telefone'
+  | 'cpf'
   | 'cep'
   | 'rua'
   | 'numero'
+  | 'complemento'
   | 'bairro'
   | 'cidade'
   | 'estado'
@@ -40,7 +43,7 @@ export type CampoCheckout =
 export type ErrosCheckout = Partial<Record<CampoCheckout, string>>;
 
 export const DADOS_CHECKOUT_INICIAIS: DadosCheckout = {
-  cliente: { nome: '', email: '', telefone: '' },
+  cliente: { nome: '', email: '', telefone: '', cpf: '' },
   endereco: { cep: '', rua: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '' },
   formaPagamento: '',
   trocoPara: '',
