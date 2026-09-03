@@ -111,6 +111,11 @@
     color: #b8720b;
 }
 
+.statusPronto {
+    background: #f0e9ff;
+    color: #7441d8;
+}
+
 .statusSaiuParaEntrega {
     background: #e6f0ff;
     color: #1d63d6;

@@ -5,6 +5,7 @@ import type { DadosCheckout } from '../features/pizzaria/types/checkout';
 export type StatusPedido =
   | 'recebido'
   | 'em_preparo'
+  | 'pronto'
   | 'saiu_para_entrega'
   | 'entregue'
   | 'cancelado';
@@ -12,6 +13,7 @@ export type StatusPedido =
 export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
   recebido: 'Recebido',
   em_preparo: 'Em preparo',
+  pronto: 'Pronto para entrega',
   saiu_para_entrega: 'Saiu para entrega',
   entregue: 'Entregue',
   cancelado: 'Cancelado',
@@ -20,6 +22,7 @@ export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
 export const STATUS_PEDIDO_ORDEM: readonly StatusPedido[] = [
   'recebido',
   'em_preparo',
+  'pronto',
   'saiu_para_entrega',
   'entregue',
   'cancelado',
@@ -73,7 +76,7 @@ export const usePedidoStore = create<PedidoState>()(
       atualizarStatusPedido: (id, status) =>
         set((state) => ({
           pedidos: state.pedidos.map((pedido) =>
-            pedido.id === id ? { ...pedido, status } : pedido,
+            pedido.id === id ? { ...pedido, status, atualizadoEm: new Date().toISOString() } : pedido,
           ),
           pedido:
             state.pedido?.id === id
