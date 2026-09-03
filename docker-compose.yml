@@ -1,0 +1,34 @@
+services:
+  backend:
+    build: ./server
+    ports:
+      - '5001:5001'
+    volumes:
+      # Código montado pra hot-reload (o Flask já roda com debug=True, que
+      # reinicia sozinho quando um .py muda). Isso já inclui server/data,
+      # onde fica o pizzaria.db — os cadastros sobrevivem a "docker compose
+      # down" porque a pasta é do próprio projeto, não algo interno do
+      # container.
+      - ./server:/app
+    environment:
+      - PORT=5001
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5173:5173'
+    environment:
+      # "backend" é o nome do serviço acima; o Docker resolve isso pra o
+      # IP do container dele dentro da rede interna do compose.
+      - API_PROXY_TARGET=http://backend:5001
+    volumes:
+      # Monta o código pra ter hot-reload sem rebuildar a imagem a cada
+      # alteração. node_modules fica isolado num volume anônimo próprio do
+      # container pra não ser sobrescrito pelo (possivelmente ausente/
+      # diferente) node_modules do seu host.
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - backend
