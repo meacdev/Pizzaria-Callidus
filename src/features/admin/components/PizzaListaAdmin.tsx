@@ -14,7 +14,7 @@ function formatarPreco(preco: string): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
 
-export function PizzaListaAdmin({ pizzas, onEditar, onExcluir }: PizzaListaAdminProps) {
+export function PizzaListaAdmin({ pizzas, onEditar, onExcluir }: Readonly<PizzaListaAdminProps>) {
     if (pizzas.length === 0) {
         return <p className={styles.vazio}>Nenhuma pizza cadastrada ainda.</p>;
     }
@@ -48,10 +48,10 @@ export function PizzaListaAdmin({ pizzas, onEditar, onExcluir }: PizzaListaAdmin
                             {pizza.ingredientes.map((ingrediente) => ingrediente.nome).join(', ')}
                         </td>
                         <td className={styles.colunaAcoes}>
-                            <button className={styles.botaoEditar} onClick={() => onEditar(pizza)}>
+                            <button type="button" className={styles.botaoEditar} onClick={() => onEditar(pizza)}>
                                 Editar
                             </button>
-                            <button className={styles.botaoExcluir} onClick={() => onExcluir(pizza)}>
+                            <button type="button" className={styles.botaoExcluir} onClick={() => onExcluir(pizza)}>
                                 Excluir
                             </button>
                         </td>

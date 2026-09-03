@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { usePedidoStore, type Pedido } from '../../../store/pedido.store';
 import { useEntregaStore } from '../../../store/entrega.store';
+import { useFuncionarioAuth } from '../../funcionarios/context/FuncionarioAuthContext';
 import styles from './EntregadorPage.module.css';
 
 function formatarPreco(valor: number) {
@@ -24,9 +25,16 @@ export function EntregadorPage() {
   const adicionarPedidoNaRota = useEntregaStore((state) => state.adicionarPedidoNaRota);
   const removerPedidoDaRota = useEntregaStore((state) => state.removerPedidoDaRota);
   const concluirEntrega = useEntregaStore((state) => state.concluirEntrega);
+  const { funcionario, sair } = useFuncionarioAuth();
+  const navigate = useNavigate();
 
   const [selecionados, setSelecionados] = useState<string[]>([]);
   const [mensagem, setMensagem] = useState('');
+
+  function sairDaConta() {
+    sair();
+    navigate('/admin');
+  }
 
   const prontos = useMemo(
     () => pedidos.filter((pedido) => pedido.status === 'pronto' && !pedidosNaRota.includes(pedido.id)),
@@ -36,7 +44,7 @@ export function EntregadorPage() {
   const rota = useMemo(
     () => pedidosNaRota
       .map((id) => pedidos.find((pedido) => pedido.id === id))
-      .filter((pedido): pedido is Pedido => Boolean(pedido) && pedido.status === 'saiu_para_entrega'),
+      .filter((pedido): pedido is Pedido => pedido !== undefined && pedido.status === 'saiu_para_entrega'),
     [pedidos, pedidosNaRota],
   );
 
@@ -65,10 +73,16 @@ export function EntregadorPage() {
           <div className={styles.eyebrow}>Painel do entregador</div>
           <h1 className={styles.title}>Pedidos para entrega</h1>
           <p className={styles.subtitle}>
-            Escolha os pedidos que deseja levar. Ao iniciar a rota, o acompanhamento do cliente passa para “Saiu para entrega”.
+            Olá, {funcionario?.nome}. Escolha os pedidos que deseja levar. Ao iniciar a rota, o
+            acompanhamento do cliente passa para “Saiu para entrega”.
           </p>
         </div>
-        <Link className={styles.secondary} to="/">Voltar ao início</Link>
+        <div className={styles.actions}>
+          <Link className={styles.secondary} to="/">Voltar ao início</Link>
+          <button className={styles.secondary} type="button" onClick={sairDaConta}>
+            Sair
+          </button>
+        </div>
       </header>
 
       {mensagem && <div className={styles.notice} role="status">{mensagem}</div>}

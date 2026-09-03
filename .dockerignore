@@ -1,0 +1,7 @@
+node_modules
+dist
+dist-ssr
+.git
+# O backend tem seu próprio build (server/Dockerfile) e contexto —
+# não precisa entrar na imagem do front-end.
+server

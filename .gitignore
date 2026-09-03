@@ -27,3 +27,10 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Backend Flask (server/)
+server/.venv
+server/__pycache__
+server/**/__pycache__
+server/data/*.db
+server/data/*.sqlite3

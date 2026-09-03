@@ -22,6 +22,12 @@ import { PizzaAdminPage } from '../features/admin/pages/PizzaAdminPage';
 import { PedidosAdminPage } from '../features/admin/pages/PedidosAdminPage';
 import { ProtectedRoute } from '../features/admin/guards/ProtectedRoute';
 
+// Funcionários (cozinheiro / garçom / entregador)
+import { CadastroFuncionarioPage } from '../features/funcionarios/pages/CadastroFuncionarioPage';
+import { CozinhaPage } from '../features/funcionarios/pages/CozinhaPage';
+import { BalcaoPage } from '../features/funcionarios/pages/BalcaoPage';
+import { RoleRoute } from '../features/funcionarios/guards/RoleRoute';
+
 export const router = createBrowserRouter(
   [
     {
@@ -38,14 +44,47 @@ export const router = createBrowserRouter(
         { path: 'checkout', Component: CheckoutPage },
         { path: 'pagamento', Component: PagamentoPage },
         { path: 'pedido/:id', Component: AcompanhamentoPedidoPage },
-        { path: 'entregador', Component: EntregadorPage },
         { path: '*', Component: NotFoundPage },
       ],
     },
     {
       path: 'admin',
       children: [
+        // Login dos funcionários (cozinheiro/garçom/entregador): identifica
+        // o cargo pelo login+senha e manda para /cozinha, /balcao ou /entrega.
         { index: true, Component: LoginPage },
+        { path: 'cadastro', Component: CadastroFuncionarioPage },
+        {
+          path: 'cozinha',
+          element: (
+            <RoleRoute cargo="cozinheiro">
+              <CozinhaPage />
+            </RoleRoute>
+          ),
+        },
+        {
+          path: 'balcao',
+          element: (
+            <RoleRoute cargo="garcom">
+              <BalcaoPage />
+            </RoleRoute>
+          ),
+        },
+        {
+          // Painel do entregador (rota de pedidos), feito pelo colega do
+          // Matheus — mantido igual, só passou a exigir login de entregador.
+          path: 'entrega',
+          element: (
+            <RoleRoute cargo="entregador">
+              <EntregadorPage />
+            </RoleRoute>
+          ),
+        },
+
+        // Páginas antigas (customização, cardápio, pedidos): a customização
+        // vai ganhar sua própria rota de login mais pra frente e não deve
+        // ser alcançada por este login de funcionário. Ficam com o
+        // guard/login antigos (ProtectedRoute + AuthContext).
         {
           path: 'customizacao',
           element: (
