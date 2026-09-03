@@ -106,7 +106,7 @@ export function PizzaForm({
   pizzaEmEdicao,
   onSalvar,
   onCancelar,
-}: PizzaFormProps) {
+}: Readonly<PizzaFormProps>) {
   const [dados, setDados] =
     useState<PizzaFormData>(
       () =>

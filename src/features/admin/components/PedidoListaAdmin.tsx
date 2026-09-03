@@ -34,7 +34,7 @@ const CLASSE_STATUS: Record<StatusPedido, string> = {
     cancelado: styles.statusCancelado,
 };
 
-export function PedidoListaAdmin({ pedidos, onAtualizarStatus }: PedidoListaAdminProps) {
+export function PedidoListaAdmin({ pedidos, onAtualizarStatus }: Readonly<PedidoListaAdminProps>) {
     if (pedidos.length === 0) {
         return <p className={styles.vazio}>Nenhum pedido recebido ainda.</p>;
     }
