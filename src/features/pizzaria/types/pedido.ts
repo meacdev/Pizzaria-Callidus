@@ -1,10 +1,11 @@
 import type { DadosCheckout } from './checkout';
 
-export type StatusPedido = 'recebido' | 'preparo' | 'saiu-entrega' | 'entregue' | 'cancelado';
+export type StatusPedido = 'recebido' | 'preparo' | 'pronto' | 'saiu-entrega' | 'entregue' | 'cancelado';
 
 export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
   'recebido': 'Pedido recebido',
   'preparo': 'Em preparo',
+  'pronto': 'Pronto para entrega',
   'saiu-entrega': 'Saiu para entrega',
   'entregue': 'Entregue',
   'cancelado': 'Cancelado',
@@ -13,6 +14,7 @@ export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
 export const STATUS_PEDIDO_ICONE: Record<StatusPedido, string> = {
   'recebido': '📥',
   'preparo': '👨‍🍳',
+  'pronto': '📦',
   'saiu-entrega': '🛵',
   'entregue': '✅',
   'cancelado': '❌',
@@ -21,6 +23,7 @@ export const STATUS_PEDIDO_ICONE: Record<StatusPedido, string> = {
 export const STATUS_PEDIDO_DESCRICAO: Record<StatusPedido, string> = {
   'recebido': 'Seu pedido foi recebido e está na fila.',
   'preparo': 'Estamos preparando seu pedido com carinho.',
+  'pronto': 'Seu pedido está pronto para sair para entrega.',
   'saiu-entrega': 'O entregador saiu e está a caminho!',
   'entregue': 'Pedido entregue. Bom apetite!',
   'cancelado': 'Pedido cancelado.',
