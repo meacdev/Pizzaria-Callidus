@@ -5,7 +5,7 @@ interface SecaoFormularioProps {
     children: React.ReactNode;
 }
 
-export function SecaoFormulario({ titulo, children }: SecaoFormularioProps) {
+export function SecaoFormulario({ titulo, children }: Readonly<SecaoFormularioProps>) {
     return (
         <fieldset className={styles.secao}>
             <legend className={styles.tituloSecao}>{titulo}</legend>

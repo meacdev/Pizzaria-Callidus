@@ -9,7 +9,7 @@ function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
 }
 
-export function DashboardPedidos({ metricas }: DashboardPedidosProps) {
+export function DashboardPedidos({ metricas }: Readonly<DashboardPedidosProps>) {
   const {
     faturamentoHoje,
     pedidosHoje,
