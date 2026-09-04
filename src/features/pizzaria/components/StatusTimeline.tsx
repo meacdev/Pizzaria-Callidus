@@ -22,9 +22,9 @@ const STATUS_CONFIG: Record<
     descricao: 'A cozinha está preparando',
   },
   pronto: {
-    label: 'Pronto',
+    label: 'Concluído / aguardando envio',
     icone: '📦',
-    descricao: 'Pedido pronto para entrega',
+    descricao: 'A cozinha concluiu o preparo; aguardando envio',
   },
   saiu_para_entrega: {
     label: 'Saiu para Entrega',

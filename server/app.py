@@ -21,13 +21,22 @@ já está configurado para encaminhar chamadas de /api/* para essa porta
 em desenvolvimento (veja vite.config.ts).
 """
 
+import json
 import os
+from datetime import datetime, timezone
 
 from flask import Flask, jsonify, request
 
 from flask_cors import CORS
 
-from models import CLASSE_POR_PROFISSAO, PROFISSOES_VALIDAS, Funcionario, db
+from models import (
+    CLASSE_POR_PROFISSAO,
+    PROFISSOES_VALIDAS,
+    STATUS_PEDIDO_VALIDOS,
+    Funcionario,
+    Pedido,
+    db,
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -49,6 +58,20 @@ def criar_app() -> Flask:
 
     registrar_rotas(app)
     return app
+
+
+
+
+def pedido_para_dict(pedido: Pedido) -> dict:
+    try:
+        payload = json.loads(pedido.payload_json)
+    except (TypeError, json.JSONDecodeError):
+        payload = {}
+
+    payload["pedidoId"] = pedido.pedido_id
+    payload["status"] = pedido.status
+    payload["atualizadoEm"] = pedido.atualizado_em.isoformat()
+    return payload
 
 
 def registrar_rotas(app: Flask) -> None:
@@ -133,6 +156,78 @@ def registrar_rotas(app: Flask) -> None:
     def listar_funcionarios():
         funcionarios = Funcionario.query.order_by(Funcionario.nome).all()
         return jsonify([funcionario.to_dict() for funcionario in funcionarios])
+
+    @app.post("/api/pedidos")
+    def criar_pedido():
+        dados = request.get_json(silent=True) or {}
+        pedido_id = str(dados.get("pedidoId", "")).strip()
+
+        if not pedido_id:
+            return jsonify({"erro": "pedidoId é obrigatório."}), 400
+
+        if not isinstance(dados.get("itens"), list) or not dados["itens"]:
+            return jsonify({"erro": "O pedido precisa ter pelo menos um item."}), 400
+
+        existente = Pedido.query.filter_by(pedido_id=pedido_id).first()
+        if existente is not None:
+            return jsonify(pedido_para_dict(existente)), 200
+
+        status = "recebido"
+        agora = datetime.now(timezone.utc)
+        criado_em = agora
+        criado_texto = dados.get("criadoEm")
+        if criado_texto:
+            try:
+                criado_em = datetime.fromisoformat(str(criado_texto).replace("Z", "+00:00"))
+            except ValueError:
+                criado_em = agora
+
+        novo_pedido = Pedido(
+            pedido_id=pedido_id,
+            status=status,
+            payload_json=json.dumps(dados, ensure_ascii=False),
+            criado_em=criado_em,
+            atualizado_em=agora,
+        )
+        db.session.add(novo_pedido)
+        db.session.commit()
+        return jsonify(pedido_para_dict(novo_pedido)), 201
+
+    @app.get("/api/pedidos")
+    def listar_pedidos():
+        status = request.args.get("status")
+        consulta = Pedido.query.order_by(Pedido.criado_em.asc())
+
+        if status:
+            if status not in STATUS_PEDIDO_VALIDOS:
+                return jsonify({"erro": "Status de pedido inválido."}), 400
+            consulta = consulta.filter_by(status=status)
+
+        return jsonify([pedido_para_dict(pedido) for pedido in consulta.all()])
+
+    @app.get("/api/pedidos/<string:pedido_id>")
+    def obter_pedido(pedido_id: str):
+        pedido = Pedido.query.filter_by(pedido_id=pedido_id).first()
+        if pedido is None:
+            return jsonify({"erro": "Pedido não encontrado."}), 404
+        return jsonify(pedido_para_dict(pedido))
+
+    @app.patch("/api/pedidos/<string:pedido_id>/status")
+    def atualizar_status_pedido(pedido_id: str):
+        dados = request.get_json(silent=True) or {}
+        status = str(dados.get("status", "")).strip()
+
+        if status not in STATUS_PEDIDO_VALIDOS:
+            return jsonify({"erro": "Status de pedido inválido."}), 400
+
+        pedido = Pedido.query.filter_by(pedido_id=pedido_id).first()
+        if pedido is None:
+            return jsonify({"erro": "Pedido não encontrado."}), 404
+
+        pedido.status = status
+        pedido.atualizado_em = datetime.now(timezone.utc)
+        db.session.commit()
+        return jsonify(pedido_para_dict(pedido))
 
     @app.get("/api/saude")
     def saude():

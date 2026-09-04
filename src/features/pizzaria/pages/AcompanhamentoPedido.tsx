@@ -1,36 +1,78 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { usePedidoStore } from '../../../store/pedido.store';
 import { useEntregaStore } from '../../../store/entrega.store';
+import { obterPedido, type PedidoApi } from '../api/pedido.service';
 import { StatusTimeline } from '../components/StatusTimeline';
 import { MensagemErro } from '../../../component/MensagemErro';
 
+const INTERVALO_ATUALIZACAO_MS = 3000;
+
 export function AcompanhamentoPedidoPage() {
   const { id } = useParams<{ id: string }>();
-
-  const pedido = usePedidoStore((state) => state.pedidos.find((p) => p.id === id));
-
+  const pedidoLocal = usePedidoStore((state) => state.pedidos.find((p) => p.id === id));
   const iniciarAcompanhamento = useEntregaStore((state) => state.iniciarAcompanhamento);
-  const iniciarSimulacaoAutomatica = useEntregaStore((state) => state.iniciarSimulacaoAutomatica);
-  const pararSimulacao = useEntregaStore((state) => state.pararSimulacao);
-  const simulacaoAtiva = useEntregaStore((state) =>
-    id ? Boolean(state.pedidosAtivos[id]?.simulacaoTimerId) : false,
-  );
+  const [pedido, setPedido] = useState<PedidoApi | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
 
   useEffect(() => {
-    if (pedido) {
-      iniciarAcompanhamento(pedido.id, pedido.status);
+    if (!id) {
+      setCarregando(false);
+      setErro('Identificador do pedido não informado.');
+      return;
     }
-  }, [pedido?.id]);
 
-  // pausa o timer se o usuário sair da página
-  useEffect(() => {
+    let ativo = true;
+
+    async function carregarPedido() {
+      try {
+        const pedidoAtualizado = await obterPedido(id);
+        if (!ativo) return;
+        setPedido(pedidoAtualizado);
+        setErro('');
+      } catch (e) {
+        if (!ativo) return;
+
+        // Permite exibir o pedido recém-criado mesmo se o backend ainda não
+        // estiver disponível. Assim que a API responder, ela passa a ser a
+        // fonte oficial do status.
+        if (pedidoLocal) {
+          setErro('Não foi possível sincronizar agora. Exibindo o último status disponível.');
+        } else {
+          setErro(e instanceof Error ? e.message : 'Não foi possível carregar o pedido.');
+        }
+      } finally {
+        if (ativo) setCarregando(false);
+      }
+    }
+
+    void carregarPedido();
+    const intervalo = window.setInterval(() => void carregarPedido(), INTERVALO_ATUALIZACAO_MS);
+
     return () => {
-      if (id) pararSimulacao(id);
+      ativo = false;
+      window.clearInterval(intervalo);
     };
-  }, [id]);
+  }, [id, pedidoLocal]);
 
-  if (!pedido) {
+  const statusAtual = pedido?.status ?? pedidoLocal?.status;
+
+  useEffect(() => {
+    if (id && statusAtual) {
+      iniciarAcompanhamento(id, statusAtual);
+    }
+  }, [id, statusAtual, iniciarAcompanhamento]);
+
+  if (carregando && !pedido && !pedidoLocal) {
+    return (
+      <main className="principal cabecalho-pagina">
+        <p>Carregando acompanhamento do pedido...</p>
+      </main>
+    );
+  }
+
+  if (!statusAtual) {
     return (
       <MensagemErro
         titulo="Pedido não encontrado"
@@ -39,36 +81,24 @@ export function AcompanhamentoPedidoPage() {
     );
   }
 
-  const finalizado = pedido.status === 'entregue' || pedido.status === 'cancelado';
-
   return (
     <main className="principal cabecalho-pagina">
-      <span className="tag">Pedido #{pedido.id.slice(0, 8).toUpperCase()}</span>
+      <span className="tag">Pedido #{id?.slice(0, 8).toUpperCase()}</span>
 
-      <StatusTimeline statusAtual={pedido.status} />
-
-      {!finalizado && (
-        <div className="acoes-pagina">
-          {simulacaoAtiva ? (
-            <button type="button" className="botao-secundario" onClick={() => pararSimulacao(pedido.id)}>
-              Parar simulação automática
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="botao-primario"
-              onClick={() => iniciarSimulacaoAutomatica(pedido.id)}
-            >
-              Simular avanço automático
-            </button>
-          )}
-        </div>
+      {erro && (
+        <p role="status" aria-live="polite">
+          {erro}
+        </p>
       )}
 
+      <StatusTimeline statusAtual={statusAtual} />
+
+      <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
+        O status é atualizado automaticamente.
+      </p>
+
       <div className="acoes-pagina">
-        <Link className="botao-secundario" to="/">
-          Voltar ao início
-        </Link>
+        <Link className="botao-secundario" to="/">Voltar ao início</Link>
       </div>
     </main>
   );

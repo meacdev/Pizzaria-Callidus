@@ -130,9 +130,11 @@ export const useEntregaStore = create<EntregaState>()(
 
 
       adicionarPedidoNaRota: (pedidoId) => {
-        const pedido = usePedidoStore.getState().pedidos.find((p) => p.id === pedidoId);
-        if (!pedido || (pedido.status !== 'pronto' && pedido.status !== 'saiu_para_entrega')) return;
-
+        // A lista de pedidos da tela do entregador vem da API/backend.
+        // Não devemos exigir que o pedido também exista no store local
+        // (cada usuário/navegador possui seu próprio localStorage).
+        // O backend já confirmou que o pedido foi alterado para
+        // 'saiu_para_entrega' antes desta função ser chamada.
         set((state) => ({
           pedidosNaRota: state.pedidosNaRota.includes(pedidoId)
             ? state.pedidosNaRota
