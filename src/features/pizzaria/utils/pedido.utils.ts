@@ -1,7 +1,7 @@
 import type { Pedido } from '../../../store/pedido.store';
 import type { InfoPagamentoSimulado } from '../types/pagamento';
 import type { PedidoPayload } from '../types/pedidoPayload';
-import { criarPedido } from '../api/pedido.service';
+import { criarPedido, type PedidoApi } from '../api/pedido.service';
 
 export function gerarPedidoPayload(
   pedido: Pedido,
@@ -11,6 +11,12 @@ export function gerarPedidoPayload(
     pedidoId: pedido.id,
     criadoEm: pedido.criadoEm,
     status: 'confirmado',
+    origem: pedido.origem,
+    // Todo pedido que passa pelo carrinho/checkout do site é do canal
+    // 'site' — os canais 'totem' e 'garcom' são montados por
+    // pedidoLocal.utils.ts, que não usa esta função.
+    canal: 'site',
+    mesa: pedido.mesa,
     cliente: {
       nome: pedido.dados.cliente.nome,
       email: pedido.dados.cliente.email,
@@ -54,7 +60,7 @@ export function gerarPedidoJSON(
 export async function enviarPedido(
   pedido: Pedido,
   infoPagamento: InfoPagamentoSimulado,
-): Promise<PedidoPayload> {
+): Promise<PedidoApi> {
   const payload = gerarPedidoPayload(pedido, infoPagamento);
   const pedidoCriado = await criarPedido(payload);
 

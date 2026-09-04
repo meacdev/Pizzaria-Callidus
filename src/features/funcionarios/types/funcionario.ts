@@ -24,6 +24,15 @@ export interface FuncionarioCadastroInput {
     profissao: Profissao;
 }
 
+/** Edição do próprio cadastro: tudo opcional, senha só entra se for trocada. */
+export interface FuncionarioEdicaoInput {
+    nome?: string;
+    idade?: number;
+    tempoExperiencia?: number;
+    login?: string;
+    senha?: string;
+}
+
 export interface LoginInput {
     login: string;
     senha: string;

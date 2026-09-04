@@ -24,10 +24,11 @@ export function AcompanhamentoPedidoPage() {
     }
 
     let ativo = true;
+    const pedidoId = id;
 
     async function carregarPedido() {
       try {
-        const pedidoAtualizado = await obterPedido(id);
+        const pedidoAtualizado = await obterPedido(pedidoId);
         if (!ativo) return;
         setPedido(pedidoAtualizado);
         setErro('');

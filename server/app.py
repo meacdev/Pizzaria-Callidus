@@ -157,6 +157,60 @@ def registrar_rotas(app: Flask) -> None:
         funcionarios = Funcionario.query.order_by(Funcionario.nome).all()
         return jsonify([funcionario.to_dict() for funcionario in funcionarios])
 
+    @app.put("/api/funcionarios/<int:funcionario_id>")
+    def atualizar_funcionario(funcionario_id: int):
+        """Edição do próprio cadastro (nome, idade, tempo de experiência,
+        login e, opcionalmente, senha). A profissão não muda por aqui — ela
+        é o que define o cargo/rota do funcionário."""
+        funcionario = Funcionario.query.get(funcionario_id)
+        if funcionario is None:
+            return jsonify({"erro": "Funcionário não encontrado."}), 404
+
+        dados = request.get_json(silent=True) or {}
+
+        if "nome" in dados:
+            nome = str(dados["nome"]).strip()
+            if len(nome) < 2:
+                return jsonify({"erro": "Informe o nome completo."}), 400
+            funcionario.nome = nome
+
+        if "idade" in dados:
+            try:
+                idade = int(dados["idade"])
+            except (TypeError, ValueError):
+                return jsonify({"erro": "Idade deve ser um número inteiro."}), 400
+            if idade < 16 or idade > 100:
+                return jsonify({"erro": "Idade inválida."}), 400
+            funcionario.idade = idade
+
+        if "tempoExperiencia" in dados:
+            try:
+                tempo_experiencia = int(dados["tempoExperiencia"])
+            except (TypeError, ValueError):
+                return jsonify({"erro": "Tempo de experiência deve ser um número inteiro."}), 400
+            if tempo_experiencia < 0 or tempo_experiencia > 80:
+                return jsonify({"erro": "Tempo de experiência inválido."}), 400
+            funcionario.tempo_experiencia = tempo_experiencia
+
+        if "login" in dados:
+            login = str(dados["login"]).strip()
+            if len(login) < 3:
+                return jsonify({"erro": "O login deve ter pelo menos 3 caracteres."}), 400
+            existente = Funcionario.query.filter_by(login=login).first()
+            if existente is not None and existente.id != funcionario.id:
+                return jsonify({"erro": "Já existe um funcionário com esse login."}), 409
+            funcionario.login = login
+
+        senha = dados.get("senha")
+        if senha:
+            senha = str(senha)
+            if len(senha) < 4:
+                return jsonify({"erro": "A senha deve ter pelo menos 4 caracteres."}), 400
+            funcionario.definir_senha(senha)
+
+        db.session.commit()
+        return jsonify(funcionario.to_dict())
+
     @app.post("/api/pedidos")
     def criar_pedido():
         dados = request.get_json(silent=True) or {}
