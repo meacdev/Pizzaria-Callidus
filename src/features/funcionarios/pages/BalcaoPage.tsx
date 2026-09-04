@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { PainelLayout } from '../components/PainelLayout';
@@ -32,6 +32,11 @@ function totalRascunho(rascunho: RascunhoComanda): number {
     const subtotal = rascunho.itens.reduce((soma, item) => soma + item.precoUnitario * item.quantidade, 0);
     return Number((subtotal + (rascunho.gorjeta?.valor ?? 0)).toFixed(2));
 }
+
+/** Tempo que a comanda da mesa fica aberta depois do mouse sair, pra dar
+ * tempo de mover até os botões (enviar pra cozinha, entregar etc.) sem ela
+ * fechar antes de clicar. */
+const DELAY_FECHAR_COMANDA_MS = 3000;
 
 const Container = styled.div`
     display: flex;
@@ -147,13 +152,6 @@ const MesaCard = styled.div<{ $status: StatusMesa }>`
         transform: translateY(-2px);
         border-color: #ff5c5c;
     }
-
-    &:hover .comanda-popover {
-        opacity: 1;
-        visibility: visible;
-        transform: translate(-50%, 0);
-        pointer-events: auto;
-    }
 `;
 
 const MesaMesa = styled.div`
@@ -193,11 +191,10 @@ const SeloStatus = styled.span<{ $status: StatusMesa }>`
     color: #150b08;
 `;
 
-const ComandaPopover = styled.div`
+const ComandaPopover = styled.div<{ $aberto: boolean }>`
     position: absolute;
     bottom: calc(100% + 10px);
     left: 50%;
-    transform: translate(-50%, 6px);
     width: 280px;
     max-height: 340px;
     overflow-y: auto;
@@ -207,12 +204,21 @@ const ComandaPopover = styled.div`
     padding: 0.9rem;
     text-align: left;
     cursor: default;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
     transition: opacity 0.15s ease, transform 0.15s ease;
     z-index: 30;
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+
+    ${({ $aberto }) => ($aberto ? `
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+        pointer-events: auto;
+    ` : `
+        opacity: 0;
+        visibility: hidden;
+        transform: translate(-50%, 6px);
+        pointer-events: none;
+    `)}
 `;
 
 const Comanda = styled.div`
@@ -383,6 +389,30 @@ export function BalcaoPage() {
     const [mesaParaNovoPedido, setMesaParaNovoPedido] = useState<number | null>(null);
     const [rascunhos, setRascunhos] = useState<Record<number, RascunhoComanda[]>>({});
     const [enviando, setEnviando] = useState<string | null>(null);
+    const [mesaComComandaAberta, setMesaComComandaAberta] = useState<number | null>(null);
+    const fechamentoComandaRef = useRef<number | null>(null);
+
+    function limparFechamentoAgendado() {
+        if (fechamentoComandaRef.current !== null) {
+            window.clearTimeout(fechamentoComandaRef.current);
+            fechamentoComandaRef.current = null;
+        }
+    }
+
+    function abrirComandaDaMesa(mesa: number) {
+        limparFechamentoAgendado();
+        setMesaComComandaAberta(mesa);
+    }
+
+    function agendarFechamentoDaComanda() {
+        limparFechamentoAgendado();
+        fechamentoComandaRef.current = window.setTimeout(() => {
+            setMesaComComandaAberta(null);
+            fechamentoComandaRef.current = null;
+        }, DELAY_FECHAR_COMANDA_MS);
+    }
+
+    useEffect(() => () => limparFechamentoAgendado(), []);
 
     async function carregarPedidos() {
         try {
@@ -525,14 +555,26 @@ export function BalcaoPage() {
                             const temAlgo = rascunhosDaMesa.length > 0 || pedidosDaMesa.length > 0;
 
                             return (
-                                <MesaCard key={mesa} $status={status} onClick={() => setMesaParaNovoPedido(mesa)}>
+                                <MesaCard
+                                    key={mesa}
+                                    data-mesa={mesa}
+                                    $status={status}
+                                    onClick={() => setMesaParaNovoPedido(mesa)}
+                                    onMouseEnter={() => abrirComandaDaMesa(mesa)}
+                                    onMouseLeave={agendarFechamentoDaComanda}
+                                >
                                     <SeloStatus $status={status}>{contador}</SeloStatus>
                                     <AssentoTopo><Assento /><Assento /></AssentoTopo>
                                     <MesaMesa>Mesa {mesa}</MesaMesa>
                                     <AssentoBaixo><Assento /><Assento /></AssentoBaixo>
                                     <RotuloMesa>4 lugares</RotuloMesa>
 
-                                    <ComandaPopover className="comanda-popover" onClick={(e) => e.stopPropagation()}>
+                                    <ComandaPopover
+                                        $aberto={mesaComComandaAberta === mesa}
+                                        onClick={(e) => e.stopPropagation()}
+                                        onMouseEnter={() => abrirComandaDaMesa(mesa)}
+                                        onMouseLeave={agendarFechamentoDaComanda}
+                                    >
                                         {!temAlgo && <VazioPopover>Nenhum pedido nessa mesa ainda.</VazioPopover>}
 
                                         {rascunhosDaMesa.map((rascunho) => (

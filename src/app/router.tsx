@@ -18,6 +18,7 @@ import { TotemPage } from '../features/totem/pages/TotemPage';
 
 // Admin
 import { LoginPage } from '../features/admin/pages/LoginPage';
+import { CustomLoginPage } from '../features/admin/pages/CustomLoginPage';
 import { CustomizationPage } from '../features/admin/pages/CustomizationPage';
 import { PizzaAdminPage } from '../features/admin/pages/PizzaAdminPage';
 import { PedidosAdminPage } from '../features/admin/pages/PedidosAdminPage';
@@ -28,6 +29,7 @@ import { CadastroFuncionarioPage } from '../features/funcionarios/pages/Cadastro
 import { CozinhaPage } from '../features/funcionarios/pages/CozinhaPage';
 import { BalcaoPage } from '../features/funcionarios/pages/BalcaoPage';
 import { RoleRoute } from '../features/funcionarios/guards/RoleRoute';
+import { FuncionarioAutenticadoRoute } from '../features/funcionarios/guards/FuncionarioAutenticadoRoute';
 
 export const router = createBrowserRouter(
   [
@@ -54,6 +56,23 @@ export const router = createBrowserRouter(
       // restaurante, por isso fica fora do Layout da loja.
       path: 'totem',
       Component: TotemPage,
+    },
+    {
+      // Login separado da customização da loja — não fica embaixo de
+      // /admin de propósito. Por enquanto aceita qualquer funcionário
+      // cadastrado (independente do cargo) e manda pra /customizacao.
+      path: 'custom',
+      Component: CustomLoginPage,
+    },
+    {
+      // A customização também é uma rota de nível superior (fora do
+      // /admin) — chega até aqui pelo login em /custom.
+      path: 'customizacao',
+      element: (
+        <FuncionarioAutenticadoRoute>
+          <CustomizationPage />
+        </FuncionarioAutenticadoRoute>
+      ),
     },
     {
       path: 'admin',
@@ -89,18 +108,10 @@ export const router = createBrowserRouter(
           ),
         },
 
-        // Páginas antigas (customização, cardápio, pedidos): a customização
-        // vai ganhar sua própria rota de login mais pra frente e não deve
-        // ser alcançada por este login de funcionário. Ficam com o
-        // guard/login antigos (ProtectedRoute + AuthContext).
-        {
-          path: 'customizacao',
-          element: (
-            <ProtectedRoute>
-              <CustomizationPage />
-            </ProtectedRoute>
-          ),
-        },
+        // Páginas antigas (cardápio, pedidos): ainda usam o guard/login
+        // antigos (ProtectedRoute + AuthContext). A customização saiu
+        // daqui — agora é uma rota própria em /customizacao, com login
+        // separado em /custom (veja acima).
         {
           path: 'cardapio',
           element: (

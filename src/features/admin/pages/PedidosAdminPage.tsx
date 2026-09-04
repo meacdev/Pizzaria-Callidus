@@ -11,7 +11,7 @@ export function PedidosAdminPage() {
 
     return (
         <div className={styles.container}>
-            <Link className={styles.voltar} to="/admin/customizacao">
+            <Link className={styles.voltar} to="/customizacao">
                 ‹ Voltar
             </Link>
 
