@@ -11,9 +11,9 @@ export type StatusPedido =
   | 'cancelado';
 
 export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
-  recebido: 'Recebido',
+  recebido: 'Na fila',
   em_preparo: 'Em preparo',
-  pronto: 'Pronto para entrega',
+  pronto: 'Concluído / aguardando envio',
   saiu_para_entrega: 'Saiu para entrega',
   entregue: 'Entregue',
   cancelado: 'Cancelado',

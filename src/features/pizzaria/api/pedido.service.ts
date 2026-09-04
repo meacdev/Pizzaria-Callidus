@@ -1,24 +1,47 @@
 import type { PedidoPayload } from '../types/pedidoPayload';
-import type { Pedido, StatusPedido } from '../../../store/pedido.store';
+import type { StatusPedido } from '../../../store/pedido.store';
 
-export async function criarPedido(payload: PedidoPayload): Promise<Pedido> {
-  const resposta = await fetch('/api/pedidos', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
-  });
-  if (!resposta.ok) throw new Error('Não foi possível enviar o pedido para a cozinha.');
-  return resposta.json();
+export interface PedidoApi extends Omit<PedidoPayload, 'status'> {
+  readonly status: StatusPedido;
+  readonly atualizadoEm: string;
 }
 
-export async function listarPedidos(): Promise<Pedido[]> {
-  const resposta = await fetch('/api/pedidos');
-  if (!resposta.ok) throw new Error('Não foi possível carregar os pedidos.');
-  return resposta.json();
+async function requisicao<T>(url: string, init?: RequestInit): Promise<T> {
+  const resposta = await fetch(url, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers ?? {}),
+    },
+  });
+
+  const dados = (await resposta.json().catch(() => ({}))) as T & { erro?: string };
+
+  if (!resposta.ok) {
+    throw new Error(dados.erro ?? `Erro HTTP ${resposta.status}`);
+  }
+
+  return dados;
 }
 
-export async function atualizarStatusPedido(id: string, status: StatusPedido): Promise<Pedido> {
-  const resposta = await fetch(`/api/pedidos/${encodeURIComponent(id)}/status`, {
-    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }),
+export function criarPedido(payload: PedidoPayload): Promise<PedidoApi> {
+  return requisicao<PedidoApi>('/api/pedidos', {
+    method: 'POST',
+    body: JSON.stringify(payload),
   });
-  if (!resposta.ok) throw new Error('Não foi possível atualizar o pedido.');
-  return resposta.json();
+}
+
+export function listarPedidos(status?: string): Promise<PedidoApi[]> {
+  const query = status ? `?status=${encodeURIComponent(status)}` : '';
+  return requisicao<PedidoApi[]>(`/api/pedidos${query}`);
+}
+
+export function atualizarStatusPedidoApi(
+  pedidoId: string,
+  status: string,
+): Promise<PedidoApi> {
+  return requisicao<PedidoApi>(`/api/pedidos/${encodeURIComponent(pedidoId)}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  });
 }
