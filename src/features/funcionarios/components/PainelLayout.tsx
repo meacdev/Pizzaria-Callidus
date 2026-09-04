@@ -2,15 +2,18 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router';
 import { useFuncionarioAuth } from '../context/FuncionarioAuthContext';
 
-const Pagina = styled.div`
+const Pagina = styled.div<{ $escuro: boolean }>`
     min-height: 100vh;
-    background: #f4f5f7;
+    background: ${({ $escuro }) => $escuro
+        ? 'radial-gradient(circle at 15% 0%, rgba(255, 42, 42, 0.06), transparent 32%), #1a0d0a'
+        : '#f4f5f7'};
+    color: ${({ $escuro }) => ($escuro ? '#ffffff' : '#1a1a2e')};
     padding: 2rem 1.5rem;
     box-sizing: border-box;
 `;
 
-const Cabecalho = styled.header`
-    max-width: 960px;
+const Cabecalho = styled.header<{ $escuro: boolean }>`
+    max-width: 1200px;
     margin: 0 auto 2rem;
     display: flex;
     align-items: center;
@@ -25,48 +28,48 @@ const TituloWrapper = styled.div`
     gap: 0.875rem;
 `;
 
-const Icone = styled.div`
+const Icone = styled.div<{ $escuro: boolean }>`
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    background: ${({ $escuro }) => $escuro ? 'linear-gradient(135deg, #ff2a2a 0%, #8f1111 100%)' : 'linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%)'};
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.375rem;
 `;
 
-const Titulo = styled.h1`
+const Titulo = styled.h1<{ $escuro: boolean }>`
     margin: 0;
     font-size: 1.375rem;
-    color: #1a1a2e;
+    color: ${({ $escuro }) => ($escuro ? '#ffffff' : '#1a1a2e')};
 `;
 
-const Saudacao = styled.p`
+const Saudacao = styled.p<{ $escuro: boolean }>`
     margin: 0.125rem 0 0;
     font-size: 0.875rem;
-    color: #6b7280;
+    color: ${({ $escuro }) => ($escuro ? '#d7c9c4' : '#6b7280')};
 `;
 
-const BotaoSair = styled.button`
-    background: #ffffff;
-    border: 1.5px solid #e5e7eb;
+const BotaoSair = styled.button<{ $escuro: boolean }>`
+    background: ${({ $escuro }) => ($escuro ? '#281410' : '#ffffff')};
+    border: 1.5px solid ${({ $escuro }) => ($escuro ? 'rgba(255,255,255,.12)' : '#e5e7eb')};
     border-radius: 10px;
     padding: 0.625rem 1.125rem;
     font-weight: 600;
     font-size: 0.875rem;
-    color: #374151;
+    color: ${({ $escuro }) => ($escuro ? '#ffffff' : '#374151')};
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-        border-color: #dc2626;
-        color: #dc2626;
+        border-color: #ff2a2a;
+        color: #ff5c5c;
     }
 `;
 
 const Conteudo = styled.main`
-    max-width: 960px;
+    max-width: 1200px;
     margin: 0 auto;
 `;
 
@@ -74,9 +77,10 @@ interface PainelLayoutProps {
     icone: string;
     titulo: string;
     children: React.ReactNode;
+    tema?: 'claro' | 'escuro';
 }
 
-export function PainelLayout({ icone, titulo, children }: Readonly<PainelLayoutProps>) {
+export function PainelLayout({ icone, titulo, children, tema = 'claro' }: Readonly<PainelLayoutProps>) {
     const { funcionario, sair } = useFuncionarioAuth();
     const navigate = useNavigate();
 
@@ -85,18 +89,20 @@ export function PainelLayout({ icone, titulo, children }: Readonly<PainelLayoutP
         navigate('/admin');
     };
 
+    const escuro = tema === 'escuro';
+
     return (
-        <Pagina>
-            <Cabecalho>
+        <Pagina $escuro={escuro}>
+            <Cabecalho $escuro={escuro}>
                 <TituloWrapper>
-                    <Icone>{icone}</Icone>
+                    <Icone $escuro={escuro}>{icone}</Icone>
                     <div>
-                        <Titulo>{titulo}</Titulo>
-                        <Saudacao>Olá, {funcionario?.nome}</Saudacao>
+                        <Titulo $escuro={escuro}>{titulo}</Titulo>
+                        <Saudacao $escuro={escuro}>Olá, {funcionario?.nome}</Saudacao>
                     </div>
                 </TituloWrapper>
 
-                <BotaoSair onClick={sairDaConta}>Sair</BotaoSair>
+                <BotaoSair $escuro={escuro} onClick={sairDaConta}>Sair</BotaoSair>
             </Cabecalho>
 
             <Conteudo>{children}</Conteudo>
