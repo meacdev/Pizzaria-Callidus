@@ -348,7 +348,12 @@ export function PagamentoPage() {
 
         </div>
 
-        <ResumoPedido itens={itensResumo} total={pedido.total} taxaEntrega={customization.taxaEntrega} />
+        <ResumoPedido
+          itens={itensResumo}
+          total={pedido.total}
+          taxaEntrega={customization.taxaEntrega}
+          gorjeta={pedido.gorjeta?.valor ?? 0}
+        />
       </div>
     </>
   );

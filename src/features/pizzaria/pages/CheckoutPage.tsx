@@ -7,6 +7,7 @@ import { useCustomizationStore } from '../../../context/customization.store';
 import {
   DADOS_CHECKOUT_INICIAIS,
   FORMAS_PAGAMENTO,
+  OPCOES_GORJETA,
   type CampoCheckout,
   type DadosCheckout,
   type DadosCliente,
@@ -17,6 +18,9 @@ import {
 import { mascararCep, mascararCpf, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
 import { buscarEnderecoPorCep } from '../api/cep.service';
 
+function formatarPreco(preco: number): string {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
+}
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -38,6 +42,11 @@ export function CheckoutPage() {
   );
 
   const total = subtotal + customization.taxaEntrega;
+
+  const [gorjetaPercentual, setGorjetaPercentual] = useState(0);
+  const valorGorjeta = Number(((total * gorjetaPercentual) / 100).toFixed(2));
+  const totalComGorjeta = total + valorGorjeta;
+
   const [dados, setDados] =
     useState<DadosCheckout>(
       DADOS_CHECKOUT_INICIAIS,
@@ -154,7 +163,8 @@ export function CheckoutPage() {
           precoUnitario: item.precoUnitario,
         };
       }),
-      total,
+      total: totalComGorjeta,
+      gorjeta: gorjetaPercentual > 0 ? { percentual: gorjetaPercentual, valor: valorGorjeta } : null,
       criadoEm: new Date().toISOString(),
       atualizadoEm: new Date().toISOString(),
     });
@@ -254,8 +264,7 @@ export function CheckoutPage() {
                   aria-describedby={erros.cep ? 'checkout-cep-erro' : undefined}
                 />
                 {erros.cep && <span id="checkout-cep-erro" className="erro-campo">{erros.cep}</span>}
-                {erros.cep && <span id="checkout-cep-erro" className="erro-campo">{erros.cep}</span>}
-              {buscandoCep && <span className="cep-status">Buscando endereço...</span>}
+                {buscandoCep && <span className="cep-status">Buscando endereço...</span>}
               </div>
 
               <div className="campo-formulario">
@@ -339,6 +348,29 @@ export function CheckoutPage() {
                 {erros.cidade && <span id="checkout-cidade-erro" className="erro-campo">{erros.cidade}</span>}
               </div>
             </div>
+          </fieldset>
+
+          <fieldset className="grupo-formulario">
+            <legend>Gorjeta (opcional)</legend>
+            <p>Quer deixar uma gorjeta para o entregador?</p>
+            <div className="opcoes-gorjeta" role="radiogroup" aria-label="Escolha uma porcentagem de gorjeta">
+              {OPCOES_GORJETA.map((percentual) => (
+                <button
+                  key={percentual}
+                  type="button"
+                  className={`opcao-gorjeta ${gorjetaPercentual === percentual ? 'opcao-gorjeta-selecionada' : ''}`}
+                  aria-pressed={gorjetaPercentual === percentual}
+                  onClick={() => setGorjetaPercentual(percentual)}
+                >
+                  {percentual === 0 ? 'Sem gorjeta' : `${percentual}%`}
+                </button>
+              ))}
+            </div>
+            {valorGorjeta > 0 && (
+              <p className="gorjeta-resumo">
+                Gorjeta de {formatarPreco(valorGorjeta)} — novo total: <strong>{formatarPreco(totalComGorjeta)}</strong>
+              </p>
+            )}
           </fieldset>
 
           <fieldset className="grupo-formulario">
@@ -427,7 +459,9 @@ export function CheckoutPage() {
               quantidade: item.quantidade,
             };
           })}
-          total={total}
+          total={totalComGorjeta}
+          taxaEntrega={customization.taxaEntrega}
+          gorjeta={valorGorjeta}
         />
       </div>
     </>

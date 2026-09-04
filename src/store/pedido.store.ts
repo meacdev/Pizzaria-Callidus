@@ -36,12 +36,18 @@ export interface ItemPedido {
   readonly precoUnitario: number;
 }
 
+export interface GorjetaPedido {
+  readonly percentual: number;
+  readonly valor: number;
+}
+
 export interface Pedido {
   readonly id: string;                    
   readonly status: StatusPedido;           
   readonly dados: DadosCheckout;
   readonly itens: readonly ItemPedido[];
   readonly total: number;
+  readonly gorjeta: GorjetaPedido | null;
   readonly criadoEm: string;
   readonly atualizadoEm: string;          
 }

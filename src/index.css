@@ -1231,6 +1231,64 @@ button {
   line-height: 1.4;
 }
 
+/* =========================================
+   GORJETA
+   ========================================= */
+
+.opcoes-gorjeta {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.opcao-gorjeta {
+  padding: 12px 10px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 12px;
+
+  background: var(--background);
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  font-weight: 800;
+
+  font-size: 14px;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.opcao-gorjeta:hover {
+  border-color: rgba(var(--primary-rgb), 0.4);
+}
+
+.opcao-gorjeta-selecionada {
+  border-color: var(--primary);
+
+  background: rgba(var(--primary-rgb), 0.08);
+
+  color: var(--primary-light);
+}
+
+.gorjeta-resumo {
+  font-size: 13px;
+
+  color: var(--muted);
+}
+
+.gorjeta-resumo strong {
+  color: var(--text);
+}
 
 /* =========================================
    RESUMO DO PEDIDO
@@ -2886,6 +2944,11 @@ button {
     grid-template-columns: 1fr;
   }
 
+  /* GORJETA */
+
+  .opcoes-gorjeta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
   /* CHECKOUT */
 
