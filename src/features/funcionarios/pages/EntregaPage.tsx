@@ -1,9 +1,40 @@
-import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { PainelLayout } from '../components/PainelLayout';
 import { useFuncionarioAuth } from '../context/FuncionarioAuthContext';
-import { buscarFilaEntrega, atualizarStatusPedido } from '../../pizzaria/api/pedido.service';
-import type { Pedido } from '../../../store/pedido.store';
-const Cartao=styled.div`background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 4px 16px rgba(15,23,42,.06);margin-bottom:1rem;`;
-const Botao=styled.button`border:0;border-radius:10px;padding:.7rem 1rem;cursor:pointer;font-weight:600;`;
-export function EntregaPage(){const{funcionario}=useFuncionarioAuth();const[pedidos,setPedidos]=useState<Pedido[]>([]);const[erro,setErro]=useState('');const carregar=useCallback(async()=>{try{setPedidos(await buscarFilaEntrega());setErro('')}catch(e){setErro(e instanceof Error?e.message:'Falha ao carregar entregas.')}},[]);useEffect(()=>{void carregar();const t=window.setInterval(()=>void carregar(),4000);return()=>window.clearInterval(t)},[carregar]);async function mudar(id:string,status:'saiu_para_entrega'|'entregue'){try{await atualizarStatusPedido(id,status);await carregar()}catch(e){setErro(e instanceof Error?e.message:'Falha ao atualizar entrega.')}}return <PainelLayout icone="🛵" titulo="Painel de Entrega"><Cartao><h2>Olá, {funcionario?.nome}!</h2><p>Pedidos concluídos pela cozinha.</p>{erro&&<p>{erro}</p>}</Cartao>{pedidos.map(p=><Cartao key={p.id}><strong>#{p.id.slice(0,8).toUpperCase()}</strong><p><b>{p.dados.cliente.nome}</b> · {p.dados.cliente.telefone}</p><p>{p.dados.endereco.rua}, {p.dados.endereco.numero} — {p.dados.endereco.bairro}, {p.dados.endereco.cidade}</p><p>{p.itens.map(i=>`${i.quantidade}x ${i.nome}`).join(', ')}</p>{p.status==='aguardando_envio'?<Botao onClick={()=>void mudar(p.id,'saiu_para_entrega')}>Saiu para entrega</Botao>:<Botao onClick={()=>void mudar(p.id,'entregue')}>Marcar entregue</Botao>}</Cartao>)}{pedidos.length===0&&<Cartao><p>Nenhum pedido disponível para entrega.</p></Cartao>}</PainelLayout>}
+
+const Cartao = styled.div`
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+`;
+
+const Lista = styled.ul`
+    margin: 1rem 0 0;
+    padding-left: 1.25rem;
+    color: #374151;
+    line-height: 1.8;
+`;
+
+export function EntregaPage() {
+    const { funcionario } = useFuncionarioAuth();
+
+    return (
+        <PainelLayout icone="🛵" titulo="Painel de Entrega">
+            <Cartao>
+                <h2 style={{ marginTop: 0 }}>Bem-vindo(a), {funcionario?.nome}!</h2>
+                <p style={{ color: '#6b7280' }}>
+                    {funcionario?.tempoExperiencia} ano(s) de experiência como entregador(a).
+                </p>
+                <p>
+                    Esta é a tela exclusiva de entrega. Aqui entrará a lista de pedidos prontos
+                    para saírem para entrega.
+                </p>
+                <Lista>
+                    <li>Ver pedidos prontos para retirada</li>
+                    <li>Marcar pedido como "saiu para entrega" / "entregue"</li>
+                </Lista>
+            </Cartao>
+        </PainelLayout>
+    );
+}

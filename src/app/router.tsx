@@ -13,6 +13,7 @@ import { PizzaDetalhePage } from '../features/pizzaria/pages/PizzaDetalhePage';
 import { BebidaDetalhePage } from '../features/pizzaria/pages/BebidaDetalhePage';
 import { ComboDetalhePage } from '../features/pizzaria/pages/ComboDetalhePage';
 import { AcompanhamentoPedidoPage } from '../features/pizzaria/pages/AcompanhamentoPedido';
+import { EntregadorPage } from '../features/entregador/pages/EntregadorPage';
 
 // Admin
 import { LoginPage } from '../features/admin/pages/LoginPage';
@@ -25,7 +26,6 @@ import { ProtectedRoute } from '../features/admin/guards/ProtectedRoute';
 import { CadastroFuncionarioPage } from '../features/funcionarios/pages/CadastroFuncionarioPage';
 import { CozinhaPage } from '../features/funcionarios/pages/CozinhaPage';
 import { BalcaoPage } from '../features/funcionarios/pages/BalcaoPage';
-import { EntregaPage } from '../features/funcionarios/pages/EntregaPage';
 import { RoleRoute } from '../features/funcionarios/guards/RoleRoute';
 
 export const router = createBrowserRouter(
@@ -71,20 +71,20 @@ export const router = createBrowserRouter(
           ),
         },
         {
+          // Painel do entregador (rota de pedidos), feito pelo colega do
+          // Matheus — mantido igual, só passou a exigir login de entregador.
           path: 'entrega',
           element: (
             <RoleRoute cargo="entregador">
-              <EntregaPage />
+              <EntregadorPage />
             </RoleRoute>
           ),
         },
 
-        // Páginas antigas (customização, cardápio, pedidos): por pedido do
-        // Matheus, a customização vai ganhar sua própria rota de login mais
-        // pra frente e não deve ser alcançada por este login de funcionário.
-        // Ficam com o guard/login antigos (ProtectedRoute + AuthContext),
-        // que por enquanto não tem mais tela de login associada — ver
-        // README/aviso no chat.
+        // Páginas antigas (customização, cardápio, pedidos): a customização
+        // vai ganhar sua própria rota de login mais pra frente e não deve
+        // ser alcançada por este login de funcionário. Ficam com o
+        // guard/login antigos (ProtectedRoute + AuthContext).
         {
           path: 'customizacao',
           element: (

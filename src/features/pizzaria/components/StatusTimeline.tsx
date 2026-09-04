@@ -21,10 +21,10 @@ const STATUS_CONFIG: Record<
     icone: '👨‍🍳',
     descricao: 'A cozinha está preparando',
   },
-  aguardando_envio: {
-    label: 'Aguardando Envio',
+  pronto: {
+    label: 'Concluído / aguardando envio',
     icone: '📦',
-    descricao: 'Pedido pronto e aguardando o entregador',
+    descricao: 'A cozinha concluiu o preparo; aguardando envio',
   },
   saiu_para_entrega: {
     label: 'Saiu para Entrega',
@@ -46,7 +46,7 @@ const STATUS_CONFIG: Record<
 const ORDEM_STATUS: readonly StatusPedido[] = [
   'recebido',
   'em_preparo',
-  'aguardando_envio',
+  'pronto',
   'saiu_para_entrega',
   'entregue',
 ];
@@ -256,6 +256,11 @@ const StatusBadge = styled.div<{ $status: StatusPedido }>`
           background: rgba(255, 42, 42, 0.15);
           color: var(--primary-light);
         `;
+      case 'pronto':
+        return css`
+          background: rgba(116, 65, 216, 0.15);
+          color: #a981f0;
+        `;
       case 'saiu_para_entrega':
         return css`
           background: rgba(42, 157, 143, 0.15);
@@ -331,6 +336,8 @@ function calcularTempoEstimado(statusAtual: StatusPedido): string {
       return '30-45 min';
     case 'em_preparo':
       return '20-30 min';
+    case 'pronto':
+      return 'Aguardando entregador';
     case 'saiu_para_entrega':
       return '10-15 min';
     case 'entregue':

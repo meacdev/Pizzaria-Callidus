@@ -1,20 +1,83 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { buscarPedidos, atualizarStatusPedido } from '../../pizzaria/api/pedido.service';
-import type { Pedido, StatusPedido } from '../../../store/pedido.store';
+import { useMemo } from 'react';
+import { usePedidoStore, type Pedido, type StatusPedido } from '../../../store/pedido.store';
 
-export interface MetricasPedidos { faturamentoHoje: number; pedidosHoje: number; ticketMedioHoje: number; faturamentoMes: number; pedidosMes: number; variacaoMesPercentual: number; }
-function mesmoDia(iso: string, ref: Date) { const d = new Date(iso); return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth() && d.getDate() === ref.getDate(); }
-function metricas(pedidos: readonly Pedido[]): MetricasPedidos {
-  const hoje = new Date(); const mes = pedidos.filter((p) => { const d = new Date(p.criadoEm); return d.getFullYear() === hoje.getFullYear() && d.getMonth() === hoje.getMonth() && p.status !== 'cancelado'; });
-  const hojePedidos = mes.filter((p) => mesmoDia(p.criadoEm, hoje)); const faturamentoHoje = hojePedidos.reduce((s, p) => s + p.total, 0);
-  return { faturamentoHoje, pedidosHoje: hojePedidos.length, ticketMedioHoje: hojePedidos.length ? faturamentoHoje / hojePedidos.length : 0,
-    faturamentoMes: mes.reduce((s, p) => s + p.total, 0), pedidosMes: mes.length, variacaoMesPercentual: 0 };
+export interface MetricasPedidos {
+  faturamentoHoje: number;
+  pedidosHoje: number;
+  ticketMedioHoje: number;
+  faturamentoMes: number;
+  pedidosMes: number;
+  variacaoMesPercentual: number;
 }
+
+function ehMesmoDia(dataIso: string, referencia: Date): boolean {
+  const data = new Date(dataIso);
+  return (
+    data.getFullYear() === referencia.getFullYear() &&
+    data.getMonth() === referencia.getMonth() &&
+    data.getDate() === referencia.getDate()
+  );
+}
+
+function contaComoFaturamento(status: StatusPedido): boolean {
+  return status !== 'cancelado';
+}
+
+// Mock: sem histórico persistido de dias anteriores, então o faturamento
+// do mês é simulado a partir do que já foi vendido hoje.
+function mockFaturamentoMes(faturamentoHoje: number, pedidosHoje: number) {
+  const diaDoMes = new Date().getDate();
+  const mediaDiariaEstimada = faturamentoHoje > 0 ? faturamentoHoje : 850;
+  const faturamentoMes = mediaDiariaEstimada * diaDoMes * 0.92;
+  const pedidosMes = Math.max(pedidosHoje, 1) * diaDoMes;
+  const variacaoMesPercentual = 12.5; // mock fixo, ex: +12,5% vs mês anterior
+
+  return { faturamentoMes, pedidosMes, variacaoMesPercentual };
+}
+
+function calcularMetricas(pedidos: readonly Pedido[]): MetricasPedidos {
+  const hoje = new Date();
+
+  const pedidosDeHoje = pedidos.filter(
+    (p) => ehMesmoDia(p.criadoEm, hoje) && contaComoFaturamento(p.status),
+  );
+
+  const faturamentoHoje = pedidosDeHoje.reduce((soma, p) => soma + p.total, 0);
+  const pedidosHoje = pedidosDeHoje.length;
+  const ticketMedioHoje = pedidosHoje > 0 ? faturamentoHoje / pedidosHoje : 0;
+
+  const { faturamentoMes, pedidosMes, variacaoMesPercentual } = mockFaturamentoMes(
+    faturamentoHoje,
+    pedidosHoje,
+  );
+
+  return {
+    faturamentoHoje,
+    pedidosHoje,
+    ticketMedioHoje,
+    faturamentoMes,
+    pedidosMes,
+    variacaoMesPercentual,
+  };
+}
+
 export function usePedidosAdmin() {
-  const [pedidos, setPedidos] = useState<Pedido[]>([]); const [erro, setErro] = useState('');
-  const carregar = useCallback(async () => { try { setPedidos(await buscarPedidos()); setErro(''); } catch (e) { setErro(e instanceof Error ? e.message : 'Falha ao carregar pedidos.'); } }, []);
-  useEffect(() => { void carregar(); const timer = window.setInterval(() => void carregar(), 5000); return () => window.clearInterval(timer); }, [carregar]);
-  const atualizarStatus = useCallback(async (id: string, status: StatusPedido) => { try { const atualizado = await atualizarStatusPedido(id, status); setPedidos((atual) => atual.map((p) => p.id === id ? atualizado : p)); } catch (e) { setErro(e instanceof Error ? e.message : 'Falha ao atualizar pedido.'); } }, []);
-  const lista = useMemo(() => [...pedidos].sort((a, b) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime()), [pedidos]);
-  return { pedidos: lista, erro, carregando: false, atualizarStatus, metricas: metricas(pedidos), recarregar: carregar };
+  const pedidos = usePedidoStore((state) => state.pedidos);
+  const atualizarStatusPedido = usePedidoStore((state) => state.atualizarStatusPedido);
+
+  const pedidosRecebidos = useMemo(
+    () =>
+      [...pedidos].sort(
+        (a, b) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime(),
+      ),
+    [pedidos],
+  );
+
+  const metricas = useMemo(() => calcularMetricas(pedidos), [pedidos]);
+
+  const atualizarStatus = (id: string, status: StatusPedido) => {
+    atualizarStatusPedido(id, status);
+  };
+
+  return { pedidos: pedidosRecebidos, atualizarStatus, metricas };
 }

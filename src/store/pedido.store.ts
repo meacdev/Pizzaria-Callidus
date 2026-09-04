@@ -5,15 +5,15 @@ import type { DadosCheckout } from '../features/pizzaria/types/checkout';
 export type StatusPedido =
   | 'recebido'
   | 'em_preparo'
-  | 'aguardando_envio'
+  | 'pronto'
   | 'saiu_para_entrega'
   | 'entregue'
   | 'cancelado';
 
 export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
-  recebido: 'Recebido',
+  recebido: 'Na fila',
   em_preparo: 'Em preparo',
-  aguardando_envio: 'Aguardando envio',
+  pronto: 'Concluído / aguardando envio',
   saiu_para_entrega: 'Saiu para entrega',
   entregue: 'Entregue',
   cancelado: 'Cancelado',
@@ -22,7 +22,7 @@ export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
 export const STATUS_PEDIDO_ORDEM: readonly StatusPedido[] = [
   'recebido',
   'em_preparo',
-  'aguardando_envio',
+  'pronto',
   'saiu_para_entrega',
   'entregue',
   'cancelado',
@@ -54,8 +54,6 @@ interface PedidoState {
   readonly definirPedido: (pedido: NovoPedido) => void;
   readonly atualizarStatusPedido: (id: string, status: StatusPedido) => void;
   readonly limparPedido: () => void;
-  readonly definirPedidoPersistido: (pedido: Pedido) => void;
-  readonly substituirPedido: (pedido: Pedido) => void;
 }
 
 export const usePedidoStore = create<PedidoState>()(
@@ -78,7 +76,7 @@ export const usePedidoStore = create<PedidoState>()(
       atualizarStatusPedido: (id, status) =>
         set((state) => ({
           pedidos: state.pedidos.map((pedido) =>
-            pedido.id === id ? { ...pedido, status } : pedido,
+            pedido.id === id ? { ...pedido, status, atualizadoEm: new Date().toISOString() } : pedido,
           ),
           pedido:
             state.pedido?.id === id
@@ -86,8 +84,6 @@ export const usePedidoStore = create<PedidoState>()(
               : state.pedido,
         })),
       limparPedido: () => set({ pedido: null }),
-      definirPedidoPersistido: (pedido) => set((state) => ({ pedido, pedidos: [pedido, ...state.pedidos.filter((p) => p.id !== pedido.id)] })),
-      substituirPedido: (pedido) => set((state) => ({ pedido: state.pedido?.id === pedido.id ? pedido : state.pedido, pedidos: state.pedidos.some((p) => p.id === pedido.id) ? state.pedidos.map((p) => p.id === pedido.id ? pedido : p) : [pedido, ...state.pedidos] })),
     }),
     { name: 'pizzaria-pedido' },
   ),

@@ -1,200 +1,47 @@
-# Pizzaria Callidus — Integração completa Front-end + API REST + Banco
+# Pizzaria-Callidus
 
-Este pacote contém a implementação integrada do site, incluindo catálogo, pedidos, cozinha, balcão, entrega, funcionários e persistência.
+Feito por Matheus Eduardo Amazonas Costa, Matheus Pantoja Viana, Luiz Davi Freitas Franco, Josafá Lucena Menezes, Luis Gustavo Monteiro da Silva, para o módulo de React do professor Emmerson Santa Rita no projeto Callidus Academy 2.0 de 2026.
 
-## 1. O que foi integrado
+## Sobre o projeto
 
-As listas JSON existentes:
+Este projeto é um Progressive Web App (PWA), baseada em recursos (*feature-based*), de venda de pizzas online que pode ser licenciado e customizado para diferentes pizzarias clientes.
 
-- `public/api/todasPizzas.json`
-- `public/api/todosCombos.json`
-- `public/api/todasBebidas.json`
+Utiliza-se Vite como build tool e servidor de desenvolvimento, aproveitando ES Modules nativos e Hot Module Replacement (HMR).
 
-são utilizadas somente como **carga inicial**. Na primeira execução do backend, seus dados são importados para o banco quando as respectivas tabelas estão vazias.
+> Para mais informações consulte [/docs](./docs)
 
-Depois disso, o front-end consulta a API REST, e o banco passa a ser a fonte de verdade.
+### Domínio Público
 
-Entidades persistidas:
+O projeto está dispoível no Github Pages: https://meacdev.github.io/Pizzaria-Callidus/
 
-- pizzas
-- combos
-- bebidas
-- extras
-- configurações
-- pedidos
-- funcionários
+## Como rodar localmente
 
-## 2. Fluxo de pedidos
+### Pré-requisitos
 
-`Site/Balcão → API → Banco → Cozinha → Aguardando envio → Entrega → Entregue`
+- **Node.js** ≥ 20.x
+- **npm**
 
-Status disponíveis:
+### Instalação
 
-- `recebido`
-- `em_preparo`
-- `aguardando_envio`
-- `saiu_para_entrega`
-- `entregue`
-- `cancelado`
-
-## 3. Principais rotas REST
-
-### Catálogo
-
-- GET/POST `/api/pizzas`
-- GET/PUT/DELETE `/api/pizzas/:id`
-- GET `/api/pizzas/:slug`
-- GET/POST `/api/combos`
-- GET/PUT/DELETE `/api/combos/:id`
-- GET `/api/combos/:slug`
-- GET/POST `/api/bebidas`
-- GET/PUT/DELETE `/api/bebidas/:id`
-- GET `/api/bebidas/:id`
-- GET `/api/extras`
-
-### Pedidos
-
-- POST `/api/pedidos`
-- GET `/api/pedidos`
-- GET `/api/pedidos/:id`
-- PATCH `/api/pedidos/:id/status`
-- GET `/api/cozinha/pedidos`
-- GET `/api/entrega/pedidos`
-
-### Funcionários
-
-- POST `/api/funcionarios`
-- GET `/api/funcionarios`
-- POST `/api/auth/login`
-
-### Configuração
-
-- GET `/api/configuracao`
-- PUT `/api/configuracao`
-
-### Saúde
-
-- GET `/api/saude`
-
-As antigas URLs `.json` continuam disponíveis para compatibilidade:
-
-- `/api/todasPizzas.json`
-- `/api/todosCombos.json`
-- `/api/todasBebidas.json`
-
-Elas também consultam o banco.
-
-## 4. Banco de dados
-
-### Desenvolvimento
-
-Sem configuração adicional, o backend cria automaticamente:
-
-`server/data/pizzaria.db`
-
-### MySQL
-
-Crie o banco:
-
-```sql
-CREATE DATABASE pizzaria_callidus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+git clone https://github.com/meacdev/Pizzaria-Callidus.git
+cd Pizzaria-Callidus
+npm install 
 ```
 
-Depois configure:
+### Ambitente de desenvolvimento
+```
+npm run dev 
+```
+O service worker está funcionando em modo dev (`devOptions.enabled: true` no `vite.config.ts`), útil para testes.
 
-```text
-DATABASE_URL=mysql+pymysql://root:SENHA@localhost:3306/pizzaria_callidus
+### Build de produção + preview do build
+
+```
+npm run build
+npm run preview
 ```
 
-O SQLAlchemy cria as tabelas automaticamente.
+### Persistência de dados
 
-## 5. Executar no Windows
-
-### Backend
-
-Execute:
-
-`INICIAR_BACKEND.bat`
-
-ou manualmente:
-
-```bat
-cd server
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
-```
-
-API:
-
-`http://localhost:5001`
-
-### Front-end
-
-Execute:
-
-`INICIAR_FRONTEND.bat`
-
-ou:
-
-```bat
-npm install
-npm run dev
-```
-
-O Vite encaminha `/api` para `http://localhost:5001`.
-
-## 6. Integração do front-end
-
-O front-end utiliza os services:
-
-- `pizza.service.ts`
-- `combo.service.ts`
-- `bebida.service.ts`
-- `extras.service.ts`
-- `pedido.service.ts`
-
-para acessar a API.
-
-O pedido confirmado é persistido no backend. O Zustand permanece apenas para o estado local da interface, carrinho e acompanhamento temporário.
-
-## 7. Cozinha
-
-A cozinha consulta `/api/cozinha/pedidos` periodicamente.
-
-Fluxo:
-
-`recebido → em_preparo → aguardando_envio`
-
-## 8. Entrega
-
-O painel de entrega consulta `/api/entrega/pedidos`.
-
-Fluxo:
-
-`aguardando_envio → saiu_para_entrega → entregue`
-
-## 9. Balcão/atendimento
-
-O painel de balcão consulta os mesmos pedidos criados pelo site e pode acompanhar/alterar o fluxo permitido pela interface.
-
-## 10. Estrutura principal
-
-```text
-Pizzaria-Callidus/
-├── public/api/                 # JSON usados somente para seed/compatibilidade
-├── server/
-│   ├── app.py                  # API REST
-│   ├── models.py               # Modelos do banco
-│   ├── schema.sql              # criação do banco MySQL
-│   ├── requirements.txt
-│   └── data/                   # SQLite local
-├── src/features/pizzaria/api/  # comunicação Front-end → API
-├── src/features/funcionarios/  # balcão/cozinha/entrega
-└── README.md
-```
-
-## 11. Importante
-
-O banco é a fonte principal após a inicialização. Alterações feitas por API não precisam modificar os arquivos JSON.
+A aplicação não depende de backend ou banco de dados externo: pedidos, customização e cardápio são persistidos no `localStorage` do navegador (via Zustand com o middleware `persist`). Não há variáveis de ambiente a configurar para rodar o projeto localmente.

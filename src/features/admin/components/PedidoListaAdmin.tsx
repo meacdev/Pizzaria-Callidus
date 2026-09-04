@@ -28,7 +28,7 @@ function resumoItens(pedido: Pedido): string {
 const CLASSE_STATUS: Record<StatusPedido, string> = {
     recebido: styles.statusRecebido,
     em_preparo: styles.statusEmPreparo,
-    aguardando_envio: styles.statusSaiuParaEntrega,
+    pronto: styles.statusPronto,
     saiu_para_entrega: styles.statusSaiuParaEntrega,
     entregue: styles.statusEntregue,
     cancelado: styles.statusCancelado,

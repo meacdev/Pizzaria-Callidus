@@ -27,14 +27,7 @@ self.addEventListener('activate', () => {
 // StaleWhileRevalidate: mostra o que já tem em cache na hora, e atualiza em segundo plano.
 // Bom pra esse caso: cardápio muda pouco, mas não pode ficar preso a uma versão velha pra sempre.
 registerRoute(
-  ({ url }) =>
-    url.pathname === '/api/pizzas' ||
-    url.pathname === '/api/combos' ||
-    url.pathname === '/api/bebidas' ||
-    url.pathname === '/api/extras' ||
-    url.pathname === '/api/todasPizzas.json' ||
-    url.pathname === '/api/todosCombos.json' ||
-    url.pathname === '/api/todasBebidas.json',
+  ({ url }) => url.pathname.startsWith('/api/'),
   new StaleWhileRevalidate({
     cacheName: 'pizzaria-api-cache',
     plugins: [

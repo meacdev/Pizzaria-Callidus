@@ -2,6 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { usePedidoStore, STATUS_PEDIDO_ORDEM, type StatusPedido } from './pedido.store';
 
+export interface NotificacaoEntrega {
+  readonly id: string;
+  readonly pedidoId: string;
+  readonly mensagem: string;
+  readonly criadaEm: string;
+}
+
 interface AcompanhamentoInfo {
   historico: { status: StatusPedido; timestamp: string }[];
   simulacaoTimerId?: number | null;
@@ -10,12 +17,17 @@ interface AcompanhamentoInfo {
 export interface EntregaState {
   intervaloMs: number;
   pedidosAtivos: Record<string, AcompanhamentoInfo>;
+  pedidosNaRota: string[];
+  notificacoes: NotificacaoEntrega[];
 
   iniciarAcompanhamento: (pedidoId: string, statusInicial: StatusPedido) => void;
   avancarStatus: (pedidoId: string) => void;
   iniciarSimulacaoAutomatica: (pedidoId: string, intervaloMs?: number) => void;
   pararSimulacao: (pedidoId: string) => void;
   pararTodasSimulacoes: () => void;
+  adicionarPedidoNaRota: (pedidoId: string) => void;
+  removerPedidoDaRota: (pedidoId: string) => void;
+  concluirEntrega: (pedidoId: string) => void;
 }
 
 export const useEntregaStore = create<EntregaState>()(
@@ -23,6 +35,8 @@ export const useEntregaStore = create<EntregaState>()(
     (set, get) => ({
       intervaloMs: 8000, // 8 segundos padrão
       pedidosAtivos: {},
+      pedidosNaRota: [],
+      notificacoes: [],
 
       iniciarAcompanhamento: (pedidoId, statusInicial) => {
         set((state) => {
@@ -113,6 +127,44 @@ export const useEntregaStore = create<EntregaState>()(
         });
       },
 
+
+
+      adicionarPedidoNaRota: (pedidoId) => {
+        const pedido = usePedidoStore.getState().pedidos.find((p) => p.id === pedidoId);
+        if (!pedido || (pedido.status !== 'pronto' && pedido.status !== 'saiu_para_entrega')) return;
+
+        set((state) => ({
+          pedidosNaRota: state.pedidosNaRota.includes(pedidoId)
+            ? state.pedidosNaRota
+            : [...state.pedidosNaRota, pedidoId],
+        }));
+      },
+
+      removerPedidoDaRota: (pedidoId) => {
+        set((state) => ({
+          pedidosNaRota: state.pedidosNaRota.filter((id) => id !== pedidoId),
+        }));
+      },
+
+      concluirEntrega: (pedidoId) => {
+        const pedido = usePedidoStore.getState().pedidos.find((p) => p.id === pedidoId);
+        if (!pedido || pedido.status !== 'saiu_para_entrega') return;
+
+        usePedidoStore.getState().atualizarStatusPedido(pedidoId, 'entregue');
+
+        const notificacao: NotificacaoEntrega = {
+          id: crypto.randomUUID(),
+          pedidoId,
+          mensagem: `O pedido #${pedidoId.slice(0, 8).toUpperCase()} foi entregue pelo entregador.`,
+          criadaEm: new Date().toISOString(),
+        };
+
+        set((state) => ({
+          pedidosNaRota: state.pedidosNaRota.filter((id) => id !== pedidoId),
+          notificacoes: [notificacao, ...state.notificacoes].slice(0, 30),
+        }));
+      },
+
       pararTodasSimulacoes: () => {
         const { pedidosAtivos } = get();
         Object.values(pedidosAtivos).forEach((acc) => {
@@ -123,6 +175,8 @@ export const useEntregaStore = create<EntregaState>()(
     {
       name: 'pizzaria-entrega',
       partialize: (state) => ({
+        pedidosNaRota: state.pedidosNaRota,
+        notificacoes: state.notificacoes,
         pedidosAtivos: Object.fromEntries(
           Object.entries(state.pedidosAtivos).map(([id, acc]) => [
             id,
