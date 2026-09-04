@@ -24,6 +24,7 @@ import {
 } from '../utils/pagamento.utils';
 import { gerarPedidoPayload } from '../utils/pedido.utils';
 import { useCustomizationStore } from '../../../context/customization.store';
+import { criarPedido } from '../api/pedido.service';
 
 const DURACAO_PIX_SEGUNDOS = 5 * 60;
 
@@ -111,6 +112,15 @@ export function PagamentoPage() {
     const payload = gerarPedidoPayload(pedido, infoPagamento);
 
     console.log('[pagamento] JSON do pedido gerado:', payload);
+
+    try {
+      await criarPedido(payload);
+    } catch (erro) {
+      console.error('[pagamento] falha ao enviar pedido para a cozinha:', erro);
+      setEstado('sucesso');
+      setPayloadGerado(payload);
+      return;
+    }
 
     setPayloadGerado(payload);
     setEstado('sucesso');

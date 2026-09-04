@@ -22,12 +22,14 @@ em desenvolvimento (veja vite.config.ts).
 """
 
 import os
+import json
+from datetime import datetime, timezone
 
 from flask import Flask, jsonify, request
 
 from flask_cors import CORS
 
-from models import CLASSE_POR_PROFISSAO, PROFISSOES_VALIDAS, Funcionario, db
+from models import CLASSE_POR_PROFISSAO, PROFISSOES_VALIDAS, Funcionario, Pedido, db
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -133,6 +135,50 @@ def registrar_rotas(app: Flask) -> None:
     def listar_funcionarios():
         funcionarios = Funcionario.query.order_by(Funcionario.nome).all()
         return jsonify([funcionario.to_dict() for funcionario in funcionarios])
+
+    @app.post("/api/pedidos")
+    def criar_pedido():
+        dados = request.get_json(silent=True) or {}
+        pedido_id = str(dados.get("pedidoId", "")).strip()
+        if not pedido_id or not dados.get("cliente") or not dados.get("itens"):
+            return jsonify({"erro": "pedidoId, cliente e itens são obrigatórios."}), 400
+
+        existente = db.session.get(Pedido, pedido_id)
+        if existente is not None:
+            return jsonify(existente.to_dict()), 200
+
+        pedido = Pedido(
+            id=pedido_id, status="recebido", origem=str(dados.get("origem", "site")),
+            cliente=json.dumps(dados.get("cliente", {}), ensure_ascii=False),
+            endereco=json.dumps(dados.get("endereco", {}), ensure_ascii=False),
+            itens=json.dumps(dados.get("itens", []), ensure_ascii=False),
+            observacoes=str(dados.get("observacoes", "")),
+            pagamento=json.dumps(dados.get("pagamento", {}), ensure_ascii=False),
+            total=float(dados.get("total", 0)),
+        )
+        db.session.add(pedido)
+        db.session.commit()
+        return jsonify(pedido.to_dict()), 201
+
+    @app.get("/api/pedidos")
+    def listar_pedidos():
+        pedidos = Pedido.query.order_by(Pedido.criado_em.asc()).all()
+        return jsonify([pedido.to_dict() for pedido in pedidos])
+
+    @app.patch("/api/pedidos/<pedido_id>/status")
+    def alterar_status_pedido(pedido_id: str):
+        dados = request.get_json(silent=True) or {}
+        status = str(dados.get("status", "")).strip()
+        status_validos = {"recebido", "em_preparo", "pronto", "saiu_para_entrega", "entregue", "cancelado"}
+        if status not in status_validos:
+            return jsonify({"erro": "Status inválido."}), 400
+        pedido = db.session.get(Pedido, pedido_id)
+        if pedido is None:
+            return jsonify({"erro": "Pedido não encontrado."}), 404
+        pedido.status = status
+        pedido.atualizado_em = datetime.now(timezone.utc)
+        db.session.commit()
+        return jsonify(pedido.to_dict())
 
     @app.get("/api/saude")
     def saude():

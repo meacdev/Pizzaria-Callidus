@@ -96,3 +96,31 @@ CLASSE_POR_PROFISSAO = {
     "garcom": Garcom,
     "entregador": Entregador,
 }
+
+
+class Pedido(db.Model):
+    """Pedido recebido pelos canais de atendimento e disponibilizado à cozinha."""
+
+    __tablename__ = "pedidos"
+
+    id = db.Column(db.String(80), primary_key=True)
+    criado_em = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    atualizado_em = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    status = db.Column(db.String(30), nullable=False, default="recebido")
+    origem = db.Column(db.String(20), nullable=False, default="site")
+    cliente = db.Column(db.Text, nullable=False)
+    endereco = db.Column(db.Text, nullable=False)
+    itens = db.Column(db.Text, nullable=False)
+    observacoes = db.Column(db.Text, nullable=False, default="")
+    pagamento = db.Column(db.Text, nullable=False)
+    total = db.Column(db.Float, nullable=False)
+
+    def to_dict(self):
+        import json
+        return {
+            "id": self.id, "status": self.status, "criadoEm": self.criado_em.isoformat(),
+            "atualizadoEm": self.atualizado_em.isoformat(), "origem": self.origem,
+            "dados": {**json.loads(self.cliente), **json.loads(self.endereco)},
+            "itens": json.loads(self.itens), "observacoes": self.observacoes,
+            "pagamento": json.loads(self.pagamento), "total": self.total,
+        }
