@@ -165,6 +165,8 @@ export function CheckoutPage() {
       }),
       total: totalComGorjeta,
       gorjeta: gorjetaPercentual > 0 ? { percentual: gorjetaPercentual, valor: valorGorjeta } : null,
+      origem: 'site',
+      mesa: null,
       criadoEm: new Date().toISOString(),
       atualizadoEm: new Date().toISOString(),
     });

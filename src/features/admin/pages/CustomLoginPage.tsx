@@ -1,0 +1,105 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import { autenticarFuncionario } from '../../funcionarios/api/funcionario.service';
+import { useFuncionarioAuth } from '../../funcionarios/context/FuncionarioAuthContext';
+import {
+    Botao,
+    Campo,
+    Erro,
+    Form,
+    Header,
+    Icon,
+    Input,
+    Label,
+    Modal,
+    Overlay,
+    Subtitle,
+    Title,
+} from '../../funcionarios/components/AuthStyles';
+
+interface CustomLoginFormData {
+    login: string;
+    senha: string;
+}
+
+/**
+ * Login separado do /admin (dos cargos cozinheiro/garçom/entregador),
+ * usado só para acessar a customização da loja em /customizacao. Por
+ * enquanto aceita qualquer funcionário cadastrado, sem olhar a profissão —
+ * futuramente pode ganhar seu próprio cadastro/permissão específica.
+ */
+export function CustomLoginPage() {
+    const { register, handleSubmit } = useForm<CustomLoginFormData>();
+    const { entrar } = useFuncionarioAuth();
+    const navigate = useNavigate();
+    const [erro, setErro] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const onSubmit = async (dados: CustomLoginFormData) => {
+        setErro(null);
+        setLoading(true);
+
+        try {
+            const resposta = await autenticarFuncionario(dados);
+            entrar(resposta.funcionario);
+            // Ao contrário do login em /admin, aqui não importa a profissão
+            // nem a rota do cargo (resposta.rota) — todo mundo vai pra
+            // customização.
+            navigate('/customizacao');
+        } catch (erroCapturado) {
+            setErro(
+                erroCapturado instanceof Error
+                    ? erroCapturado.message
+                    : 'Erro ao conectar. Tente novamente.',
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Overlay>
+            <Modal>
+                <Header>
+                    <Icon>🎨</Icon>
+                    <Title>Customização da Loja</Title>
+                    <Subtitle>
+                        Entre com seu login e senha de funcionário. Por enquanto, qualquer
+                        funcionário da loja (cozinheiro, garçom ou entregador) pode acessar
+                        esta área.
+                    </Subtitle>
+                </Header>
+
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Campo>
+                        <Label htmlFor="login">Login</Label>
+                        <Input
+                            id="login"
+                            placeholder="Digite seu login"
+                            autoComplete="username"
+                            {...register('login', { required: true })}
+                        />
+                    </Campo>
+
+                    <Campo>
+                        <Label htmlFor="senha">Senha</Label>
+                        <Input
+                            id="senha"
+                            type="password"
+                            placeholder="Digite sua senha"
+                            autoComplete="current-password"
+                            {...register('senha', { required: true })}
+                        />
+                    </Campo>
+
+                    {erro && <Erro>{erro}</Erro>}
+
+                    <Botao type="submit" disabled={loading} $loading={loading}>
+                        {loading ? 'Entrando...' : 'Entrar'}
+                    </Botao>
+                </Form>
+            </Modal>
+        </Overlay>
+    );
+}

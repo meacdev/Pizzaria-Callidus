@@ -1,4 +1,17 @@
-import type { ItemPedido } from '../../../store/pedido.store';
+import type { ItemPedido, OrigemPedido } from '../../../store/pedido.store';
+
+/**
+ * Por onde o pedido entrou no sistema:
+ * - 'site': cliente pediu pelo site/app de casa (sempre origem 'site').
+ * - 'totem': cliente se autoatendeu no totem dentro do restaurante.
+ * - 'garcom': o próprio garçom lançou o pedido numa mesa pelo balcão.
+ *
+ * Existe além de "origem" porque tanto um pedido do totem quanto um pedido
+ * lançado pelo garçom têm origem 'local' — o canal é o que diferencia, no
+ * painel do garçom, um pedido que ainda precisa ser conferido e enviado pra
+ * cozinha (site/totem) de um que o próprio garçom já mandou direto.
+ */
+export type CanalPedido = 'site' | 'totem' | 'garcom';
 
 export interface ItemPedidoPayload {
   readonly id: string;
@@ -44,6 +57,9 @@ export interface PedidoPayload {
   readonly pedidoId: string;
   readonly criadoEm: string;
   readonly status: 'confirmado';
+  readonly origem: OrigemPedido;
+  readonly canal: CanalPedido;
+  readonly mesa: number | null;
   readonly cliente: ClientePedidoPayload;
   readonly endereco: EnderecoPedidoPayload;
   readonly itens: readonly ItemPedidoPayload[];
