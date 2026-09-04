@@ -48,6 +48,8 @@ export const DADOS_CHECKOUT_INICIAIS: DadosCheckout = {
   observacoes: '',
 };
 
+export const OPCOES_GORJETA: readonly number[] = [0, 5, 10, 15];
+
 export const FORMAS_PAGAMENTO: readonly { readonly valor: FormaPagamento; readonly rotulo: string; readonly descricao: string }[] = [
   { valor: 'pix', rotulo: 'Pix', descricao: 'Pagamento instantâneo, chave enviada após a confirmação.' },
   { valor: 'cartao', rotulo: 'Cartão', descricao: 'Crédito ou débito na entrega.' },

@@ -9,6 +9,7 @@ interface ResumoPedidoProps {
   readonly itens: readonly ItemResumoPedido[];
   readonly total: number;
   readonly taxaEntrega?: number; // novo
+  readonly gorjeta?: number;
 }
 
 function formatarPreco(preco: number): string {
@@ -16,7 +17,7 @@ function formatarPreco(preco: number): string {
 }
 
 
-export function ResumoPedido({ itens, total, taxaEntrega = 0 }: ResumoPedidoProps) {
+export function ResumoPedido({ itens, total, taxaEntrega = 0, gorjeta = 0 }: ResumoPedidoProps) {
   return (
     <aside className="resumo-pedido">
       <h2>Resumo do pedido</h2>
@@ -32,6 +33,12 @@ export function ResumoPedido({ itens, total, taxaEntrega = 0 }: ResumoPedidoProp
         <div className="resumo-pedido-taxa">
           <span>Taxa de entrega</span>
           <span>{formatarPreco(taxaEntrega)}</span>
+        </div>
+      )}
+      {gorjeta > 0 && (
+        <div className="resumo-pedido-taxa">
+          <span>Gorjeta </span>
+          <span>{formatarPreco(gorjeta)}</span>
         </div>
       )}
       <div className="resumo-pedido-total">

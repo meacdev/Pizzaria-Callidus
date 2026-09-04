@@ -31,6 +31,11 @@ export interface PagamentoPedidoPayload {
   readonly confirmadoEm: string;
 }
 
+export interface GorjetaPedidoPayload {
+  readonly percentual: number;
+  readonly valor: number;
+}
+
 /**
  * Formato "final" do pedido, pensado para já sair no shape
  * que uma futura API de pedidos provavelmente esperaria.
@@ -44,5 +49,6 @@ export interface PedidoPayload {
   readonly itens: readonly ItemPedidoPayload[];
   readonly observacoes: string;
   readonly pagamento: PagamentoPedidoPayload;
+  readonly gorjeta: GorjetaPedidoPayload | null;
   readonly total: number;
 }

@@ -48,6 +48,7 @@ export function PedidoListaAdmin({ pedidos, onAtualizarStatus }: Readonly<Pedido
                     <th>Itens</th>
                     <th>Total</th>
                     <th>Pagamento</th>
+                    <th>Gorjeta</th>
                     <th>Recebido em</th>
                     <th>Status</th>
                 </tr>
@@ -63,6 +64,9 @@ export function PedidoListaAdmin({ pedidos, onAtualizarStatus }: Readonly<Pedido
                         <td className={styles.colunaItens}>{resumoItens(pedido)}</td>
                         <td>{formatarPreco(pedido.total)}</td>
                         <td className={styles.colunaSecundaria}>{pedido.dados.formaPagamento || '—'}</td>
+                        <td className={styles.colunaSecundaria}>
+                            {pedido.gorjeta ? `${pedido.gorjeta.percentual}% (${formatarPreco(pedido.gorjeta.valor)})` : '—'}
+                        </td>
                         <td className={styles.colunaSecundaria}>{formatarData(pedido.criadoEm)}</td>
                         <td>
                             <select
