@@ -1,6 +1,7 @@
 import type {
     Funcionario,
     FuncionarioCadastroInput,
+    FuncionarioEdicaoInput,
     LoginInput,
     LoginResponse,
 } from '../types/funcionario';
@@ -37,6 +38,19 @@ export async function cadastrarFuncionario(
 ): Promise<Funcionario> {
     const resposta = await fetch(`${BASE_URL}/funcionarios`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados),
+    });
+
+    return tratarResposta<Funcionario>(resposta);
+}
+
+export async function atualizarFuncionario(
+    id: number,
+    dados: FuncionarioEdicaoInput,
+): Promise<Funcionario> {
+    const resposta = await fetch(`${BASE_URL}/funcionarios/${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dados),
     });

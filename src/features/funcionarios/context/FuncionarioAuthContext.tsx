@@ -5,6 +5,7 @@ interface FuncionarioAuthContextType {
     funcionario: Funcionario | null;
     autenticado: boolean;
     entrar: (funcionario: Funcionario) => void;
+    atualizar: (funcionario: Funcionario) => void;
     sair: () => void;
 }
 
@@ -40,9 +41,16 @@ export function FuncionarioAuthProvider({ children }: { children: ReactNode }) {
         setFuncionario(null);
     };
 
+    // Usado depois de editar o próprio cadastro (nome, login, senha etc.):
+    // atualiza a sessão guardada sem precisar logar de novo.
+    const atualizar = (funcionarioAtualizado: Funcionario) => {
+        localStorage.setItem(CHAVE_SESSAO, JSON.stringify(funcionarioAtualizado));
+        setFuncionario(funcionarioAtualizado);
+    };
+
     return (
         <FuncionarioAuthContext.Provider
-            value={{ funcionario, autenticado: !!funcionario, entrar, sair }}
+            value={{ funcionario, autenticado: !!funcionario, entrar, atualizar, sair }}
         >
             {children}
         </FuncionarioAuthContext.Provider>
