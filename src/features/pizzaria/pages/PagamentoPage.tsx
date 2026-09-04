@@ -22,8 +22,9 @@ import {
   simularProcessamentoPagamento,
   validarDadosCartao,
 } from '../utils/pagamento.utils';
-import { enviarPedido } from '../utils/pedido.utils';
+import { gerarPedidoPayload } from '../utils/pedido.utils';
 import { useCustomizationStore } from '../../../context/customization.store';
+import { criarPedido } from '../api/pedido.service';
 
 const DURACAO_PIX_SEGUNDOS = 5 * 60;
 
@@ -43,6 +44,7 @@ function formatarTempo(segundos: number): string {
 export function PagamentoPage() {
   const pedido = usePedidoStore((state) => state.pedido);
   const limparPedido = usePedidoStore((state) => state.limparPedido);
+  const definirPedidoPersistido = usePedidoStore((state) => state.definirPedidoPersistido);
   const customization = useCustomizationStore((state) => state.customization);
 
   const [estado, setEstado] = useState<EstadoPagamento>('formulario');
@@ -51,7 +53,6 @@ export function PagamentoPage() {
   const [pixCopiado, setPixCopiado] = useState(false);
   const [segundosRestantes, setSegundosRestantes] = useState(DURACAO_PIX_SEGUNDOS);
   const [payloadGerado, setPayloadGerado] = useState<PedidoPayload | null>(null);
-  const [erroEnvio, setErroEnvio] = useState('');
 
   const forma: FormaPagamento = (pedido?.dados.formaPagamento || 'dinheiro') as FormaPagamento;
   const formaPagamentoInfo = FORMAS_PAGAMENTO.find((item) => item.valor === forma);
@@ -99,7 +100,6 @@ export function PagamentoPage() {
     if (!pedido) return;
 
     setEstado('processando');
-    setErroEnvio('');
 
     await simularProcessamentoPagamento();
 
@@ -110,15 +110,12 @@ export function PagamentoPage() {
       trocoPara: pedido.dados.trocoPara,
     });
 
-    try {
-      const pedidoEnviado = await enviarPedido(pedido, infoPagamento);
-      console.log('[pagamento] pedido enviado:', pedidoEnviado);
-      setPayloadGerado(pedidoEnviado);
-      setEstado('sucesso');
-    } catch (erro) {
-      setErroEnvio(erro instanceof Error ? erro.message : 'Não foi possível registrar o pedido.');
-      setEstado('formulario');
-    }
+    const payload = gerarPedidoPayload(pedido, infoPagamento);
+
+    const pedidoPersistido = await criarPedido(payload);
+    definirPedidoPersistido(pedidoPersistido);
+    setPayloadGerado(payload);
+    setEstado('sucesso');
   }
 
   function handleSubmitCartao(evento: React.FormEvent<HTMLFormElement>) {
@@ -175,11 +172,6 @@ export function PagamentoPage() {
 
       <div className="principal checkout-layout">
         <div className="pagamento-conteudo">
-          {erroEnvio && (
-            <div className="mensagem-erro" role="alert">
-              Não foi possível registrar o pedido no sistema. {erroEnvio}
-            </div>
-          )}
           {estado === 'sucesso' && payloadGerado && (
             <section className="pagamento-sucesso">
               <div className="pagamento-sucesso-icone" aria-hidden="true">✓</div>

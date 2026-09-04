@@ -1,5 +1,4 @@
 import { Link } from 'react-router';
-import { useEntregaStore } from '../../../store/entrega.store';
 import { usePedidosAdmin } from '../hooks/usePedidosAdmin';
 import { PedidoListaAdmin } from '../components/PedidoListaAdmin';
 import { DashboardPedidos } from '../components/DashboardPedidos';
@@ -7,7 +6,6 @@ import styles from './PedidosAdminPage.module.css';
 
 export function PedidosAdminPage() {
     const { pedidos, atualizarStatus, metricas } = usePedidosAdmin();
-    const notificacoes = useEntregaStore((state) => state.notificacoes);
 
     return (
         <div className={styles.container}>
@@ -24,14 +22,7 @@ export function PedidosAdminPage() {
                 refletida na tela de acompanhamento do cliente.
             </p>
 
-            {notificacoes.length > 0 && (
-                <div style={{ marginBottom: '1.5rem', padding: '1rem', borderRadius: 12, background: '#eefbf2', border: '1px solid #ccebd7', color: '#176b37' }}>
-                    <strong>🔔 Notificação de entrega</strong>
-                    <div style={{ marginTop: '.35rem', fontSize: '.9rem' }}>{notificacoes[0].mensagem}</div>
-                </div>
-            )}
-
-            <DashboardPedidos metricas={metricas} />
+            <DashboardPedidos metricas={metricas} /> {/* novo */}
 
             <PedidoListaAdmin pedidos={pedidos} onAtualizarStatus={atualizarStatus} />
         </div>

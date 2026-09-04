@@ -1,14 +1,21 @@
 import type { Pedido } from '../../../store/pedido.store';
 import type { InfoPagamentoSimulado } from '../types/pagamento';
 import type { PedidoPayload } from '../types/pedidoPayload';
-import { criarPedido } from '../api/pedido.service';
+
+function gerarIdPedido(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+
+  return `pedido-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 export function gerarPedidoPayload(
   pedido: Pedido,
   infoPagamento: InfoPagamentoSimulado,
 ): PedidoPayload {
   return {
-    pedidoId: pedido.id,
+    pedidoId: gerarIdPedido(),
     criadoEm: pedido.criadoEm,
     status: 'confirmado',
     cliente: {
@@ -55,8 +62,8 @@ export async function enviarPedido(
   infoPagamento: InfoPagamentoSimulado,
 ): Promise<PedidoPayload> {
   const payload = gerarPedidoPayload(pedido, infoPagamento);
-  const pedidoCriado = await criarPedido(payload);
 
-  console.log('[pedido] pedido enviado para o backend:', pedidoCriado);
-  return pedidoCriado;
+  console.log('[pedido] payload pronto para envio futuro:', payload);
+
+  return payload;
 }

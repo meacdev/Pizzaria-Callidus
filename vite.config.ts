@@ -3,26 +3,15 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-// Alvo do proxy do backend Flask. Fora do Docker é localhost:5001; dentro
-// do docker-compose, o serviço do backend não é acessível por "localhost"
-// (cada serviço tem sua própria rede), então o compose passa
-// API_PROXY_TARGET=http://backend:5001 (o nome do serviço vira o host).
-const apiProxyTarget = process.env.API_PROXY_TARGET ?? 'http://localhost:5001';
-
 export default defineConfig({
   base: '/Pizzaria-Callidus/',
   server: {
-    // 0.0.0.0: preciso disso pra o Vite aceitar conexões vindas de fora do
-    // container (senão só escuta em 127.0.0.1 e o host nunca alcança).
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
     proxy: {
       // Backend Flask (cadastro/login de funcionários), veja server/app.py.
       // Não colide com public/api/*.json, que é servido sob a base
       // "/Pizzaria-Callidus/api/...".
       '/api': {
-        target: apiProxyTarget,
+        target: 'http://localhost:5001',
         changeOrigin: true,
       },
     },
