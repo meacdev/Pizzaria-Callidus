@@ -2,6 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { DadosCheckout } from '../features/pizzaria/types/checkout';
 
+/**
+ * De onde o pedido veio:
+ * - 'site': cliente pediu pelo site/app, em casa — precisa de entrega.
+ * - 'local': pedido feito no próprio estabelecimento (totem de
+ *   autoatendimento ou lançado pelo garçom numa mesa) — nunca vai para a
+ *   rota do entregador.
+ */
+export type OrigemPedido = 'site' | 'local';
+
 export type StatusPedido =
   | 'recebido'
   | 'em_preparo'
@@ -42,14 +51,18 @@ export interface GorjetaPedido {
 }
 
 export interface Pedido {
-  readonly id: string;                    
-  readonly status: StatusPedido;           
+  readonly id: string;
+  readonly status: StatusPedido;
   readonly dados: DadosCheckout;
   readonly itens: readonly ItemPedido[];
   readonly total: number;
   readonly gorjeta: GorjetaPedido | null;
+  /** 'site' (padrão) = pedido pelo site, precisa de entrega. 'local' = totem/garçom, não vai para o entregador. */
+  readonly origem: OrigemPedido;
+  /** Número da mesa, quando o pedido foi lançado pelo garçom numa mesa. Null para site e totem (retirada no balcão). */
+  readonly mesa: number | null;
   readonly criadoEm: string;
-  readonly atualizadoEm: string;          
+  readonly atualizadoEm: string;
 }
 
 export type NovoPedido = Omit<Pedido, 'id' | 'status'>;

@@ -58,7 +58,16 @@ export function EntregadorPage() {
   }
 
   const prontos = useMemo(
-    () => pedidos.filter((pedido) => pedido.status === 'pronto' && !pedidosNaRota.includes(pedido.pedidoId)),
+    // Pedidos com origem 'local' (totem ou mesa lançada pelo garçom) nunca
+    // aparecem aqui — eles são entregues no próprio balcão/mesa, não pelo
+    // entregador. Pedidos antigos sem "origem" (de antes dessa distinção
+    // existir) são tratados como 'site' por compatibilidade.
+    () => pedidos.filter(
+      (pedido) =>
+        pedido.status === 'pronto' &&
+        (pedido.origem ?? 'site') === 'site' &&
+        !pedidosNaRota.includes(pedido.pedidoId),
+    ),
     [pedidos, pedidosNaRota],
   );
 

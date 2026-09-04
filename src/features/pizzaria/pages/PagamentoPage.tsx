@@ -11,7 +11,7 @@ import {
   type EstadoPagamento,
   type ErrosCartao,
 } from '../types/pagamento';
-import type { PedidoPayload } from '../types/pedidoPayload';
+import type { PedidoApi } from '../api/pedido.service';
 import {
   gerarCodigoPixCopiaCola,
   gerarUrlQrCodePix,
@@ -50,7 +50,7 @@ export function PagamentoPage() {
   const [errosCartao, setErrosCartao] = useState<ErrosCartao>({});
   const [pixCopiado, setPixCopiado] = useState(false);
   const [segundosRestantes, setSegundosRestantes] = useState(DURACAO_PIX_SEGUNDOS);
-  const [payloadGerado, setPayloadGerado] = useState<PedidoPayload | null>(null);
+  const [payloadGerado, setPayloadGerado] = useState<PedidoApi | null>(null);
   const [erroEnvio, setErroEnvio] = useState('');
 
   const forma: FormaPagamento = (pedido?.dados.formaPagamento || 'dinheiro') as FormaPagamento;

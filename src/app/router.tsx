@@ -14,6 +14,7 @@ import { BebidaDetalhePage } from '../features/pizzaria/pages/BebidaDetalhePage'
 import { ComboDetalhePage } from '../features/pizzaria/pages/ComboDetalhePage';
 import { AcompanhamentoPedidoPage } from '../features/pizzaria/pages/AcompanhamentoPedido';
 import { EntregadorPage } from '../features/entregador/pages/EntregadorPage';
+import { TotemPage } from '../features/totem/pages/TotemPage';
 
 // Admin
 import { LoginPage } from '../features/admin/pages/LoginPage';
@@ -46,6 +47,13 @@ export const router = createBrowserRouter(
         { path: 'pedido/:id', Component: AcompanhamentoPedidoPage },
         { path: '*', Component: NotFoundPage },
       ],
+    },
+    {
+      // Totem de autoatendimento: tela cheia, sem o cabeçalho/rodapé da
+      // loja — pensado para rodar num tablet/quiosque dentro do
+      // restaurante, por isso fica fora do Layout da loja.
+      path: 'totem',
+      Component: TotemPage,
     },
     {
       path: 'admin',
