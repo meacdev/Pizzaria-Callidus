@@ -1,48 +1,13 @@
-import type { DadosCheckout } from './checkout';
-
-export type StatusPedido = 'recebido' | 'preparo' | 'pronto' | 'saiu-entrega' | 'entregue' | 'cancelado';
-
-export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
-  'recebido': 'Pedido recebido',
-  'preparo': 'Em preparo',
-  'pronto': 'Pronto para entrega',
-  'saiu-entrega': 'Saiu para entrega',
-  'entregue': 'Entregue',
-  'cancelado': 'Cancelado',
-};
-
-export const STATUS_PEDIDO_ICONE: Record<StatusPedido, string> = {
-  'recebido': '📥',
-  'preparo': '👨‍🍳',
-  'pronto': '📦',
-  'saiu-entrega': '🛵',
-  'entregue': '✅',
-  'cancelado': '❌',
-};
-
-export const STATUS_PEDIDO_DESCRICAO: Record<StatusPedido, string> = {
-  'recebido': 'Seu pedido foi recebido e está na fila.',
-  'preparo': 'Estamos preparando seu pedido com carinho.',
-  'pronto': 'Seu pedido está pronto para sair para entrega.',
-  'saiu-entrega': 'O entregador saiu e está a caminho!',
-  'entregue': 'Pedido entregue. Bom apetite!',
-  'cancelado': 'Pedido cancelado.',
-};
-
-export interface ItemPedido {
-  readonly id: string;
-  readonly tipo: 'pizza' | 'bebida' | 'combo';
-  readonly nome: string;
-  readonly quantidade: number;
-  readonly precoUnitario: number;
+export interface Comanda {
+  id: string;
+  mesaId: number;
+  nomeCliente: string;
+  itens: any[];
+  total: number;
+  status: 'ABERTA' | 'PAGA';
 }
 
-export interface Pedido {
-  readonly id: string;
-  readonly status: StatusPedido;
-  readonly dados: DadosCheckout;
-  readonly itens: readonly ItemPedido[];
-  readonly total: number;
-  readonly criadoEm: string;
-  readonly atualizadoEm: string;
+export interface Mesa {
+  id: number;
+  status: 'LIVRE' | 'OCUPADA';
 }

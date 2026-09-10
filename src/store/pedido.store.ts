@@ -1,109 +1,56 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { DadosCheckout } from '../features/pizzaria/types/checkout';
+import { Comanda, Mesa } from '../features/pizzaria/types/pedido';
 
-/**
- * De onde o pedido veio:
- * - 'site': cliente pediu pelo site/app, em casa — precisa de entrega.
- * - 'local': pedido feito no próprio estabelecimento (totem de
- *   autoatendimento ou lançado pelo garçom numa mesa) — nunca vai para a
- *   rota do entregador.
- */
-export type OrigemPedido = 'site' | 'local';
-
-export type StatusPedido =
-  | 'recebido'
-  | 'em_preparo'
-  | 'pronto'
-  | 'saiu_para_entrega'
-  | 'entregue'
-  | 'cancelado';
-
-export const STATUS_PEDIDO_LABEL: Record<StatusPedido, string> = {
-  recebido: 'Na fila',
-  em_preparo: 'Em preparo',
-  pronto: 'Concluído / aguardando envio',
-  saiu_para_entrega: 'Saiu para entrega',
-  entregue: 'Entregue',
-  cancelado: 'Cancelado',
-};
-
-export const STATUS_PEDIDO_ORDEM: readonly StatusPedido[] = [
-  'recebido',
-  'em_preparo',
-  'pronto',
-  'saiu_para_entrega',
-  'entregue',
-  'cancelado',
-];
-
-export interface ItemPedido {
-  readonly id: string;
-  readonly tipo: 'pizza' | 'bebida' | 'combo';
-  readonly nome: string;
-  readonly quantidade: number;
-  readonly precoUnitario: number;
+interface PedidoStore {
+  mesas: Mesa[];
+  comandas: Comanda[];
+  abrirComanda: (mesaId: number, nomeCliente: string, itens: any[], total: number) => void;
+  pagarComanda: (comandaId: string) => void;
+  finalizarMesa: (mesaId: number) => boolean;
 }
 
-export interface GorjetaPedido {
-  readonly percentual: number;
-  readonly valor: number;
-}
-
-export interface Pedido {
-  readonly id: string;
-  readonly status: StatusPedido;
-  readonly dados: DadosCheckout;
-  readonly itens: readonly ItemPedido[];
-  readonly total: number;
-  readonly gorjeta: GorjetaPedido | null;
-  /** 'site' (padrão) = pedido pelo site, precisa de entrega. 'local' = totem/garçom, não vai para o entregador. */
-  readonly origem: OrigemPedido;
-  /** Número da mesa, quando o pedido foi lançado pelo garçom numa mesa. Null para site e totem (retirada no balcão). */
-  readonly mesa: number | null;
-  readonly criadoEm: string;
-  readonly atualizadoEm: string;
-}
-
-export type NovoPedido = Omit<Pedido, 'id' | 'status'>;
-
-interface PedidoState {
-  readonly pedido: Pedido | null;
-  readonly pedidos: readonly Pedido[];
-  readonly definirPedido: (pedido: NovoPedido) => void;
-  readonly atualizarStatusPedido: (id: string, status: StatusPedido) => void;
-  readonly limparPedido: () => void;
-}
-
-export const usePedidoStore = create<PedidoState>()(
-  persist(
-    (set) => ({
-      pedido: null,
-      pedidos: [],
-      definirPedido: (novoPedido) =>
-        set((state) => {
-          const pedido: Pedido = {
-            ...novoPedido,
-            id: crypto.randomUUID(),
-            status: 'recebido',
-          };
-          return {
-            pedido,
-            pedidos: [pedido, ...state.pedidos],
-          };
-        }),
-      atualizarStatusPedido: (id, status) =>
-        set((state) => ({
-          pedidos: state.pedidos.map((pedido) =>
-            pedido.id === id ? { ...pedido, status, atualizadoEm: new Date().toISOString() } : pedido,
-          ),
-          pedido:
-            state.pedido?.id === id
-              ? { ...state.pedido, status }
-              : state.pedido,
-        })),
-      limparPedido: () => set({ pedido: null }),
-    }),
-    { name: 'pizzaria-pedido' },
-  ),
-);
+export const usePedidoStore = create<PedidoStore>((set, get) => ({
+  mesas: Array.from({ length: 10 }, (_, i) => ({ id: i + 1, status: 'LIVRE' })),
+  comandas: [],
+  
+  abrirComanda: (mesaId, nomeCliente, itens, total) => {
+    const novaComanda: Comanda = {
+      id: Math.random().toString(36).substring(2, 9),
+      mesaId,
+      nomeCliente,
+      itens,
+      total,
+      status: 'ABERTA',
+    };
+    
+    set((state) => ({
+      comandas: [...state.comandas, novaComanda],
+      mesas: state.mesas.map(m => m.id === mesaId ? { ...m, status: 'OCUPADA' } : m)
+    }));
+  },
+  
+  pagarComanda: (comandaId) => {
+    set((state) => ({
+      comandas: state.comandas.map(c => c.id === comandaId ? { ...c, status: 'PAGA' } : c)
+    }));
+  },
+  
+  finalizarMesa: (mesaId) => {
+    const { comandas } = get();
+    const comandasDaMesa = comandas.filter(c => c.mesaId === mesaId);
+    
+    // Verifica se TODAS as comandas da mesa estão pagas
+    const todasPagas = comandasDaMesa.every(c => c.status === 'PAGA');
+    
+    if (todasPagas && comandasDaMesa.length > 0) {
+      set((state) => ({
+        // Arquiva/Remove as comandas da mesa atual
+        comandas: state.comandas.filter(c => c.mesaId !== mesaId),
+        // Libera a mesa
+        mesas: state.mesas.map(m => m.id === mesaId ? { ...m, status: 'LIVRE' } : m)
+      }));
+      return true;
+    }
+    return false;
+  }
+}));
