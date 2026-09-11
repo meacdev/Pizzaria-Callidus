@@ -7,6 +7,7 @@ import { ListaCombos } from '../features/pizzaria/components/ListaCombos';
 import { ListaBebidas } from '../features/pizzaria/components/ListaBebidas';
 import { CarrosselPizza } from '../features/pizzaria/components/CarrosselPizza';
 import { EstabelecimentoInfo } from '../features/pizzaria/components/EstabelecimentoInfo';
+import { SistemaAvaliacao } from '../component/SistemaAvaliacao';
 
 import { usePizzas } from '../features/pizzaria/hooks/usePizzas';
 import { useCombos } from '../features/pizzaria/hooks/useCombo';
@@ -99,6 +100,7 @@ export function HomePage() {
         titulo="Bebidas"
         bebidas={bebidas.slice(0, 6)}
       />
+      <SistemaAvaliacao />
       <EstabelecimentoInfo aberto={mostrarInformacoes} onFechar={() => setMostrarInformacoes(false)} logo={logoSrc} />
     </>
   );
