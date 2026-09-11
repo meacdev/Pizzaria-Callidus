@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 db = SQLAlchemy()
 
-PROFISSOES_VALIDAS = ("cozinheiro", "garcom", "entregador")
+PROFISSOES_VALIDAS = ("cozinheiro", "garcom", "entregador", "gerente")
 STATUS_PEDIDO_VALIDOS = (
     "recebido",
     "em_preparo",
@@ -19,6 +19,7 @@ STATUS_PEDIDO_VALIDOS = (
     "entregue",
     "cancelado",
 )
+STATUS_COMANDA_VALIDOS = ("aberta", "paga", "encerrada")
 
 
 class Funcionario(db.Model):
@@ -79,6 +80,32 @@ class Entregador(Funcionario):
         return "/admin/entrega"
 
 
+class Gerente(Funcionario):
+    __mapper_args__ = {"polymorphic_identity": "gerente"}
+
+    def rota_admin(self) -> str:
+        return "/admin/gerente"
+
+
+class Comanda(db.Model):
+    """Uma comanda individual dentro de uma mesa — permite que uma mesa
+    tenha várias comandas abertas (uma por cliente/grupo), cada uma paga
+    separadamente. A mesa só pode ser finalizada pelo caixa quando todas
+    as comandas vinculadas a ela estiverem pagas (veja /api/mesas/<mesa>/
+    finalizar em app.py)."""
+
+    __tablename__ = "comandas"
+
+    id = db.Column(db.String(64), primary_key=True)
+    mesa = db.Column(db.Integer, nullable=False, index=True)
+    status = db.Column(db.String(20), nullable=False, default="aberta")
+    forma_pagamento = db.Column(db.String(30), nullable=True)
+    aberta_em = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    paga_em = db.Column(db.DateTime, nullable=True)
+
+    pedidos = db.relationship("Pedido", backref="comanda", lazy="select")
+
+
 class Pedido(db.Model):
     """Pedido compartilhado entre site, cozinha, balcão e entregador."""
 
@@ -94,10 +121,18 @@ class Pedido(db.Model):
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
+    # Vincula o pedido a uma comanda específica da mesa (permite múltiplas
+    # comandas por mesa, pagas separadamente).
+    comanda_id = db.Column(db.String(64), db.ForeignKey("comandas.id"), nullable=True, index=True)
+    # Funcionário "responsável" pelo pedido para fins de repasse de
+    # gorjeta/taxa de serviço no relatório gerencial: o garçom que lançou
+    # o pedido na mesa, ou o entregador que saiu com ele para entrega.
+    funcionario_id = db.Column(db.Integer, db.ForeignKey("funcionarios.id"), nullable=True, index=True)
 
 
 CLASSE_POR_PROFISSAO = {
     "cozinheiro": Cozinheiro,
     "garcom": Garcom,
     "entregador": Entregador,
+    "gerente": Gerente,
 }

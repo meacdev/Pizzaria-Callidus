@@ -1,4 +1,4 @@
-export type Profissao = 'cozinheiro' | 'garcom' | 'entregador';
+export type Profissao = 'cozinheiro' | 'garcom' | 'entregador' | 'gerente';
 
 /**
  * Espelha (no front-end) a classe Funcionario e as suas 3 subclasses do
@@ -47,10 +47,12 @@ export const PROFISSAO_LABEL: Record<Profissao, string> = {
     cozinheiro: 'Cozinheiro(a)',
     garcom: 'Garçom / Garçonete',
     entregador: 'Entregador(a)',
+    gerente: 'Gerente',
 };
 
 export const PROFISSAO_ROTA: Record<Profissao, string> = {
     cozinheiro: '/admin/cozinha',
     garcom: '/admin/balcao',
     entregador: '/admin/entrega',
+    gerente: '/admin/gerente',
 };

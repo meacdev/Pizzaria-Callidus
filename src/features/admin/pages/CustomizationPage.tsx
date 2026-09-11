@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { PainelLayout } from '../../funcionarios/components/PainelLayout';
 import { useCustomization } from '../../../context/CustomizationContext';
 import type { Customization } from '../types/customization';
 import { SecaoFormulario } from '../components/SecaoFormulario';
@@ -29,9 +30,8 @@ export function CustomizationPage() {
     };
 
     return (
+        <PainelLayout icone="🎨" titulo="Customização da Loja" tema="escuro" rotaSair="/custom">
         <div className={styles.container}>
-            <h1 style={{ marginTop: 0 }}>Customização da Loja</h1>
-
             <form onSubmit={handleSubmit(onSubmit)}>
                 <SecaoFormulario titulo="Identidade">
                     <CampoImagem
@@ -120,5 +120,6 @@ export function CustomizationPage() {
                 <CardNavegacao icone="📦" titulo="Gestão de Pedidos" descricao="Acompanhe pedidos em tempo real, status e histórico de vendas." rota="/admin/pedidos" />
             </div>
         </div>
+        </PainelLayout>
     );
 }

@@ -78,15 +78,25 @@ interface PainelLayoutProps {
     titulo: string;
     children: React.ReactNode;
     tema?: 'claro' | 'escuro';
+    /** Para onde "Sair" deve mandar o funcionário — por padrão /admin
+     * (login dos cargos cozinheiro/garçom/entregador/gerente), mas a
+     * customização da loja usa o login em /custom. */
+    rotaSair?: string;
 }
 
-export function PainelLayout({ icone, titulo, children, tema = 'claro' }: Readonly<PainelLayoutProps>) {
+export function PainelLayout({
+    icone,
+    titulo,
+    children,
+    tema = 'claro',
+    rotaSair = '/admin',
+}: Readonly<PainelLayoutProps>) {
     const { funcionario, sair } = useFuncionarioAuth();
     const navigate = useNavigate();
 
     const sairDaConta = () => {
         sair();
-        navigate('/admin');
+        navigate(rotaSair);
     };
 
     const escuro = tema === 'escuro';
