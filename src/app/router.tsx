@@ -22,6 +22,7 @@ import { CustomLoginPage } from '../features/admin/pages/CustomLoginPage';
 import { CustomizationPage } from '../features/admin/pages/CustomizationPage';
 import { PizzaAdminPage } from '../features/admin/pages/PizzaAdminPage';
 import { PedidosAdminPage } from '../features/admin/pages/PedidosAdminPage';
+import { GerentePage } from '../features/admin/pages/GerentePage';
 import { ProtectedRoute } from '../features/admin/guards/ProtectedRoute';
 
 // Funcionários (cozinheiro / garçom / entregador)
@@ -104,6 +105,16 @@ export const router = createBrowserRouter(
           element: (
             <RoleRoute cargo="entregador">
               <EntregadorPage />
+            </RoleRoute>
+          ),
+        },
+        {
+          // Painel gerencial: relatórios de vendas em PDF com filtro por
+          // dia/semana/mês/ano.
+          path: 'gerente',
+          element: (
+            <RoleRoute cargo="gerente">
+              <GerentePage />
             </RoleRoute>
           ),
         },

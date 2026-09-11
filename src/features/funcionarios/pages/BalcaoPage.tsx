@@ -7,16 +7,25 @@ import { EditarCadastroDialog } from '../components/EditarCadastroDialog';
 import { NovoPedidoMesaDialog } from '../components/NovoPedidoMesaDialog';
 import { listarPedidos, atualizarStatusPedidoApi, type PedidoApi } from '../../pizzaria/api/pedido.service';
 import { enviarPedidoLocal, pagamentoLocalSimulado } from '../../pizzaria/utils/pedidoLocal.utils';
+import { abrirComanda, listarComandas, pagarComanda, finalizarMesa } from '../../pizzaria/api/comanda.service';
+import type { ComandaApi } from '../../pizzaria/types/comanda';
 import { NUMEROS_DAS_MESAS } from '../../pizzaria/constants/mesas';
 import type { ItemSelecionado } from '../../pizzaria/hooks/useSeletorItens';
 import type { GorjetaPedidoPayload } from '../../pizzaria/types/pedidoPayload';
 
 interface RascunhoComanda {
     readonly id: string;
+    readonly comandaId: string;
     readonly itens: readonly ItemSelecionado[];
     readonly gorjeta: GorjetaPedidoPayload | null;
     readonly criadoEm: string;
 }
+
+const FORMAS_PAGAMENTO_COMANDA: readonly { valor: string; rotulo: string }[] = [
+    { valor: 'dinheiro', rotulo: 'Dinheiro' },
+    { valor: 'cartao', rotulo: 'Cartão' },
+    { valor: 'pix', rotulo: 'Pix' },
+];
 
 type StatusMesa = 'vazia' | 'aberta' | 'pronta';
 
@@ -280,6 +289,99 @@ const BotaoComandaSecundario = styled(BotaoComanda)`
     &:hover { background: rgba(0,0,0,0.06); }
 `;
 
+const BlocoComanda = styled.div<{ $paga: boolean }>`
+    background: ${({ $paga }) => ($paga ? '#eef3ea' : '#fdf6e9')};
+    color: #2b1c12;
+    border-radius: 10px;
+    padding: 0.75rem 0.8rem;
+    margin-bottom: 0.7rem;
+    border: 1px solid ${({ $paga }) => ($paga ? '#9fc79f' : '#e3d6bd')};
+
+    &:last-child { margin-bottom: 0; }
+`;
+
+const CabecalhoComanda = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 800;
+    font-size: 0.78rem;
+    margin-bottom: 0.5rem;
+`;
+
+const SeloComanda = styled.span<{ $status: 'aberta' | 'paga' }>`
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.66rem;
+    font-weight: 800;
+    background: ${({ $status }) => ($status === 'paga' ? '#2a9d4f' : '#c2780f')};
+    color: #fff;
+`;
+
+const SubPedido = styled.div`
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    padding: 0.45rem 0;
+    border-top: 1px dashed #d8c8a8;
+
+    &:first-of-type { border-top: none; }
+`;
+
+const LinhaFormaPagamento = styled.div`
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+`;
+
+const BotaoForma = styled.button`
+    flex: 1;
+    min-width: 70px;
+    border: 1px solid #b8a88f;
+    border-radius: 8px;
+    padding: 0.4rem;
+    font-weight: 800;
+    font-size: 0.72rem;
+    cursor: pointer;
+    background: #fff;
+    color: #2b1c12;
+
+    &:hover:not(:disabled) { background: #2a9d4f; color: #fff; border-color: #2a9d4f; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+`;
+
+const BotaoAbrirComanda = styled.button`
+    width: 100%;
+    margin-bottom: 0.7rem;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-weight: 800;
+    font-size: 0.74rem;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+
+    &:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+`;
+
+const BotaoFinalizarMesa = styled.button`
+    width: 100%;
+    margin-top: 0.7rem;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem;
+    font-weight: 800;
+    font-size: 0.76rem;
+    cursor: pointer;
+    background: #2a9d4f;
+    color: #fff;
+
+    &:hover:not(:disabled) { background: #34bb5f; }
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
+`;
+
 const VazioPopover = styled.p`
     margin: 0;
     color: #d7c9c4;
@@ -384,11 +486,15 @@ export function BalcaoPage() {
     const { funcionario, sair } = useFuncionarioAuth();
     const navigate = useNavigate();
     const [pedidos, setPedidos] = useState<PedidoApi[]>([]);
+    const [comandas, setComandas] = useState<ComandaApi[]>([]);
     const [erro, setErro] = useState('');
     const [editandoCadastro, setEditandoCadastro] = useState(false);
-    const [mesaParaNovoPedido, setMesaParaNovoPedido] = useState<number | null>(null);
-    const [rascunhos, setRascunhos] = useState<Record<number, RascunhoComanda[]>>({});
+    const [pedidoParaComanda, setPedidoParaComanda] = useState<{ mesa: number; comandaId: string } | null>(null);
+    const [rascunhos, setRascunhos] = useState<Record<string, RascunhoComanda[]>>({});
     const [enviando, setEnviando] = useState<string | null>(null);
+    const [abrindoComanda, setAbrindoComanda] = useState<number | null>(null);
+    const [comandaPagando, setComandaPagando] = useState<string | null>(null);
+    const [finalizandoMesa, setFinalizandoMesa] = useState<number | null>(null);
     const [mesaComComandaAberta, setMesaComComandaAberta] = useState<number | null>(null);
     const fechamentoComandaRef = useRef<number | null>(null);
 
@@ -423,9 +529,22 @@ export function BalcaoPage() {
         }
     }
 
+    async function carregarComandas() {
+        try {
+            setComandas(await listarComandas());
+            setErro('');
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : 'Não foi possível carregar as comandas das mesas.');
+        }
+    }
+
     useEffect(() => {
         void carregarPedidos();
-        const intervalo = window.setInterval(() => void carregarPedidos(), 5000);
+        void carregarComandas();
+        const intervalo = window.setInterval(() => {
+            void carregarPedidos();
+            void carregarComandas();
+        }, 5000);
         return () => window.clearInterval(intervalo);
     }, []);
 
@@ -444,44 +563,103 @@ export function BalcaoPage() {
         [pedidos],
     );
 
+    function comandasDaMesa(mesa: number): ComandaApi[] {
+        return comandas.filter((c) => c.mesa === mesa);
+    }
+
+    function rascunhosDaComanda(comandaId: string): RascunhoComanda[] {
+        return rascunhos[comandaId] ?? [];
+    }
+
     function statusDaMesa(mesa: number): StatusMesa {
         const pedidosDaMesa = pedidosLocaisAtivos.filter((p) => p.mesa === mesa);
         if (pedidosDaMesa.some((p) => p.status === 'pronto')) return 'pronta';
-        if ((rascunhos[mesa]?.length ?? 0) > 0 || pedidosDaMesa.length > 0) return 'aberta';
+        const temComanda = comandasDaMesa(mesa).length > 0;
+        const temRascunho = comandasDaMesa(mesa).some((c) => rascunhosDaComanda(c.id).length > 0);
+        if (temComanda || temRascunho || pedidosDaMesa.length > 0) return 'aberta';
         return 'vazia';
     }
 
     function contadorDaMesa(mesa: number): number {
-        return (rascunhos[mesa]?.length ?? 0) + pedidosLocaisAtivos.filter((p) => p.mesa === mesa).length;
+        return comandasDaMesa(mesa).length;
     }
 
-    function adicionarRascunho(mesa: number, itens: readonly ItemSelecionado[], gorjeta: GorjetaPedidoPayload | null) {
-        const novoRascunho: RascunhoComanda = { id: crypto.randomUUID(), itens, gorjeta, criadoEm: new Date().toISOString() };
-        setRascunhos((atuais) => ({ ...atuais, [mesa]: [...(atuais[mesa] ?? []), novoRascunho] }));
-        setMesaParaNovoPedido(null);
+    async function abrirComandaDaMesaHandler(mesa: number) {
+        setAbrindoComanda(mesa);
+        try {
+            const nova = await abrirComanda(mesa);
+            setComandas((atuais) => [...atuais, nova]);
+            setErro('');
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : 'Não foi possível abrir uma nova comanda.');
+        } finally {
+            setAbrindoComanda(null);
+        }
     }
 
-    function descartarRascunho(mesa: number, rascunhoId: string) {
-        setRascunhos((atuais) => ({ ...atuais, [mesa]: (atuais[mesa] ?? []).filter((r) => r.id !== rascunhoId) }));
+    function adicionarRascunho(comandaId: string, itens: readonly ItemSelecionado[], gorjeta: GorjetaPedidoPayload | null) {
+        const novoRascunho: RascunhoComanda = {
+            id: crypto.randomUUID(),
+            comandaId,
+            itens,
+            gorjeta,
+            criadoEm: new Date().toISOString(),
+        };
+        setRascunhos((atuais) => ({ ...atuais, [comandaId]: [...(atuais[comandaId] ?? []), novoRascunho] }));
+        setPedidoParaComanda(null);
     }
 
-    async function enviarRascunhoParaCozinha(mesa: number, rascunho: RascunhoComanda) {
+    function descartarRascunho(comandaId: string, rascunhoId: string) {
+        setRascunhos((atuais) => ({ ...atuais, [comandaId]: (atuais[comandaId] ?? []).filter((r) => r.id !== rascunhoId) }));
+    }
+
+    async function enviarRascunhoParaCozinha(mesa: number, comandaId: string, rascunho: RascunhoComanda) {
         setEnviando(rascunho.id);
         try {
             await enviarPedidoLocal({
                 canal: 'garcom',
                 mesa,
+                comandaId,
+                funcionarioId: funcionario?.id ?? null,
                 cliente: { nome: `Mesa ${mesa}` },
                 itens: rascunho.itens,
                 gorjeta: rascunho.gorjeta,
                 pagamento: pagamentoLocalSimulado('dinheiro', `Comanda lançada pelo garçom — mesa ${mesa}`),
             });
-            descartarRascunho(mesa, rascunho.id);
+            descartarRascunho(comandaId, rascunho.id);
             await carregarPedidos();
+            await carregarComandas();
         } catch (e) {
             setErro(e instanceof Error ? e.message : 'Não foi possível enviar o pedido para a cozinha.');
         } finally {
             setEnviando(null);
+        }
+    }
+
+    async function pagarComandaHandler(comandaId: string, formaPagamento: string) {
+        setEnviando(comandaId);
+        try {
+            const atualizada = await pagarComanda(comandaId, formaPagamento);
+            setComandas((atuais) => atuais.map((c) => (c.id === comandaId ? atualizada : c)));
+            setComandaPagando(null);
+            setErro('');
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : 'Não foi possível registrar o pagamento da comanda.');
+        } finally {
+            setEnviando(null);
+        }
+    }
+
+    async function finalizarMesaHandler(mesa: number) {
+        setFinalizandoMesa(mesa);
+        try {
+            await finalizarMesa(mesa);
+            await carregarComandas();
+            setErro('');
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : 'Não foi possível finalizar a mesa — verifique se todas as comandas estão pagas.');
+        } finally {
+            setFinalizandoMesa(null);
         }
     }
 
@@ -500,7 +678,7 @@ export function BalcaoPage() {
     async function concluirEntrega(pedido: PedidoApi) {
         setEnviando(pedido.pedidoId);
         try {
-            await atualizarStatusPedidoApi(pedido.pedidoId, 'entregue');
+            await atualizarStatusPedidoApi(pedido.pedidoId, 'entregue', funcionario?.id ?? null);
             await carregarPedidos();
         } catch (e) {
             setErro(e instanceof Error ? e.message : 'Não foi possível concluir a entrega.');
@@ -550,16 +728,17 @@ export function BalcaoPage() {
                         {NUMEROS_DAS_MESAS.map((mesa) => {
                             const status = statusDaMesa(mesa);
                             const contador = contadorDaMesa(mesa);
-                            const rascunhosDaMesa = rascunhos[mesa] ?? [];
-                            const pedidosDaMesa = pedidosLocaisAtivos.filter((p) => p.mesa === mesa);
-                            const temAlgo = rascunhosDaMesa.length > 0 || pedidosDaMesa.length > 0;
+                            const pedidosTotemDaMesa = pedidosLocaisAtivos.filter((p) => p.mesa === mesa && p.canal === 'totem');
+                            const comandasDessaMesa = comandasDaMesa(mesa);
+                            const temAlgo = pedidosTotemDaMesa.length > 0 || comandasDessaMesa.length > 0;
+                            const todasPagas = comandasDessaMesa.length > 0 && comandasDessaMesa.every((c) => c.status === 'paga');
 
                             return (
                                 <MesaCard
                                     key={mesa}
                                     data-mesa={mesa}
                                     $status={status}
-                                    onClick={() => setMesaParaNovoPedido(mesa)}
+                                    onClick={() => abrirComandaDaMesa(mesa)}
                                     onMouseEnter={() => abrirComandaDaMesa(mesa)}
                                     onMouseLeave={agendarFechamentoDaComanda}
                                 >
@@ -575,35 +754,20 @@ export function BalcaoPage() {
                                         onMouseEnter={() => abrirComandaDaMesa(mesa)}
                                         onMouseLeave={agendarFechamentoDaComanda}
                                     >
-                                        {!temAlgo && <VazioPopover>Nenhum pedido nessa mesa ainda.</VazioPopover>}
+                                        <BotaoAbrirComanda
+                                            type="button"
+                                            disabled={abrindoComanda === mesa}
+                                            onClick={(e) => { e.stopPropagation(); void abrirComandaDaMesaHandler(mesa); }}
+                                        >
+                                            {abrindoComanda === mesa ? 'Abrindo...' : '+ Abrir nova comanda'}
+                                        </BotaoAbrirComanda>
 
-                                        {rascunhosDaMesa.map((rascunho) => (
-                                            <Comanda key={rascunho.id}>
-                                                <ComandaTopo><span>COMANDA</span><span>Aguardando envio</span></ComandaTopo>
-                                                <ComandaItens>
-                                                    {rascunho.itens.map((item) => (
-                                                        <li key={item.chave}>{item.quantidade}x {item.nome}</li>
-                                                    ))}
-                                                </ComandaItens>
-                                                {rascunho.gorjeta && <p style={{ margin: '0 0 0.3rem' }}>Gorjeta: {rascunho.gorjeta.percentual}%</p>}
-                                                <ComandaTotal><span>Total</span><span>{formatarPreco(totalRascunho(rascunho))}</span></ComandaTotal>
-                                                <BotaoComanda
-                                                    type="button"
-                                                    disabled={enviando === rascunho.id}
-                                                    onClick={(e) => { e.stopPropagation(); void enviarRascunhoParaCozinha(mesa, rascunho); }}
-                                                >
-                                                    {enviando === rascunho.id ? 'Enviando...' : 'Enviar para a cozinha'}
-                                                </BotaoComanda>
-                                                <BotaoComandaSecundario type="button" onClick={(e) => { e.stopPropagation(); descartarRascunho(mesa, rascunho.id); }}>
-                                                    Remover
-                                                </BotaoComandaSecundario>
-                                            </Comanda>
-                                        ))}
+                                        {!temAlgo && <VazioPopover>Nenhuma comanda ou pedido nessa mesa ainda.</VazioPopover>}
 
-                                        {pedidosDaMesa.map((pedido) => (
+                                        {pedidosTotemDaMesa.map((pedido) => (
                                             <Comanda key={pedido.pedidoId}>
                                                 <ComandaTopo>
-                                                    <span>#{idCurto(pedido.pedidoId)}</span>
+                                                    <span>#{idCurto(pedido.pedidoId)} (totem)</span>
                                                     <span>{pedido.status === 'pronto' ? 'Pronto!' : pedido.status === 'em_preparo' ? 'Em preparo' : 'Na fila'}</span>
                                                 </ComandaTopo>
                                                 <ComandaItens>
@@ -623,6 +787,111 @@ export function BalcaoPage() {
                                                 )}
                                             </Comanda>
                                         ))}
+
+                                        {comandasDessaMesa.map((comanda, indice) => {
+                                            const rascunhosDaComandaAtual = rascunhosDaComanda(comanda.id);
+                                            const paga = comanda.status === 'paga';
+                                            const totalComanda = comanda.total + rascunhosDaComandaAtual.reduce((soma, r) => soma + totalRascunho(r), 0);
+
+                                            return (
+                                                <BlocoComanda key={comanda.id} $paga={paga}>
+                                                    <CabecalhoComanda>
+                                                        <span>Comanda {indice + 1} — #{idCurto(comanda.id)}</span>
+                                                        <SeloComanda $status={paga ? 'paga' : 'aberta'}>{paga ? 'Paga' : 'Aberta'}</SeloComanda>
+                                                    </CabecalhoComanda>
+
+                                                    {comanda.pedidos.length === 0 && rascunhosDaComandaAtual.length === 0 && (
+                                                        <p style={{ margin: '0 0 0.4rem', fontSize: '0.74rem' }}>Nenhum item lançado ainda.</p>
+                                                    )}
+
+                                                    {comanda.pedidos.map((pedido) => (
+                                                        <SubPedido key={pedido.pedidoId}>
+                                                            <ComandaItens>
+                                                                {pedido.itens.map((item) => (
+                                                                    <li key={item.id}>{item.quantidade}x {item.nome}</li>
+                                                                ))}
+                                                            </ComandaItens>
+                                                        </SubPedido>
+                                                    ))}
+
+                                                    {rascunhosDaComandaAtual.map((rascunho) => (
+                                                        <SubPedido key={rascunho.id}>
+                                                            <ComandaItens>
+                                                                {rascunho.itens.map((item) => (
+                                                                    <li key={item.chave}>{item.quantidade}x {item.nome} <em>(aguardando envio)</em></li>
+                                                                ))}
+                                                            </ComandaItens>
+                                                            {rascunho.gorjeta && <p style={{ margin: '0 0 0.3rem' }}>Gorjeta: {rascunho.gorjeta.percentual}%</p>}
+                                                            <BotaoComanda
+                                                                type="button"
+                                                                disabled={enviando === rascunho.id}
+                                                                onClick={(e) => { e.stopPropagation(); void enviarRascunhoParaCozinha(mesa, comanda.id, rascunho); }}
+                                                            >
+                                                                {enviando === rascunho.id ? 'Enviando...' : 'Enviar para a cozinha'}
+                                                            </BotaoComanda>
+                                                            <BotaoComandaSecundario
+                                                                type="button"
+                                                                onClick={(e) => { e.stopPropagation(); descartarRascunho(comanda.id, rascunho.id); }}
+                                                            >
+                                                                Remover
+                                                            </BotaoComandaSecundario>
+                                                        </SubPedido>
+                                                    ))}
+
+                                                    <ComandaTotal><span>Total</span><span>{formatarPreco(totalComanda)}</span></ComandaTotal>
+
+                                                    {!paga && (
+                                                        <>
+                                                            <BotaoComanda
+                                                                type="button"
+                                                                onClick={(e) => { e.stopPropagation(); setPedidoParaComanda({ mesa, comandaId: comanda.id }); }}
+                                                            >
+                                                                + Adicionar itens
+                                                            </BotaoComanda>
+
+                                                            {comandaPagando === comanda.id ? (
+                                                                <LinhaFormaPagamento onClick={(e) => e.stopPropagation()}>
+                                                                    {FORMAS_PAGAMENTO_COMANDA.map((forma) => (
+                                                                        <BotaoForma
+                                                                            key={forma.valor}
+                                                                            type="button"
+                                                                            disabled={enviando === comanda.id}
+                                                                            onClick={() => void pagarComandaHandler(comanda.id, forma.valor)}
+                                                                        >
+                                                                            {forma.rotulo}
+                                                                        </BotaoForma>
+                                                                    ))}
+                                                                </LinhaFormaPagamento>
+                                                            ) : (
+                                                                <BotaoComandaSecundario
+                                                                    type="button"
+                                                                    onClick={(e) => { e.stopPropagation(); setComandaPagando(comanda.id); }}
+                                                                >
+                                                                    Pagar comanda
+                                                                </BotaoComandaSecundario>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                    {paga && comanda.formaPagamento && (
+                                                        <p style={{ margin: '0.4rem 0 0', fontSize: '0.72rem' }}>
+                                                            Pago em {FORMAS_PAGAMENTO_COMANDA.find((f) => f.valor === comanda.formaPagamento)?.rotulo ?? comanda.formaPagamento}
+                                                        </p>
+                                                    )}
+                                                </BlocoComanda>
+                                            );
+                                        })}
+
+                                        {comandasDessaMesa.length > 0 && (
+                                            <BotaoFinalizarMesa
+                                                type="button"
+                                                disabled={!todasPagas || finalizandoMesa === mesa}
+                                                onClick={(e) => { e.stopPropagation(); void finalizarMesaHandler(mesa); }}
+                                                title={todasPagas ? undefined : 'Todas as comandas precisam estar pagas para finalizar a mesa'}
+                                            >
+                                                {finalizandoMesa === mesa ? 'Finalizando...' : 'Finalizar mesa'}
+                                            </BotaoFinalizarMesa>
+                                        )}
                                     </ComandaPopover>
                                 </MesaCard>
                             );
@@ -705,13 +974,13 @@ export function BalcaoPage() {
 
             {editandoCadastro && <EditarCadastroDialog onFechar={() => setEditandoCadastro(false)} />}
 
-            {mesaParaNovoPedido !== null && (() => {
-                const mesaDoDialogo = mesaParaNovoPedido;
+            {pedidoParaComanda !== null && (() => {
+                const { mesa: mesaDoDialogo, comandaId } = pedidoParaComanda;
                 return (
                     <NovoPedidoMesaDialog
                         mesa={mesaDoDialogo}
-                        onFechar={() => setMesaParaNovoPedido(null)}
-                        onConfirmar={(itens, gorjeta) => adicionarRascunho(mesaDoDialogo, itens, gorjeta)}
+                        onFechar={() => setPedidoParaComanda(null)}
+                        onConfirmar={(itens, gorjeta) => adicionarRascunho(comandaId, itens, gorjeta)}
                     />
                 );
             })()}
