@@ -6,6 +6,7 @@ const NOTA_MAXIMA = 5;
 
 interface AvaliacaoState {
   readonly avaliacoes: readonly number[];
+  readonly jaAvaliou: boolean;
   readonly avaliar: (nota: number) => void;
 }
 
@@ -13,15 +14,23 @@ export const useAvaliacaoStore = create<AvaliacaoState>()(
   persist(
     (set) => ({
       avaliacoes: [],
+      jaAvaliou: false,
       avaliar: (nota) => {
         const notaNormalizada = Math.max(
           NOTA_MINIMA,
           Math.min(NOTA_MAXIMA, Math.round(nota)),
         );
 
-        set((state) => ({
-          avaliacoes: [...state.avaliacoes, notaNormalizada],
-        }));
+        set((state) => {
+          if (state.jaAvaliou) {
+            return state;
+          }
+
+          return {
+            avaliacoes: [...state.avaliacoes, notaNormalizada],
+            jaAvaliou: true,
+          };
+        });
       },
     }),
     {

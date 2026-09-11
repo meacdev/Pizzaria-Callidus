@@ -14,6 +14,7 @@ function formatarMedia(media: number): string {
 export function SistemaAvaliacao() {
   const avaliacoes = useAvaliacaoStore((state) => state.avaliacoes);
   const avaliar = useAvaliacaoStore((state) => state.avaliar);
+  const jaAvaliou = useAvaliacaoStore((state) => state.jaAvaliou);
   const [notaSelecionada, setNotaSelecionada] = useState(0);
   const [mensagem, setMensagem] = useState('');
 
@@ -25,13 +26,17 @@ export function SistemaAvaliacao() {
   const quantidadeAvaliacoes = avaliacoes.length;
 
   function enviarAvaliacao() {
+    if (jaAvaliou) {
+      return;
+    }
+
     if (!notaSelecionada) {
       setMensagem('Selecione uma nota de 1 a 5 estrelas.');
       return;
     }
 
     avaliar(notaSelecionada);
-    setMensagem(`Obrigado pela avaliação de ${notaSelecionada} estrela${notaSelecionada > 1 ? 's' : ''}!`);
+    setMensagem('Obrigado pela sua avaliação!');
     setNotaSelecionada(0);
   }
 
@@ -61,36 +66,44 @@ export function SistemaAvaliacao() {
         </div>
       </div>
 
-      <div className={styles.formulario}>
-        <div className={styles.seletor} role="radiogroup" aria-label="Escolha sua nota">
-          {ESTRELAS.map((estrela) => (
-            <button
-              key={estrela}
-              type="button"
-              className={estrela <= notaSelecionada ? styles.estrelaBotaoAtiva : styles.estrelaBotao}
-              onClick={() => setNotaSelecionada(estrela)}
-              role="radio"
-              aria-checked={notaSelecionada === estrela}
-              aria-label={`${estrela} estrela${estrela > 1 ? 's' : ''}`}
-            >
-              ★
-            </button>
-          ))}
-        </div>
-
-        <button
-          type="button"
-          className="botao-primario"
-          onClick={enviarAvaliacao}
-        >
-          Enviar avaliação
-        </button>
-      </div>
-
-      {mensagem && (
+      {jaAvaliou ? (
         <p className={styles.mensagem} role="status" aria-live="polite">
-          {mensagem}
+          Obrigado pela sua avaliação!
         </p>
+      ) : (
+        <>
+          <div className={styles.formulario}>
+            <div className={styles.seletor} role="radiogroup" aria-label="Escolha sua nota">
+              {ESTRELAS.map((estrela) => (
+                <button
+                  key={estrela}
+                  type="button"
+                  className={estrela <= notaSelecionada ? styles.estrelaBotaoAtiva : styles.estrelaBotao}
+                  onClick={() => setNotaSelecionada(estrela)}
+                  role="radio"
+                  aria-checked={notaSelecionada === estrela}
+                  aria-label={`${estrela} estrela${estrela > 1 ? 's' : ''}`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="botao-primario"
+              onClick={enviarAvaliacao}
+            >
+              Enviar avaliação
+            </button>
+          </div>
+
+          {mensagem && (
+            <p className={styles.mensagem} role="status" aria-live="polite">
+              {mensagem}
+            </p>
+          )}
+        </>
       )}
     </section>
   );
