@@ -1,3 +1,15 @@
+/**
+ * @file EntregadorPage.tsx
+ * @brief Painel do entregador: pedidos prontos disponíveis e a rota de entrega em andamento.
+ *
+ * @details
+ * Busca os pedidos periodicamente (polling a cada 5s) e filtra os que
+ * estão prontos e vieram do site (pedidos de origem 'local', como mesa ou
+ * totem, são entregues no próprio balcão e nunca aparecem aqui). Ao
+ * aceitar um pedido, o vínculo entregador/pedido é registrado via @see
+ * pedido.service para o rastreamento usado no painel gerencial (@see
+ * GerentePage).
+ */
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { listarPedidos, atualizarStatusPedidoApi, type PedidoApi } from '../../pizzaria/api/pedido.service';
@@ -5,23 +17,28 @@ import { useEntregaStore } from '../../../store/entrega.store';
 import { useFuncionarioAuth } from '../../funcionarios/context/FuncionarioAuthContext';
 import styles from './EntregadorPage.module.css';
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
 
+/** @brief Monta o endereço de entrega de um pedido em uma única linha. */
 function endereco(pedido: PedidoApi) {
   const e = pedido.endereco;
   return `${e.rua}, ${e.numero}${e.complemento ? ` - ${e.complemento}` : ''} • ${e.bairro} • ${e.cidade}`;
 }
 
+/** @brief Lista os itens de um pedido como texto ("2x Calabresa, 1x Coca-Cola"). */
 function itens(pedido: PedidoApi) {
   return pedido.itens.map((item) => `${item.quantidade}x ${item.nome}`).join(', ');
 }
 
+/** @brief Reduz um id de pedido (UUID) às 8 primeiras posições, em maiúsculas, para exibição. */
 function idCurto(id: string) {
   return id.slice(0, 8).toUpperCase();
 }
 
+/** @brief Página do entregador: pedidos prontos para entrega e a rota atual, com ações para aceitar, entregar e devolver pedidos. */
 export function EntregadorPage() {
   const [pedidos, setPedidos] = useState<PedidoApi[]>([]);
   const [selecionados, setSelecionados] = useState<string[]>([]);

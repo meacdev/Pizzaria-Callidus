@@ -1,3 +1,7 @@
+/**
+ * @file comanda.ts
+ * @brief Tipo de comanda de mesa (agrupamento de pedidos do salão), retornado pela API.
+ */
 import type { PedidoApi } from '../api/pedido.service';
 
 /** Uma mesa pode ter várias comandas abertas ao mesmo tempo — uma por
@@ -5,6 +9,7 @@ import type { PedidoApi } from '../api/pedido.service';
  * quando todas as comandas vinculadas a ela estiverem pagas. */
 export type StatusComanda = 'aberta' | 'paga' | 'encerrada';
 
+/** @brief Comanda de uma mesa, com os pedidos nela lançados e o total acumulado. */
 export interface ComandaApi {
     readonly id: string;
     readonly mesa: number;

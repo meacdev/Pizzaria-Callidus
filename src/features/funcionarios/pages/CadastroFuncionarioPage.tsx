@@ -1,3 +1,11 @@
+/**
+ * @file CadastroFuncionarioPage.tsx
+ * @brief Página de auto-cadastro de funcionário (rota /admin/cadastro).
+ *
+ * @details
+ * Após o cadastro, redireciona para /admin (tela de login), de onde o
+ * funcionário entra com o login/senha recém-criados.
+ */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
@@ -23,6 +31,7 @@ import {
     Title,
 } from '../components/AuthStyles';
 
+/** @brief Campos do formulário de cadastro de funcionário. */
 interface CadastroFormData {
     nome: string;
     idade: number;
@@ -33,6 +42,7 @@ interface CadastroFormData {
     confirmarSenha: string;
 }
 
+/** @brief Página de cadastro de novo funcionário. */
 export function CadastroFuncionarioPage() {
     const {
         register,

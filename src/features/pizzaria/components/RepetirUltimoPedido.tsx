@@ -1,3 +1,13 @@
+/**
+ * @file RepetirUltimoPedido.tsx
+ * @brief Bloco de "repetir último pedido", revalidando os itens contra o cardápio atual antes de adicioná-los ao carrinho.
+ *
+ * @details
+ * Usa @see repetirPedido.utils para localizar o último pedido repetível do
+ * cliente e revalidar cada item contra as pizzas/bebidas/combos disponíveis
+ * no momento (itens descontinuados são avisados ao usuário, e os demais são
+ * adicionados normalmente ao carrinho — @see carrinho.store).
+ */
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { usePedidoStore } from '../../../store/pedido.store';
@@ -8,16 +18,19 @@ import { useCombos } from '../hooks/useCombo';
 import { obterUltimoPedidoRepetivel, revalidarItensPedido } from '../utils/repetirPedido.utils';
 import type { ItemCarrinho } from '../types/itemCarrinho';
 
+/** @brief Formata um valor numérico em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
 }
 
+/** @brief Obtém o nome de exibição de um item do carrinho, qualquer que seja seu tipo (pizza, bebida ou combo). */
 function nomeExibicaoItem(item: ItemCarrinho): string {
   if (item.tipo === 'pizza') return item.pizza.nome;
   if (item.tipo === 'bebida') return item.bebida.nome;
   return item.combo.nome;
 }
 
+/** @brief Bloco que sugere repetir o último pedido do cliente, revalidando disponibilidade antes de adicioná-lo ao carrinho. */
 export function RepetirUltimoPedido() {
   const navigate = useNavigate();
   const pedidos = usePedidoStore((state) => state.pedidos);
@@ -36,6 +49,7 @@ export function RepetirUltimoPedido() {
 
   const totalItens = ultimoPedido.itensCarrinho.reduce((soma, item) => soma + item.quantidade, 0);
 
+  /** @brief Revalida os itens do último pedido e os adiciona ao carrinho, avisando sobre itens indisponíveis e navegando ao carrinho quando tudo é adicionado com sucesso. */
   function handleRepetirPedido() {
     if (!ultimoPedido) return;
 

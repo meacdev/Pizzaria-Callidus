@@ -1,3 +1,7 @@
+/**
+ * @file ComboCard.tsx
+ * @brief Card de combo exibido nas listagens do cardápio (@see ListaCombos).
+ */
 import { Link } from 'react-router';
 import type { Combo } from '../types/combo';
 import { nomeCategoriaCombo } from '../utils/combo.utils';
@@ -7,6 +11,7 @@ interface ComboCardProps {
   readonly compacto?: boolean;
 }
 
+/** @brief Formata um preço (string vinda da API) em reais (BRL); mantém o valor bruto se não for numérico. */
 function formatarPreco(preco: string): string {
   const valor = Number(preco);
 
@@ -20,6 +25,13 @@ function formatarPreco(preco: string): string {
   }).format(valor);
 }
 
+/**
+ * @brief Obtém a descrição do combo a ser exibida no card, truncando-a em 130
+ * caracteres quando o modo compacto está ativo.
+ * @param combo Combo cuja descrição será exibida.
+ * @param compacto Se `true`, trunca a descrição quando ela for longa.
+ * @return Descrição completa ou truncada (com reticências).
+ */
 function obterDescricaoCard(
   combo: Combo,
   compacto: boolean,
@@ -31,6 +43,7 @@ function obterDescricaoCard(
   return `${combo.descricao.slice(0, 130)}...`;
 }
 
+/** @brief Card clicável de um combo, levando à página de detalhes do produto. */
 export function ComboCard({
   combo,
   compacto = false,

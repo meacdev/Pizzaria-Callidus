@@ -1,8 +1,11 @@
-"""
-Backend do painel administrativo da Pizzaria Callidus.
+"""!
+@file app.py
+@brief Aplicação Flask com as rotas da API da pizzaria: funcionários, clientes, reservas, comandas e pedidos.
 
-Responsável por cadastrar funcionários (cozinheiro, garçom e entregador)
-e autenticá-los, direcionando cada um para a rota correta do painel.
+@details
+Responsável por cadastrar funcionários (cozinheiro, garçom, entregador e
+gerente) e clientes, autenticá-los e expor as rotas de reservas de mesa,
+comandas, pedidos e relatórios gerenciais consumidas pelo front-end.
 
 Persistência: SQLite em server/data/pizzaria.db (pasta do próprio
 projeto). Isso é temporário: quando o projeto tiver um banco de dados
@@ -51,6 +54,13 @@ DB_PATH = os.path.join(DATA_DIR, "pizzaria.db")
 
 
 def criar_app() -> Flask:
+    """!
+    @brief Cria e configura a aplicação Flask: banco SQLite, CORS e registro das rotas.
+    @details Garante que a pasta de dados exista, cria as tabelas do banco
+    (`db.create_all()`) caso ainda não existam e registra todas as rotas
+    via registrar_rotas().
+    @return Instância de Flask pronta para rodar (usada tanto pelo `python app.py` quanto por testes).
+    """
     os.makedirs(DATA_DIR, exist_ok=True)
 
     app = Flask(__name__)
@@ -70,6 +80,13 @@ def criar_app() -> Flask:
 
 
 def pedido_para_dict(pedido: Pedido) -> dict:
+    """!
+    @brief Converte um Pedido em dicionário JSON, mesclando o payload original com os campos vindos do banco.
+    @param pedido Instância de Pedido a ser serializada.
+    @return Dicionário com os dados do payload original (itens, total etc.)
+    mais pedidoId, status, atualizadoEm, comandaId, funcionarioId,
+    clienteId e preparadoPorId atualizados a partir do banco.
+    """
     try:
         payload = json.loads(pedido.payload_json)
     except (TypeError, json.JSONDecodeError):
@@ -86,6 +103,13 @@ def pedido_para_dict(pedido: Pedido) -> dict:
 
 
 def comanda_para_dict(comanda: Comanda) -> dict:
+    """!
+    @brief Converte uma Comanda em dicionário JSON, incluindo seus pedidos e o total calculado.
+    @param comanda Instância de Comanda a ser serializada.
+    @return Dicionário com id, mesa, status, formaPagamento, abertaEm,
+    pagaEm, total (soma dos pedidos não cancelados), quantidadePedidos e a
+    lista de pedidos serializados.
+    """
     pedidos_validos = [p for p in comanda.pedidos if p.status != "cancelado"]
     total = 0.0
     for pedido in pedidos_validos:
@@ -108,8 +132,20 @@ def comanda_para_dict(comanda: Comanda) -> dict:
 
 
 def registrar_rotas(app: Flask) -> None:
+    """!
+    @brief Registra todas as rotas (endpoints) da API no app Flask.
+    @param app Instância de Flask onde as rotas serão registradas.
+    @return None.
+    """
     @app.post("/api/funcionarios")
     def cadastrar_funcionario():
+        """!
+        @brief POST /api/funcionarios — cadastra um novo funcionário (cozinheiro, garçom, entregador ou gerente).
+        @details Valida campos obrigatórios, profissão, faixas de idade e
+        tempo de experiência, e unicidade do login antes de criar o
+        registro com a subclasse correspondente (@see CLASSE_POR_PROFISSAO).
+        @return JSON do funcionário criado (201), ou um erro (400/409).
+        """
         dados = request.get_json(silent=True) or {}
 
         campos_obrigatorios = ["nome", "idade", "tempoExperiencia", "login", "senha", "profissao"]
@@ -166,6 +202,10 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.post("/api/auth/login")
     def autenticar():
+        """!
+        @brief POST /api/auth/login — autentica um funcionário e retorna a rota do seu painel.
+        @return JSON com o funcionário e a rota do painel (200), ou erro (400/401).
+        """
         dados = request.get_json(silent=True) or {}
         login = str(dados.get("login", "")).strip()
         senha = str(dados.get("senha", ""))
@@ -187,14 +227,23 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/funcionarios")
     def listar_funcionarios():
+        """!
+        @brief GET /api/funcionarios — lista todos os funcionários cadastrados, ordenados por nome.
+        @return JSON com a lista de funcionários (200).
+        """
         funcionarios = Funcionario.query.order_by(Funcionario.nome).all()
         return jsonify([funcionario.to_dict() for funcionario in funcionarios])
 
     @app.put("/api/funcionarios/<int:funcionario_id>")
     def atualizar_funcionario(funcionario_id: int):
-        """Edição do próprio cadastro (nome, idade, tempo de experiência,
-        login e, opcionalmente, senha). A profissão não muda por aqui — ela
-        é o que define o cargo/rota do funcionário."""
+        """!
+        @brief PUT /api/funcionarios/<funcionario_id> — edita o próprio cadastro do funcionário.
+        @details Permite alterar nome, idade, tempo de experiência, login e,
+        opcionalmente, senha. A profissão não muda por aqui — ela é o que
+        define o cargo/rota do funcionário.
+        @param funcionario_id Id do funcionário a ser atualizado.
+        @return JSON do funcionário atualizado (200), ou erro (400/404/409).
+        """
         funcionario = Funcionario.query.get(funcionario_id)
         if funcionario is None:
             return jsonify({"erro": "Funcionário não encontrado."}), 404
@@ -250,6 +299,12 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.post("/api/clientes")
     def cadastrar_cliente():
+        """!
+        @brief POST /api/clientes — cadastra um novo cliente da loja.
+        @details Valida campos obrigatórios, formato de e-mail e unicidade
+        de e-mail e login antes de criar o registro.
+        @return JSON do cliente criado (201), ou erro (400/409).
+        """
         dados = request.get_json(silent=True) or {}
 
         campos_obrigatorios = ["nome", "email", "telefone", "login", "senha"]
@@ -296,6 +351,10 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.post("/api/auth/login-cliente")
     def autenticar_cliente():
+        """!
+        @brief POST /api/auth/login-cliente — autentica um cliente, aceitando login ou e-mail.
+        @return JSON com o cliente autenticado (200), ou erro (400/401).
+        """
         dados = request.get_json(silent=True) or {}
         login = str(dados.get("login", "")).strip()
         senha = str(dados.get("senha", ""))
@@ -314,6 +373,13 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.put("/api/clientes/<int:cliente_id>")
     def atualizar_cliente(cliente_id: int):
+        """!
+        @brief PUT /api/clientes/<cliente_id> — edita o cadastro do cliente logado.
+        @details Permite alterar nome, telefone, cpf, e-mail (validando
+        formato e unicidade) e, opcionalmente, senha.
+        @param cliente_id Id do cliente a ser atualizado.
+        @return JSON do cliente atualizado (200), ou erro (400/404/409).
+        """
         cliente = Cliente.query.get(cliente_id)
         if cliente is None:
             return jsonify({"erro": "Cliente não encontrado."}), 404
@@ -353,7 +419,11 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/clientes/<int:cliente_id>/pedidos")
     def listar_pedidos_cliente(cliente_id: int):
-        """Histórico de compras do cliente logado (seção "Compras")."""
+        """!
+        @brief GET /api/clientes/<cliente_id>/pedidos — histórico de compras do cliente logado (seção "Compras").
+        @param cliente_id Id do cliente cujos pedidos serão listados.
+        @return JSON com a lista de pedidos do cliente, mais recentes primeiro (200), ou erro (404).
+        """
         cliente = Cliente.query.get(cliente_id)
         if cliente is None:
             return jsonify({"erro": "Cliente não encontrado."}), 404
@@ -371,6 +441,12 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.post("/api/reservas")
     def criar_reserva():
+        """!
+        @brief POST /api/reservas — cria uma nova reserva de mesa.
+        @details Valida campos obrigatórios, número da mesa, data/hora
+        (ISO 8601), quantidade de pessoas e, se informado, que o clienteId existe.
+        @return JSON da reserva criada, com status "pendente" (201), ou erro (400/404).
+        """
         dados = request.get_json(silent=True) or {}
 
         campos_obrigatorios = ["nome", "telefone", "mesa", "dataHora"]
@@ -424,8 +500,14 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/reservas")
     def listar_reservas():
-        """Lista reservas — usado pelo garçom (painel de reservas) e pelo
-        cliente (suas próprias reservas, via ?clienteId=)."""
+        """!
+        @brief GET /api/reservas — lista reservas, com filtros opcionais.
+        @details Usado pelo garçom (painel de reservas, sem filtro ou
+        filtrando por mesa/data) e pelo cliente (suas próprias reservas,
+        via ?clienteId=). Aceita os parâmetros de query clienteId, mesa e
+        data (AAAA-MM-DD).
+        @return JSON com a lista de reservas ordenada por data/hora (200), ou erro (400) se algum filtro for inválido.
+        """
         consulta = Reserva.query.order_by(Reserva.data_hora.asc())
 
         cliente_id = request.args.get("clienteId")
@@ -454,6 +536,11 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.patch("/api/reservas/<string:reserva_id>/status")
     def atualizar_status_reserva(reserva_id: str):
+        """!
+        @brief PATCH /api/reservas/<reserva_id>/status — atualiza o status de uma reserva.
+        @param reserva_id Id da reserva a ser atualizada.
+        @return JSON da reserva atualizada (200), ou erro (400/404).
+        """
         dados = request.get_json(silent=True) or {}
         status = str(dados.get("status", "")).strip()
 
@@ -470,6 +557,15 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.post("/api/pedidos")
     def criar_pedido():
+        """!
+        @brief POST /api/pedidos — cria um novo pedido (idempotente por pedidoId).
+        @details Se um pedido com o mesmo pedidoId já existe, retorna esse
+        pedido existente em vez de duplicar. Valida a comanda (quando
+        informada) e o cliente (quando informado), e credita pontos de
+        fidelidade ao cliente com base no total do pedido (@see
+        REAIS_POR_PONTO_FIDELIDADE).
+        @return JSON do pedido criado (201) ou já existente (200), ou erro (400/404/409).
+        """
         dados = request.get_json(silent=True) or {}
         pedido_id = str(dados.get("pedidoId", "")).strip()
 
@@ -547,6 +643,10 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/pedidos")
     def listar_pedidos():
+        """!
+        @brief GET /api/pedidos — lista pedidos, com filtro opcional por status.
+        @return JSON com a lista de pedidos ordenada por data de criação (200), ou erro (400) se o status for inválido.
+        """
         status = request.args.get("status")
         consulta = Pedido.query.order_by(Pedido.criado_em.asc())
 
@@ -559,6 +659,11 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/pedidos/<string:pedido_id>")
     def obter_pedido(pedido_id: str):
+        """!
+        @brief GET /api/pedidos/<pedido_id> — obtém um pedido pelo seu pedidoId.
+        @param pedido_id Identificador do pedido.
+        @return JSON do pedido (200), ou erro (404).
+        """
         pedido = Pedido.query.filter_by(pedido_id=pedido_id).first()
         if pedido is None:
             return jsonify({"erro": "Pedido não encontrado."}), 404
@@ -566,6 +671,11 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.patch("/api/pedidos/<string:pedido_id>/status")
     def atualizar_status_pedido(pedido_id: str):
+        """!
+        @brief PATCH /api/pedidos/<pedido_id>/status — atualiza o status de um pedido e, opcionalmente, quem é o responsável/preparador.
+        @param pedido_id Identificador do pedido a ser atualizado.
+        @return JSON do pedido atualizado (200), ou erro (400/404).
+        """
         dados = request.get_json(silent=True) or {}
         status = str(dados.get("status", "")).strip()
 
@@ -600,9 +710,12 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.post("/api/comandas")
     def abrir_comanda():
-        """Abre uma nova comanda para uma mesa. Uma mesa pode ter várias
-        comandas abertas ao mesmo tempo (uma por cliente/grupo), cada uma
-        paga separadamente."""
+        """!
+        @brief POST /api/comandas — abre uma nova comanda para uma mesa.
+        @details Uma mesa pode ter várias comandas abertas ao mesmo tempo
+        (uma por cliente/grupo), cada uma paga separadamente.
+        @return JSON da comanda criada, com status "aberta" (201), ou erro (400).
+        """
         dados = request.get_json(silent=True) or {}
         try:
             mesa = int(dados.get("mesa"))
@@ -616,6 +729,10 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/comandas")
     def listar_comandas():
+        """!
+        @brief GET /api/comandas — lista as comandas não encerradas, com filtro opcional por mesa.
+        @return JSON com a lista de comandas (200), ou erro (400) se a mesa for inválida.
+        """
         mesa = request.args.get("mesa")
         consulta = Comanda.query.filter(Comanda.status != "encerrada").order_by(Comanda.aberta_em.asc())
 
@@ -629,6 +746,11 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.patch("/api/comandas/<string:comanda_id>/pagar")
     def pagar_comanda(comanda_id: str):
+        """!
+        @brief PATCH /api/comandas/<comanda_id>/pagar — marca uma comanda como paga.
+        @param comanda_id Id da comanda a ser paga.
+        @return JSON da comanda atualizada (200), ou erro (404/409).
+        """
         comanda = Comanda.query.get(comanda_id)
         if comanda is None:
             return jsonify({"erro": "Comanda não encontrada."}), 404
@@ -646,8 +768,13 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.post("/api/mesas/<int:mesa>/finalizar")
     def finalizar_mesa(mesa: int):
-        """O caixa só pode finalizar (liberar) a mesa quando TODAS as
-        comandas vinculadas a ela já estiverem pagas."""
+        """!
+        @brief POST /api/mesas/<mesa>/finalizar — libera (encerra) uma mesa.
+        @details O caixa só pode finalizar (liberar) a mesa quando TODAS as
+        comandas vinculadas a ela já estiverem pagas.
+        @param mesa Número da mesa a ser finalizada.
+        @return JSON com a mesa e a quantidade de comandas encerradas (200), ou erro (409) se houver comanda(s) ainda não paga(s).
+        """
         comandas_da_mesa = Comanda.query.filter(
             Comanda.mesa == mesa, Comanda.status != "encerrada"
         ).all()
@@ -665,15 +792,26 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/relatorios/vendas")
     def relatorio_vendas():
-        """Relatório gerencial: pedidos entre `inicio` e `fim` (ISO 8601,
-        inclusive), com o mais vendido de pizza/bebida/combo e a proporção
-        de vendas presenciais (totem/garçom) contra vendas por entrega
-        (site). Pensado para alimentar o relatório em PDF do painel
-        gerencial."""
+        """!
+        @brief GET /api/relatorios/vendas — relatório gerencial de vendas em um período.
+        @details Considera pedidos entre `inicio` e `fim` (query params,
+        ISO 8601, inclusive), calculando o item mais vendido de
+        pizza/bebida/combo, o repasse de gorjetas por funcionário e a
+        proporção de vendas presenciais (totem/garçom) contra vendas por
+        entrega (site). Pensado para alimentar o relatório em PDF do
+        painel gerencial.
+        @return JSON com o resumo do período (200), ou erro (400) se `inicio`/`fim` forem inválidos.
+        """
         inicio_texto = request.args.get("inicio")
         fim_texto = request.args.get("fim")
 
         def parse_data(texto, nome_campo):
+            """!
+            @brief Converte um texto ISO 8601 em datetime, ou levanta ValueError(nome_campo) se inválido.
+            @param texto Texto da data/hora a converter (pode ser vazio/None).
+            @param nome_campo Nome do campo de origem, usado na mensagem de erro.
+            @return O datetime convertido, ou None se `texto` estiver vazio.
+            """
             if not texto:
                 return None
             try:
@@ -736,6 +874,11 @@ def registrar_rotas(app: Flask) -> None:
                 quantidade_por_item[tipo][nome] = quantidade_por_item[tipo].get(nome, 0) + quantidade
 
         def mais_vendido(tipo):
+            """!
+            @brief Encontra o item mais vendido de um tipo (pizza, bebida ou combo) no período.
+            @param tipo Chave do tipo de item ("pizza", "bebida" ou "combo").
+            @return Dicionário com nome e quantidade do item mais vendido, ou None se nada foi vendido nesse tipo.
+            """
             itens = quantidade_por_item[tipo]
             if not itens:
                 return None
@@ -777,10 +920,16 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/pedidos/rastreamento")
     def rastreamento_pedidos():
-        """Alimenta o painel gerencial de rastreamento do fluxo de pedido:
-        quem fez o pedido (cliente), quem preparou (cozinheiro) e quem
-        ficou responsável por levá-lo até o cliente (garçom na mesa ou
-        entregador) — pensado para resolver reclamações rapidamente."""
+        """!
+        @brief GET /api/pedidos/rastreamento — rastreamento do fluxo dos últimos pedidos (até 500).
+        @details Alimenta o painel gerencial de rastreamento do fluxo de
+        pedido: quem fez o pedido (cliente), quem preparou (cozinheiro) e
+        quem ficou responsável por levá-lo até o cliente (garçom na mesa
+        ou entregador) — pensado para resolver reclamações rapidamente.
+        Aceita o parâmetro de query opcional `busca`, que filtra por
+        pedidoId, nome do cliente, do cozinheiro ou do responsável.
+        @return JSON com a lista de linhas de rastreamento (200).
+        """
         termo = (request.args.get("busca") or "").strip().lower()
 
         consulta = Pedido.query.order_by(Pedido.criado_em.desc()).limit(500)
@@ -842,6 +991,10 @@ def registrar_rotas(app: Flask) -> None:
 
     @app.get("/api/saude")
     def saude():
+        """!
+        @brief GET /api/saude — endpoint simples de health check da API.
+        @return JSON {"status": "ok"} (200).
+        """
         return jsonify({"status": "ok"})
 
 

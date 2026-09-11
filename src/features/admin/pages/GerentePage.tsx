@@ -1,3 +1,14 @@
+/**
+ * @file GerentePage.tsx
+ * @brief Painel gerencial (/gerente): relatório de vendas por período, comparativo presencial x entrega e rastreamento de pedidos.
+ *
+ * @details
+ * Busca o relatório (@see relatorio.service) para o período selecionado
+ * (dia/semana/mês/ano ou intervalo de datas customizado) e permite
+ * exportá-lo em PDF (@see relatorioPdf.utils). Também expõe o fechamento
+ * diário (@see FechamentoDiarioModal) e a lista de rastreamento de
+ * pedidos (@see RastreamentoPedidos).
+ */
 import { useState } from 'react';
 import styled from 'styled-components';
 import { PainelLayout } from '../../funcionarios/components/PainelLayout';
@@ -280,14 +291,17 @@ const Vazio = styled.div`
     background: rgba(0, 0, 0, 0.08);
 `;
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
 
+/** @brief Converte uma Date para o formato "aaaa-mm-dd" esperado por um `<input type="date">`. */
 function paraInputData(data: Date): string {
     return data.toISOString().slice(0, 10);
 }
 
+/** @brief Página do painel gerencial: relatórios de vendas, comparativo de canais e rastreamento de pedidos. */
 export function GerentePage() {
     const { funcionario } = useFuncionarioAuth();
 

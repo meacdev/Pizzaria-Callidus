@@ -1,3 +1,10 @@
+/**
+ * @file pedidoLocal.utils.ts
+ * @brief Monta e envia pedidos locais (totem e garçom), que não passam pelo carrinho/checkout do site.
+ *
+ * @details
+ * Para pedidos feitos pelo carrinho/checkout do site, @see pedido.utils.ts.
+ */
 import type {
   ClientePedidoPayload,
   GorjetaPedidoPayload,
@@ -31,6 +38,11 @@ export interface NovoPedidoLocalInput {
   readonly funcionarioId?: number | null;
 }
 
+/**
+ * @brief Converte os itens selecionados no totem/painel do garçom para o formato de payload do pedido, com subtotal calculado.
+ * @param itens Itens selecionados.
+ * @return Itens no formato de payload.
+ */
 export function itensPedidoPayload(itens: readonly ItemSelecionado[]): ItemPedidoPayload[] {
   return itens.map((item) => ({
     id: item.id,
@@ -42,6 +54,12 @@ export function itensPedidoPayload(itens: readonly ItemSelecionado[]): ItemPedid
   }));
 }
 
+/**
+ * @brief Calcula o total do pedido (soma dos itens) somando a gorjeta, quando houver.
+ * @param itens Itens selecionados.
+ * @param gorjeta Gorjeta escolhida, ou `null` se não houver.
+ * @return Total do pedido, arredondado a duas casas decimais.
+ */
 export function calcularTotalComGorjeta(itens: readonly ItemSelecionado[], gorjeta: GorjetaPedidoPayload | null): number {
   const subtotal = itens.reduce((soma, item) => soma + item.precoUnitario * item.quantidade, 0);
   return Number((subtotal + (gorjeta?.valor ?? 0)).toFixed(2));
@@ -57,6 +75,11 @@ export function pagamentoLocalSimulado(forma: PagamentoPedidoPayload['forma'], o
   };
 }
 
+/**
+ * @brief Monta o payload de um pedido local (totem ou garçom) e o envia ao backend.
+ * @param input Dados do novo pedido local.
+ * @return Pedido criado, conforme retornado pela API.
+ */
 export async function enviarPedidoLocal(input: NovoPedidoLocalInput): Promise<PedidoApi> {
   const itensPayload = itensPedidoPayload(input.itens);
   const total = calcularTotalComGorjeta(input.itens, input.gorjeta);

@@ -1,18 +1,33 @@
+/**
+ * @file ReservarMesaPage.tsx
+ * @brief Página de reserva de mesa pelo cliente (rota /usuario/reservar).
+ *
+ * @details
+ * Protegida por @see ClienteAutenticadoRoute. O cliente escolhe uma mesa,
+ * data, hora e número de pessoas; a reserva é criada com status
+ * "pendente" e passa a aparecer para o garçom confirmar no painel de
+ * reservas (@see ReservasPage, em /admin/reservas). Página multi-idioma
+ * (@see LocaleContext).
+ */
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { useClienteAuth } from '../context/ClienteAuthContext';
 import { criarReserva } from '../../reservas/api/reserva.service';
 import { NUMEROS_DAS_MESAS, CAPACIDADE_MESA } from '../../pizzaria/constants/mesas';
 import { mascararTelefone } from '../../pizzaria/utils/checkout.utils';
+import { useLocale } from '../../../i18n/LocaleContext';
 
+/** @brief Data de amanhã no formato "AAAA-MM-DD", usada como sugestão inicial no campo de data. */
 function amanha(): string {
     const data = new Date();
     data.setDate(data.getDate() + 1);
     return data.toISOString().slice(0, 10);
 }
 
+/** @brief Página de reserva de mesa do cliente logado. */
 export function ReservarMesaPage() {
     const { cliente } = useClienteAuth();
+    const { t, localeIntl } = useLocale();
 
     const [mesa, setMesa] = useState<number | null>(null);
     const [data, setData] = useState(amanha());
@@ -25,16 +40,17 @@ export function ReservarMesaPage() {
 
     if (!cliente) return null;
 
+    /** @brief Valida os campos e envia a reserva para a API. */
     async function handleSubmit(evento: React.FormEvent<HTMLFormElement>) {
         evento.preventDefault();
         setErro('');
 
         if (!mesa) {
-            setErro('Escolha uma mesa.');
+            setErro(t('reserva.erroMesa'));
             return;
         }
         if (!telefone.trim()) {
-            setErro('Informe um telefone de contato.');
+            setErro(t('reserva.erroTelefone'));
             return;
         }
 
@@ -60,13 +76,16 @@ export function ReservarMesaPage() {
         return (
             <div className="principal usuario-layout">
                 <div className="reserva-sucesso">
-                    <h2>Reserva enviada!</h2>
+                    <h2>{t('reserva.sucessoTitulo')}</h2>
                     <p>
-                        Sua reserva da mesa {mesa} para {new Date(`${data}T${hora}:00`).toLocaleDateString('pt-BR')} às {hora} foi
-                        registrada e já aparece para o garçom confirmar.
+                        {t('reserva.sucessoTexto', {
+                            mesa: mesa ?? '',
+                            data: new Date(`${data}T${hora}:00`).toLocaleDateString(localeIntl),
+                            hora,
+                        })}
                     </p>
                     <div className="acoes-pagina">
-                        <Link className="botao-primario" to="/usuario">Voltar para minha conta</Link>
+                        <Link className="botao-primario" to="/usuario">{t('reserva.sucessoBotao')}</Link>
                     </div>
                 </div>
             </div>
@@ -76,15 +95,15 @@ export function ReservarMesaPage() {
     return (
         <>
             <main className="principal cabecalho-pagina">
-                <span className="tag">Reserva de mesa</span>
-                <h1>Reservar uma mesa</h1>
-                <p>Escolha a mesa, a data e o número de pessoas. O garçom confirma sua reserva no salão.</p>
+                <span className="tag">{t('reserva.tag')}</span>
+                <h1>{t('reserva.titulo')}</h1>
+                <p>{t('reserva.subtitulo')}</p>
             </main>
 
             <div className="principal usuario-layout">
                 <form className="formulario-checkout" onSubmit={handleSubmit} noValidate>
                     <fieldset className="grupo-formulario">
-                        <legend>Escolha a mesa (até {CAPACIDADE_MESA} pessoas por mesa)</legend>
+                        <legend>{t('reserva.legendaMesa', { capacidade: CAPACIDADE_MESA })}</legend>
                         <div className="reserva-lista-mesas">
                             {NUMEROS_DAS_MESAS.map((numero) => (
                                 <button
@@ -94,17 +113,17 @@ export function ReservarMesaPage() {
                                     aria-pressed={mesa === numero}
                                     onClick={() => setMesa(numero)}
                                 >
-                                    Mesa {numero}
+                                    {t('reserva.mesa', { numero })}
                                 </button>
                             ))}
                         </div>
                     </fieldset>
 
                     <fieldset className="grupo-formulario">
-                        <legend>Quando</legend>
+                        <legend>{t('reserva.legendaQuando')}</legend>
                         <div className="grade-formulario">
                             <div className="campo-formulario">
-                                <label htmlFor="reserva-data">Data</label>
+                                <label htmlFor="reserva-data">{t('reserva.campoData')}</label>
                                 <input
                                     id="reserva-data"
                                     type="date"
@@ -115,7 +134,7 @@ export function ReservarMesaPage() {
                                 />
                             </div>
                             <div className="campo-formulario">
-                                <label htmlFor="reserva-hora">Hora</label>
+                                <label htmlFor="reserva-hora">{t('reserva.campoHora')}</label>
                                 <input
                                     id="reserva-hora"
                                     type="time"
@@ -125,7 +144,7 @@ export function ReservarMesaPage() {
                                 />
                             </div>
                             <div className="campo-formulario">
-                                <label htmlFor="reserva-pessoas">Número de pessoas</label>
+                                <label htmlFor="reserva-pessoas">{t('reserva.campoPessoas')}</label>
                                 <input
                                     id="reserva-pessoas"
                                     type="number"
@@ -137,7 +156,7 @@ export function ReservarMesaPage() {
                                 />
                             </div>
                             <div className="campo-formulario">
-                                <label htmlFor="reserva-telefone">Telefone de contato</label>
+                                <label htmlFor="reserva-telefone">{t('reserva.campoTelefone')}</label>
                                 <input
                                     id="reserva-telefone"
                                     type="tel"
@@ -154,9 +173,9 @@ export function ReservarMesaPage() {
                     {erro && <span className="erro-campo" role="alert">{erro}</span>}
 
                     <div className="acoes-pagina">
-                        <Link className="botao-secundario" to="/usuario">Cancelar</Link>
+                        <Link className="botao-secundario" to="/usuario">{t('reserva.botaoCancelar')}</Link>
                         <button type="submit" className="botao-primario" disabled={enviando}>
-                            {enviando ? 'Reservando...' : 'Confirmar reserva'}
+                            {enviando ? t('reserva.botaoConfirmando') : t('reserva.botaoConfirmar')}
                         </button>
                     </div>
                 </form>

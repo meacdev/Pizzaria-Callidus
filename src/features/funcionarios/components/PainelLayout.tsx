@@ -1,3 +1,13 @@
+/**
+ * @file PainelLayout.tsx
+ * @brief Layout comum dos painéis internos de funcionário (cabeçalho com ícone, título, saudação e botão "Sair").
+ *
+ * @details
+ * Usado por todas as páginas de painel (@see BalcaoPage.tsx, @see
+ * CozinhaPage.tsx, @see EntregaPage.tsx, @see ReservasPage.tsx) para dar
+ * consistência visual. Depende de @see FuncionarioAuthContext para saber
+ * quem está logado e para deslogar ao clicar em "Sair".
+ */
 import styled from 'styled-components';
 import { useNavigate } from 'react-router';
 import { useFuncionarioAuth } from '../context/FuncionarioAuthContext';
@@ -73,6 +83,7 @@ const Conteudo = styled.main`
     margin: 0 auto;
 `;
 
+/** @brief Propriedades do layout de painel de funcionário. */
 interface PainelLayoutProps {
     icone: string;
     titulo: string;
@@ -84,6 +95,7 @@ interface PainelLayoutProps {
     rotaSair?: string;
 }
 
+/** @brief Casca visual dos painéis internos: cabeçalho (ícone, título, saudação, botão "Sair") + conteúdo. */
 export function PainelLayout({
     icone,
     titulo,

@@ -1,3 +1,12 @@
+/**
+ * @file rastreamento.ts
+ * @brief Formato de uma linha do rastreamento de pedidos (quem fez, preparou e entregou/atendeu).
+ *
+ * @details
+ * @see RastreamentoPedidos.tsx e rastreamento.service.ts, que consome a API correspondente.
+ */
+
+/** @brief Dados de rastreamento de um pedido: cliente, cozinheiro e responsável por entrega/atendimento. */
 export interface LinhaRastreamento {
     readonly pedidoId: string;
     readonly status: string;

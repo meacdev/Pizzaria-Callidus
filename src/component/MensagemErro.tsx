@@ -1,8 +1,15 @@
+/**
+ * @file MensagemErro.tsx
+ * @brief Estado de erro genérico, exibido quando uma operação/busca falha.
+ */
+
+/** @brief Props do componente @see MensagemErro. */
 interface MensagemErroProps {
   readonly titulo?: string;
   readonly mensagem: string;
 }
 
+/** @brief Tela de erro com título e mensagem, anunciada via `role="alert"`. */
 export function MensagemErro({
   titulo = 'Ops! Algo deu errado.',
   mensagem

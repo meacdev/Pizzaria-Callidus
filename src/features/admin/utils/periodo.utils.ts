@@ -1,8 +1,17 @@
+/**
+ * @file periodo.utils.ts
+ * @brief Cálculo do intervalo de datas de um período de relatório (dia/semana/mês/ano) e seus rótulos.
+ */
 import type { PeriodoRelatorio } from '../types/relatorio';
 
-/** Calcula o intervalo [início, fim] do período "atual" (hoje / esta
+/**
+ * @brief Calcula o intervalo [início, fim] do período "atual" (hoje / esta
  * semana / este mês / este ano) a partir de uma data de referência
- * qualquer dentro do período (normalmente `new Date()`). */
+ * qualquer dentro do período (normalmente `new Date()`).
+ * @param periodo Tipo de período a calcular.
+ * @param referencia Data de referência dentro do período (padrão: agora).
+ * @return Início e fim do período, com hora zerada/máxima respectivamente.
+ */
 export function intervaloPeriodoAtual(
     periodo: PeriodoRelatorio,
     referencia: Date = new Date(),
@@ -40,6 +49,7 @@ export function intervaloPeriodoAtual(
     return { inicio, fim: fimDoAno };
 }
 
+/** @brief Rótulos em português para cada período de relatório. */
 export const PERIODO_LABEL: Record<PeriodoRelatorio, string> = {
     dia: 'Dia',
     semana: 'Semana',

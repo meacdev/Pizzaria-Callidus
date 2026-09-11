@@ -1,3 +1,13 @@
+/**
+ * @file AuthStyles.tsx
+ * @brief Componentes styled-components compartilhados entre as telas de login e cadastro de funcionário.
+ *
+ * @details
+ * Usados pela tela de login (/admin, @see LoginPage), pelo login de
+ * customização (@see CustomLoginPage) e pela tela de cadastro
+ * (/admin/cadastro) dos funcionários, para manter a mesma identidade
+ * visual entre elas.
+ */
 import styled, { css, keyframes } from 'styled-components';
 
 // Estilos compartilhados entre a tela de login (/admin) e a de cadastro
@@ -27,10 +37,12 @@ const shake = keyframes`
     80% { transform: translateX(4px); }
 `;
 
+/** @brief Animação de rotação contínua, usada no spinner de carregamento do botão. */
 export const spin = keyframes`
     to { transform: rotate(360deg); }
 `;
 
+/** @brief Fundo escurecido em tela cheia que centraliza o modal de login/cadastro. */
 export const Overlay = styled.div`
     position: fixed;
     inset: 0;
@@ -45,6 +57,7 @@ export const Overlay = styled.div`
     z-index: 1000;
 `;
 
+/** @brief Cartão branco do formulário de login/cadastro. */
 export const Modal = styled.div`
     background: #ffffff;
     padding: 2.5rem;
@@ -58,11 +71,13 @@ export const Modal = styled.div`
     animation: ${slideUp} 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 `;
 
+/** @brief Cabeçalho centralizado do modal (ícone, título e subtítulo). */
 export const Header = styled.div`
     text-align: center;
     margin-bottom: 2rem;
 `;
 
+/** @brief Emblema/ícone de destaque no topo do modal. */
 export const Icon = styled.div`
     width: 56px;
     height: 56px;
@@ -77,6 +92,7 @@ export const Icon = styled.div`
     box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
 `;
 
+/** @brief Título principal do modal. */
 export const Title = styled.h2`
     margin: 0;
     font-size: 1.5rem;
@@ -85,30 +101,35 @@ export const Title = styled.h2`
     letter-spacing: -0.02em;
 `;
 
+/** @brief Texto de apoio abaixo do título do modal. */
 export const Subtitle = styled.p`
     margin: 0.5rem 0 0;
     font-size: 0.875rem;
     color: #6b7280;
 `;
 
+/** @brief Contêiner do formulário, empilhando os campos verticalmente. */
 export const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 `;
 
+/** @brief Linha de duas colunas para agrupar dois campos lado a lado. */
 export const Linha = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
 `;
 
+/** @brief Agrupa um rótulo (`Label`) e seu campo de entrada. */
 export const Campo = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
 `;
 
+/** @brief Rótulo de um campo do formulário. */
 export const Label = styled.label`
     font-size: 0.8125rem;
     font-weight: 600;
@@ -141,6 +162,7 @@ const camposBase = `
     }
 `;
 
+/** @brief Campo de texto padrão do formulário. */
 export const Input = styled.input`
     ${camposBase}
 
@@ -149,17 +171,20 @@ export const Input = styled.input`
     }
 `;
 
+/** @brief Campo de seleção (dropdown) padrão do formulário. */
 export const Select = styled.select`
     ${camposBase}
     cursor: pointer;
 `;
 
+/** @brief Mensagem de erro de validação exibida junto a um campo específico. */
 export const CampoErro = styled.span`
     color: #dc2626;
     font-size: 0.75rem;
     font-weight: 500;
 `;
 
+/** @brief Mensagem de erro geral do formulário (ex: falha de login), com animação de "shake". */
 export const Erro = styled.p`
     color: #dc2626;
     font-size: 0.8125rem;
@@ -176,6 +201,7 @@ export const Erro = styled.p`
     }
 `;
 
+/** @brief Mensagem de sucesso do formulário (ex: cadastro concluído). */
 export const Sucesso = styled.p`
     color: #16a34a;
     font-size: 0.8125rem;
@@ -191,6 +217,7 @@ export const Sucesso = styled.p`
     }
 `;
 
+/** @brief Botão primário do formulário; quando `$loading` é verdadeiro, oculta o texto e mostra um spinner. */
 export const Botao = styled.button<{ $loading?: boolean }>`
     background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
     color: white;
@@ -243,6 +270,7 @@ export const Botao = styled.button<{ $loading?: boolean }>`
         `}
 `;
 
+/** @brief Texto de rodapé do modal com um link de ação (ex: ir para o cadastro). */
 export const LinkRodape = styled.p`
     text-align: center;
     margin: 1.5rem 0 0;

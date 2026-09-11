@@ -1,3 +1,12 @@
+/**
+ * @file PedidosAdminPage.tsx
+ * @brief Painel de gestão de pedidos (/admin/pedidos): dashboard de métricas e lista de pedidos com atualização de status.
+ *
+ * @details
+ * Os dados vêm do hook @see usePedidosAdmin. A mudança de status feita
+ * aqui é refletida na tela de acompanhamento do cliente. Também mostra
+ * notificações de entrega vindas de @see entrega.store.
+ */
 import { Link } from 'react-router';
 import { useEntregaStore } from '../../../store/entrega.store';
 import { usePedidosAdmin } from '../hooks/usePedidosAdmin';
@@ -5,6 +14,7 @@ import { PedidoListaAdmin } from '../components/PedidoListaAdmin';
 import { DashboardPedidos } from '../components/DashboardPedidos';
 import styles from './PedidosAdminPage.module.css';
 
+/** @brief Página de gestão de pedidos: métricas do dashboard e lista de pedidos com ações de status. */
 export function PedidosAdminPage() {
     const { pedidos, atualizarStatus, metricas } = usePedidosAdmin();
     const notificacoes = useEntregaStore((state) => state.notificacoes);

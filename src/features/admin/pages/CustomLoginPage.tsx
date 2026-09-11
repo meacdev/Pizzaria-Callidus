@@ -1,3 +1,12 @@
+/**
+ * @file CustomLoginPage.tsx
+ * @brief Login separado de /admin, usado só para acessar a customização da loja em /customizacao.
+ *
+ * @details
+ * Aceita qualquer funcionário cadastrado, sem olhar o cargo/profissão —
+ * diferente do login em /admin (@see LoginPage), que redireciona conforme
+ * a rota do cargo do funcionário autenticado.
+ */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
@@ -24,10 +33,12 @@ interface CustomLoginFormData {
 }
 
 /**
- * Login separado do /admin (dos cargos cozinheiro/garçom/entregador),
- * usado só para acessar a customização da loja em /customizacao. Por
- * enquanto aceita qualquer funcionário cadastrado, sem olhar a profissão —
- * futuramente pode ganhar seu próprio cadastro/permissão específica.
+ * @brief Página de login para acesso à customização da loja (/customizacao).
+ *
+ * @details
+ * Por enquanto aceita qualquer funcionário cadastrado, sem olhar a
+ * profissão — futuramente pode ganhar seu próprio cadastro/permissão
+ * específica.
  */
 export function CustomLoginPage() {
     const { register, handleSubmit } = useForm<CustomLoginFormData>();

@@ -1,3 +1,11 @@
+/**
+ * @file ReservasPage.tsx
+ * @brief Painel de reservas de mesa (rota /admin/reservas): lista e permite confirmar/cancelar reservas feitas pelo site.
+ *
+ * @details
+ * Protegida por @see FuncionarioAutenticadoRoute — qualquer funcionário
+ * autenticado pode acessar. Usa @see PainelLayout.tsx para o cabeçalho.
+ */
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { PainelLayout } from '../components/PainelLayout';
@@ -158,10 +166,12 @@ const Vazio = styled.div`
     background: rgba(0, 0, 0, 0.08);
 `;
 
+/** @brief Formata um timestamp ISO na data/hora curta em pt-BR. */
 function formatarDataHora(data: string) {
     return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(data));
 }
 
+/** @brief Página do painel de reservas de mesa. */
 export function ReservasPage() {
     const [reservas, setReservas] = useState<Reserva[]>([]);
     const [dataFiltro, setDataFiltro] = useState('');

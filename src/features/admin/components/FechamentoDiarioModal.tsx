@@ -1,3 +1,12 @@
+/**
+ * @file FechamentoDiarioModal.tsx
+ * @brief Modal de fechamento financeiro diário do admin: faturamento da loja e repasses por funcionário.
+ *
+ * @details
+ * Busca o relatório de vendas do dia via {@see buscarRelatorioVendas} e
+ * separa claramente o que é faturamento da pizzaria do que é repasse
+ * (gorjeta/taxa de serviço) devido a cada garçom/entregador.
+ */
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ModalOverlay } from '../../funcionarios/components/ModalOverlay';
@@ -5,6 +14,7 @@ import { buscarRelatorioVendas } from '../api/relatorio.service';
 import { intervaloPeriodoAtual } from '../utils/periodo.utils';
 import type { RelatorioVendas } from '../types/relatorio';
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
@@ -113,6 +123,7 @@ const Vazio = styled.p`
     padding: 1rem 0;
 `;
 
+/** @brief Rótulo curto exibido para cada profissão de funcionário. */
 const PROFISSAO_LABEL_CURTO: Record<string, string> = {
     garcom: 'Garçom',
     entregador: 'Entregador',
@@ -120,14 +131,19 @@ const PROFISSAO_LABEL_CURTO: Record<string, string> = {
     gerente: 'Gerente',
 };
 
+/** @brief Propriedades do componente {@link FechamentoDiarioModal}. */
 interface FechamentoDiarioModalProps {
+    /** @brief Callback chamado ao fechar o modal. */
     readonly onFechar: () => void;
 }
 
-/** Modal de fechamento financeiro diário: mostra, logo ao abrir o painel
+/**
+ * @brief Modal de fechamento financeiro diário: mostra, logo ao abrir o painel
  * gerencial, o faturamento do dia que é da pizzaria e o repasse exato que
  * cabe a cada garçom/entregador (gorjeta/taxa de serviço) — os dois nunca
- * devem ser confundidos. */
+ * devem ser confundidos.
+ * @param onFechar Callback chamado ao fechar o modal.
+ */
 export function FechamentoDiarioModal({ onFechar }: Readonly<FechamentoDiarioModalProps>) {
     const [relatorio, setRelatorio] = useState<RelatorioVendas | null>(null);
     const [erro, setErro] = useState('');

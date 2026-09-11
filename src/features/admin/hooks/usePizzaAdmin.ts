@@ -1,3 +1,11 @@
+/**
+ * @file usePizzaAdmin.ts
+ * @brief Hook do painel administrativo para listar, criar, atualizar e excluir pizzas.
+ *
+ * @details
+ * Encapsula as chamadas a @see pizzaAdmin.service e mantém a lista de
+ * pizzas em estado local, carregando-a automaticamente ao montar.
+ */
 import { useCallback, useEffect, useState } from 'react';
 import type { Pizza } from '../../pizzaria/types/pizza';
 import {
@@ -8,6 +16,10 @@ import {
     type PizzaFormData,
 } from '../api/pizzaAdmin.service';
 
+/**
+ * @brief Hook de administração de pizzas: lista, carregando/erro e as ações criar/atualizar/excluir.
+ * @return `pizzas`, `carregando`, `erro`, `carregar`, `criar`, `atualizar` e `excluir`.
+ */
 export function usePizzaAdmin() {
     const [pizzas, setPizzas] = useState<Pizza[]>([]);
     const [carregando, setCarregando] = useState(true);

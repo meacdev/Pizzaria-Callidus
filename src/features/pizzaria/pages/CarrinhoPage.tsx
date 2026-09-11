@@ -1,7 +1,13 @@
+/**
+ * @file CarrinhoPage.tsx
+ * @brief Página do carrinho (rota /carrinho): lista os itens adicionados
+ * e permite seguir para o checkout ou limpar o carrinho.
+ */
 import { Link } from 'react-router';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { ItemCarrinho } from '../components/ItemCarrinho';
 
+/** @brief Formata um valor numérico como preço em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -9,6 +15,7 @@ function formatarPreco(preco: number): string {
   }).format(preco);
 }
 
+/** @brief Página com os itens do carrinho e o resumo do total. */
 export function CarrinhoPage() {
 
   const itensCarrinho = useCarrinhoStore(

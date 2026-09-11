@@ -1,3 +1,8 @@
+/**
+ * @file ComboDetalhePage.tsx
+ * @brief Página de detalhe de um combo (rota /combo/:slug), com escolha
+ * de quantidade e adição ao carrinho.
+ */
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { Loading } from '../../../component/Loading';
@@ -6,6 +11,7 @@ import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { useComboPorSlug } from '../hooks/useCombo';
 import { nomeCategoriaCombo } from '../utils/combo.utils';
 
+/** @brief Formata um preço (recebido como string) como valor em reais (BRL). */
 function formatarPreco(preco: string): string {
   const valor = Number(preco);
   return new Intl.NumberFormat('pt-BR', {
@@ -14,6 +20,7 @@ function formatarPreco(preco: string): string {
   }).format(valor);
 }
 
+/** @brief Página de detalhe de um combo, com seletor de quantidade e adição ao carrinho. */
 export function ComboDetalhePage() {
   const { slug } =
     useParams<{ slug: string }>();

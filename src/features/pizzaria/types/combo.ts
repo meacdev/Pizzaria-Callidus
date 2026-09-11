@@ -1,3 +1,9 @@
+/**
+ * @file combo.ts
+ * @brief Tipos de combo do cardápio.
+ */
+
+/** @brief Categoria de um combo, usada para agrupar/filtrar no cardápio. */
 export type CategoriaCombo =
     | 'família'
     | 'casal'
@@ -6,6 +12,7 @@ export type CategoriaCombo =
     | 'especial'
     | 'doce';
 
+/** @brief Combo (kit) disponível no cardápio da pizzaria. */
 export interface Combo {
     readonly id: string;
     readonly nome: string;
