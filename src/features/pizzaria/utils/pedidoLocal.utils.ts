@@ -24,6 +24,11 @@ export interface NovoPedidoLocalInput {
   readonly observacoes?: string;
   readonly gorjeta: GorjetaPedidoPayload | null;
   readonly pagamento: PagamentoPedidoPayload;
+  /** Comanda da mesa a que esse pedido pertence (lançamentos do garçom). */
+  readonly comandaId?: string | null;
+  /** Garçom que lançou o pedido — usado no relatório gerencial para saber
+   * o repasse de gorjeta de cada funcionário. */
+  readonly funcionarioId?: number | null;
 }
 
 export function itensPedidoPayload(itens: readonly ItemSelecionado[]): ItemPedidoPayload[] {
@@ -76,5 +81,5 @@ export async function enviarPedidoLocal(input: NovoPedidoLocalInput): Promise<Pe
     total,
   };
 
-  return criarPedido(payload);
+  return criarPedido(payload, { comandaId: input.comandaId, funcionarioId: input.funcionarioId });
 }
