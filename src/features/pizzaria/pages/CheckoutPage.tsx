@@ -17,6 +17,7 @@ import {
 } from '../types/checkout';
 import { mascararCep, mascararCpf, mascararTelefone, validarFormularioCheckout } from '../utils/checkout.utils';
 import { buscarEnderecoPorCep } from '../api/cep.service';
+import { useClienteAuth } from '../../clientes/context/ClienteAuthContext';
 
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
@@ -47,9 +48,22 @@ export function CheckoutPage() {
   const valorGorjeta = Number(((total * gorjetaPercentual) / 100).toFixed(2));
   const totalComGorjeta = total + valorGorjeta;
 
+  const { cliente, autenticado } = useClienteAuth();
+
   const [dados, setDados] =
-    useState<DadosCheckout>(
-      DADOS_CHECKOUT_INICIAIS,
+    useState<DadosCheckout>(() =>
+      cliente
+        ? {
+            ...DADOS_CHECKOUT_INICIAIS,
+            cliente: {
+              ...DADOS_CHECKOUT_INICIAIS.cliente,
+              nome: cliente.nome,
+              email: cliente.email,
+              telefone: cliente.telefone,
+              cpf: cliente.cpf ?? '',
+            },
+          }
+        : DADOS_CHECKOUT_INICIAIS,
     );
   const [erros, setErros] =
     useState<ErrosCheckout>({});
@@ -201,6 +215,13 @@ export function CheckoutPage() {
 
           <fieldset className="grupo-formulario">
             <legend>Dados do cliente</legend>
+
+            {autenticado && (
+              <p style={{ color: 'var(--muted)', fontSize: '0.88rem', marginBottom: '0.75rem' }}>
+                Pedindo com sua conta — este pedido vai contar pontos no seu programa de fidelidade e aparecer em
+                "Minhas compras".
+              </p>
+            )}
 
             <div className="campo-formulario">
               <label htmlFor="checkout-nome">Nome completo</label>

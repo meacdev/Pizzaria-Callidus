@@ -33,11 +33,15 @@ from flask_cors import CORS
 from models import (
     CLASSE_POR_PROFISSAO,
     PROFISSOES_VALIDAS,
+    REAIS_POR_PONTO_FIDELIDADE,
     STATUS_COMANDA_VALIDOS,
     STATUS_PEDIDO_VALIDOS,
+    STATUS_RESERVA_VALIDOS,
+    Cliente,
     Comanda,
     Funcionario,
     Pedido,
+    Reserva,
     db,
 )
 
@@ -76,6 +80,8 @@ def pedido_para_dict(pedido: Pedido) -> dict:
     payload["atualizadoEm"] = pedido.atualizado_em.isoformat()
     payload["comandaId"] = pedido.comanda_id
     payload["funcionarioId"] = pedido.funcionario_id
+    payload["clienteId"] = pedido.cliente_id
+    payload["preparadoPorId"] = pedido.preparado_por_id
     return payload
 
 
@@ -238,6 +244,230 @@ def registrar_rotas(app: Flask) -> None:
         db.session.commit()
         return jsonify(funcionario.to_dict())
 
+    # ------------------------------------------------------------------
+    # Clientes (cadastro / login / programa de fidelidade / compras)
+    # ------------------------------------------------------------------
+
+    @app.post("/api/clientes")
+    def cadastrar_cliente():
+        dados = request.get_json(silent=True) or {}
+
+        campos_obrigatorios = ["nome", "email", "telefone", "login", "senha"]
+        faltando = [
+            campo for campo in campos_obrigatorios
+            if dados.get(campo) is None or str(dados.get(campo)).strip() == ""
+        ]
+        if faltando:
+            return jsonify({"erro": f"Campos obrigatórios faltando: {', '.join(faltando)}"}), 400
+
+        nome = str(dados["nome"]).strip()
+        if len(nome) < 2:
+            return jsonify({"erro": "Informe o nome completo."}), 400
+
+        email = str(dados["email"]).strip().lower()
+        if "@" not in email:
+            return jsonify({"erro": "Informe um e-mail válido."}), 400
+
+        login = str(dados["login"]).strip()
+        senha = str(dados["senha"])
+        if len(login) < 3:
+            return jsonify({"erro": "O login deve ter pelo menos 3 caracteres."}), 400
+        if len(senha) < 4:
+            return jsonify({"erro": "A senha deve ter pelo menos 4 caracteres."}), 400
+
+        if Cliente.query.filter_by(email=email).first() is not None:
+            return jsonify({"erro": "Já existe um cliente cadastrado com esse e-mail."}), 409
+        if Cliente.query.filter_by(login=login).first() is not None:
+            return jsonify({"erro": "Já existe um cliente com esse login."}), 409
+
+        novo_cliente = Cliente(
+            nome=nome,
+            email=email,
+            telefone=str(dados["telefone"]).strip(),
+            cpf=str(dados.get("cpf") or "").strip() or None,
+            login=login,
+        )
+        novo_cliente.definir_senha(senha)
+
+        db.session.add(novo_cliente)
+        db.session.commit()
+
+        return jsonify(novo_cliente.to_dict()), 201
+
+    @app.post("/api/auth/login-cliente")
+    def autenticar_cliente():
+        dados = request.get_json(silent=True) or {}
+        login = str(dados.get("login", "")).strip()
+        senha = str(dados.get("senha", ""))
+
+        if not login or not senha:
+            return jsonify({"erro": "Informe login e senha."}), 400
+
+        cliente = Cliente.query.filter(
+            (Cliente.login == login) | (Cliente.email == login.lower())
+        ).first()
+
+        if cliente is None or not cliente.verificar_senha(senha):
+            return jsonify({"erro": "Login ou senha incorretos."}), 401
+
+        return jsonify({"cliente": cliente.to_dict()})
+
+    @app.put("/api/clientes/<int:cliente_id>")
+    def atualizar_cliente(cliente_id: int):
+        cliente = Cliente.query.get(cliente_id)
+        if cliente is None:
+            return jsonify({"erro": "Cliente não encontrado."}), 404
+
+        dados = request.get_json(silent=True) or {}
+
+        if "nome" in dados:
+            nome = str(dados["nome"]).strip()
+            if len(nome) < 2:
+                return jsonify({"erro": "Informe o nome completo."}), 400
+            cliente.nome = nome
+
+        if "telefone" in dados:
+            cliente.telefone = str(dados["telefone"]).strip()
+
+        if "cpf" in dados:
+            cliente.cpf = str(dados.get("cpf") or "").strip() or None
+
+        if "email" in dados:
+            email = str(dados["email"]).strip().lower()
+            if "@" not in email:
+                return jsonify({"erro": "Informe um e-mail válido."}), 400
+            existente = Cliente.query.filter_by(email=email).first()
+            if existente is not None and existente.id != cliente.id:
+                return jsonify({"erro": "Já existe um cliente cadastrado com esse e-mail."}), 409
+            cliente.email = email
+
+        senha = dados.get("senha")
+        if senha:
+            senha = str(senha)
+            if len(senha) < 4:
+                return jsonify({"erro": "A senha deve ter pelo menos 4 caracteres."}), 400
+            cliente.definir_senha(senha)
+
+        db.session.commit()
+        return jsonify(cliente.to_dict())
+
+    @app.get("/api/clientes/<int:cliente_id>/pedidos")
+    def listar_pedidos_cliente(cliente_id: int):
+        """Histórico de compras do cliente logado (seção "Compras")."""
+        cliente = Cliente.query.get(cliente_id)
+        if cliente is None:
+            return jsonify({"erro": "Cliente não encontrado."}), 404
+
+        pedidos = (
+            Pedido.query.filter_by(cliente_id=cliente_id)
+            .order_by(Pedido.criado_em.desc())
+            .all()
+        )
+        return jsonify([pedido_para_dict(p) for p in pedidos])
+
+    # ------------------------------------------------------------------
+    # Reservas de mesa
+    # ------------------------------------------------------------------
+
+    @app.post("/api/reservas")
+    def criar_reserva():
+        dados = request.get_json(silent=True) or {}
+
+        campos_obrigatorios = ["nome", "telefone", "mesa", "dataHora"]
+        faltando = [
+            campo for campo in campos_obrigatorios
+            if dados.get(campo) is None or str(dados.get(campo)).strip() == ""
+        ]
+        if faltando:
+            return jsonify({"erro": f"Campos obrigatórios faltando: {', '.join(faltando)}"}), 400
+
+        try:
+            mesa = int(dados["mesa"])
+        except (TypeError, ValueError):
+            return jsonify({"erro": "Mesa inválida."}), 400
+
+        try:
+            data_hora = datetime.fromisoformat(str(dados["dataHora"]).replace("Z", "+00:00"))
+        except ValueError:
+            return jsonify({"erro": "Data/hora da reserva inválida. Use o formato ISO 8601."}), 400
+
+        pessoas = dados.get("pessoas", 1)
+        try:
+            pessoas = int(pessoas)
+        except (TypeError, ValueError):
+            return jsonify({"erro": "Número de pessoas inválido."}), 400
+        if pessoas < 1:
+            return jsonify({"erro": "Informe ao menos 1 pessoa."}), 400
+
+        cliente_id = dados.get("clienteId")
+        if cliente_id is not None:
+            try:
+                cliente_id = int(cliente_id)
+            except (TypeError, ValueError):
+                return jsonify({"erro": "clienteId inválido."}), 400
+            if Cliente.query.get(cliente_id) is None:
+                return jsonify({"erro": "Cliente não encontrado."}), 404
+
+        nova_reserva = Reserva(
+            id=str(uuid.uuid4()),
+            cliente_id=cliente_id,
+            nome=str(dados["nome"]).strip(),
+            telefone=str(dados["telefone"]).strip(),
+            mesa=mesa,
+            pessoas=pessoas,
+            data_hora=data_hora,
+            status="pendente",
+        )
+        db.session.add(nova_reserva)
+        db.session.commit()
+        return jsonify(nova_reserva.to_dict()), 201
+
+    @app.get("/api/reservas")
+    def listar_reservas():
+        """Lista reservas — usado pelo garçom (painel de reservas) e pelo
+        cliente (suas próprias reservas, via ?clienteId=)."""
+        consulta = Reserva.query.order_by(Reserva.data_hora.asc())
+
+        cliente_id = request.args.get("clienteId")
+        if cliente_id is not None:
+            try:
+                consulta = consulta.filter(Reserva.cliente_id == int(cliente_id))
+            except ValueError:
+                return jsonify({"erro": "clienteId inválido."}), 400
+
+        mesa = request.args.get("mesa")
+        if mesa is not None:
+            try:
+                consulta = consulta.filter(Reserva.mesa == int(mesa))
+            except ValueError:
+                return jsonify({"erro": "Mesa inválida."}), 400
+
+        data = request.args.get("data")
+        if data:
+            try:
+                dia = datetime.fromisoformat(str(data)).date()
+            except ValueError:
+                return jsonify({"erro": "Data inválida. Use o formato AAAA-MM-DD."}), 400
+            consulta = consulta.filter(db.func.date(Reserva.data_hora) == dia.isoformat())
+
+        return jsonify([r.to_dict() for r in consulta.all()])
+
+    @app.patch("/api/reservas/<string:reserva_id>/status")
+    def atualizar_status_reserva(reserva_id: str):
+        dados = request.get_json(silent=True) or {}
+        status = str(dados.get("status", "")).strip()
+
+        if status not in STATUS_RESERVA_VALIDOS:
+            return jsonify({"erro": "Status de reserva inválido."}), 400
+
+        reserva = Reserva.query.get(reserva_id)
+        if reserva is None:
+            return jsonify({"erro": "Reserva não encontrada."}), 404
+
+        reserva.status = status
+        db.session.commit()
+        return jsonify(reserva.to_dict())
+
     @app.post("/api/pedidos")
     def criar_pedido():
         dados = request.get_json(silent=True) or {}
@@ -281,6 +511,17 @@ def registrar_rotas(app: Flask) -> None:
             except (TypeError, ValueError):
                 return jsonify({"erro": "funcionarioId inválido."}), 400
 
+        cliente_id = dados.get("clienteId")
+        cliente = None
+        if cliente_id is not None:
+            try:
+                cliente_id = int(cliente_id)
+            except (TypeError, ValueError):
+                return jsonify({"erro": "clienteId inválido."}), 400
+            cliente = Cliente.query.get(cliente_id)
+            if cliente is None:
+                return jsonify({"erro": "Cliente não encontrado."}), 404
+
         novo_pedido = Pedido(
             pedido_id=pedido_id,
             status=status,
@@ -289,8 +530,18 @@ def registrar_rotas(app: Flask) -> None:
             atualizado_em=agora,
             comanda_id=comanda_id,
             funcionario_id=funcionario_id,
+            cliente_id=cliente_id,
         )
         db.session.add(novo_pedido)
+
+        # Programa de fidelidade: 1 ponto para cada REAIS_POR_PONTO_FIDELIDADE
+        # gastos nesse pedido.
+        if cliente is not None:
+            total_pedido = float(dados.get("total") or 0)
+            pontos_ganhos = int(total_pedido // REAIS_POR_PONTO_FIDELIDADE)
+            if pontos_ganhos > 0:
+                cliente.pontos_fidelidade += pontos_ganhos
+
         db.session.commit()
         return jsonify(pedido_para_dict(novo_pedido)), 201
 
@@ -334,6 +585,15 @@ def registrar_rotas(app: Flask) -> None:
                 pedido.funcionario_id = int(funcionario_id)
             except (TypeError, ValueError):
                 return jsonify({"erro": "funcionarioId inválido."}), 400
+
+        # Quem preparou: marcado pela cozinha (normalmente ao concluir o
+        # preparo), usado só para rastreamento do fluxo do pedido.
+        preparado_por_id = dados.get("preparadoPorId")
+        if preparado_por_id is not None:
+            try:
+                pedido.preparado_por_id = int(preparado_por_id)
+            except (TypeError, ValueError):
+                return jsonify({"erro": "preparadoPorId inválido."}), 400
 
         db.session.commit()
         return jsonify(pedido_para_dict(pedido))
@@ -514,6 +774,71 @@ def registrar_rotas(app: Flask) -> None:
                 "entrega": {"quantidade": entrega["quantidade"], "total": round(entrega["total"], 2)},
             }
         )
+
+    @app.get("/api/pedidos/rastreamento")
+    def rastreamento_pedidos():
+        """Alimenta o painel gerencial de rastreamento do fluxo de pedido:
+        quem fez o pedido (cliente), quem preparou (cozinheiro) e quem
+        ficou responsável por levá-lo até o cliente (garçom na mesa ou
+        entregador) — pensado para resolver reclamações rapidamente."""
+        termo = (request.args.get("busca") or "").strip().lower()
+
+        consulta = Pedido.query.order_by(Pedido.criado_em.desc()).limit(500)
+        pedidos = consulta.all()
+
+        funcionarios_por_id = {f.id: f for f in Funcionario.query.all()}
+        clientes_por_id = {c.id: c for c in Cliente.query.all()}
+
+        linhas = []
+        for pedido in pedidos:
+            try:
+                payload = json.loads(pedido.payload_json)
+            except (TypeError, json.JSONDecodeError):
+                payload = {}
+
+            cliente_cadastrado = clientes_por_id.get(pedido.cliente_id) if pedido.cliente_id else None
+            nome_cliente = (
+                cliente_cadastrado.nome
+                if cliente_cadastrado is not None
+                else (payload.get("cliente") or {}).get("nome") or "Cliente não identificado"
+            )
+
+            cozinheiro = funcionarios_por_id.get(pedido.preparado_por_id) if pedido.preparado_por_id else None
+            responsavel = funcionarios_por_id.get(pedido.funcionario_id) if pedido.funcionario_id else None
+
+            linha = {
+                "pedidoId": pedido.pedido_id,
+                "status": pedido.status,
+                "origem": payload.get("origem"),
+                "mesa": payload.get("mesa"),
+                "criadoEm": pedido.criado_em.isoformat(),
+                "atualizadoEm": pedido.atualizado_em.isoformat(),
+                "clienteId": pedido.cliente_id,
+                "clienteNome": nome_cliente,
+                "cozinheiroId": pedido.preparado_por_id,
+                "cozinheiroNome": cozinheiro.nome if cozinheiro else None,
+                "responsavelId": pedido.funcionario_id,
+                "responsavelNome": responsavel.nome if responsavel else None,
+                "responsavelProfissao": responsavel.profissao if responsavel else None,
+                "total": float(payload.get("total") or 0),
+            }
+
+            if termo:
+                alvo = " ".join(
+                    str(valor).lower()
+                    for valor in (
+                        linha["pedidoId"],
+                        linha["clienteNome"],
+                        linha["cozinheiroNome"] or "",
+                        linha["responsavelNome"] or "",
+                    )
+                )
+                if termo not in alvo:
+                    continue
+
+            linhas.append(linha)
+
+        return jsonify(linhas)
 
     @app.get("/api/saude")
     def saude():

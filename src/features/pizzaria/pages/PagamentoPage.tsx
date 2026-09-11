@@ -24,6 +24,7 @@ import {
 } from '../utils/pagamento.utils';
 import { enviarPedido } from '../utils/pedido.utils';
 import { useCustomizationStore } from '../../../context/customization.store';
+import { useClienteAuth } from '../../clientes/context/ClienteAuthContext';
 
 const DURACAO_PIX_SEGUNDOS = 5 * 60;
 
@@ -44,6 +45,7 @@ export function PagamentoPage() {
   const pedido = usePedidoStore((state) => state.pedido);
   const limparPedido = usePedidoStore((state) => state.limparPedido);
   const customization = useCustomizationStore((state) => state.customization);
+  const { cliente } = useClienteAuth();
 
   const [estado, setEstado] = useState<EstadoPagamento>('formulario');
   const [dadosCartao, setDadosCartao] = useState<DadosCartao>(DADOS_CARTAO_INICIAIS);
@@ -111,7 +113,7 @@ export function PagamentoPage() {
     });
 
     try {
-      const pedidoEnviado = await enviarPedido(pedido, infoPagamento);
+      const pedidoEnviado = await enviarPedido(pedido, infoPagamento, cliente?.id);
       console.log('[pagamento] pedido enviado:', pedidoEnviado);
       setPayloadGerado(pedidoEnviado);
       setEstado('sucesso');

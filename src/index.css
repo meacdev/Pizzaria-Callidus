@@ -163,7 +163,9 @@ button {
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 
   padding:
     10px max(24px, calc((100% - 1180px) / 2));
@@ -175,6 +177,26 @@ button {
 
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+.link-area-usuario {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border-radius: 9px;
+  border: 1.5px solid var(--line);
+  text-decoration: none;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.link-area-usuario:hover,
+.link-area-usuario.ativo {
+  background: rgba(var(--primary-rgb), 0.1);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 
@@ -4351,4 +4373,197 @@ button {
   .confirmacao-rodape {
     gap: 12px;
   }
+}
+
+/* =========================================
+   ÁREA DO USUÁRIO (cliente)
+   ========================================= */
+
+.usuario-layout {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.usuario-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.usuario-abas {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.usuario-aba {
+  padding: 10px 18px;
+  font-weight: 700;
+  color: var(--muted);
+  border-bottom: 3px solid transparent;
+}
+
+.usuario-aba-ativa {
+  color: var(--text);
+  border-bottom-color: var(--primary);
+}
+
+.usuario-conta {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: var(--shadow);
+}
+
+.usuario-conta-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.usuario-conta-saudacao {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.usuario-conta-email {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.usuario-fidelidade {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 42, 42, 0.08);
+}
+
+.usuario-fidelidade-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.usuario-fidelidade-pontos {
+  font-size: 1.7rem;
+}
+
+.usuario-fidelidade-descricao {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.usuario-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* =========================================
+   COMPRAS (histórico do cliente)
+   ========================================= */
+
+.compras-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.compra-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compra-card-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.compra-card-id {
+  font-weight: 800;
+}
+
+.compra-card-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
+}
+
+.compra-card-itens {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.compra-card-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.compra-card-total {
+  color: var(--text);
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+/* =========================================
+   RESERVA DE MESA
+   ========================================= */
+
+.reserva-lista-mesas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 10px;
+  margin: 4px 0 8px;
+}
+
+.reserva-opcao-mesa {
+  min-height: 52px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.reserva-opcao-mesa-selecionada {
+  border-color: var(--primary);
+  background: rgba(255, 42, 42, 0.15);
+}
+
+.reserva-sucesso {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

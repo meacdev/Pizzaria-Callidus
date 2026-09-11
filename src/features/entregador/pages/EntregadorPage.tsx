@@ -85,7 +85,10 @@ export function EntregadorPage() {
     if (ids.length === 0) return;
 
     try {
-      await Promise.all(ids.map((id) => atualizarStatusPedidoApi(id, 'saiu_para_entrega')));
+      // Registra qual entregador assumiu cada pedido — é esse vínculo
+      // (cliente + entregador) que o painel gerencial usa para saber quem
+      // atendeu quem (rastreamento do fluxo do pedido).
+      await Promise.all(ids.map((id) => atualizarStatusPedidoApi(id, 'saiu_para_entrega', funcionario?.id)));
       ids.forEach(adicionarPedidoNaRota);
       setSelecionados([]);
       setMensagem(`${ids.length} pedido(s) adicionado(s) à sua rota.`);

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { PainelLayout } from '../components/PainelLayout';
 import { useFuncionarioAuth } from '../context/FuncionarioAuthContext';
@@ -710,6 +710,7 @@ export function BalcaoPage() {
                             <p style={{ margin: '0.35rem 0 0', color: '#d7c9c4' }}>Gerencie as mesas do salão e os pedidos que chegam pelo site e pelo totem.</p>
                         </div>
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <BotaoConta as={Link} to="/admin/reservas">📅 Reservas</BotaoConta>
                             <BotaoConta type="button" onClick={() => setEditandoCadastro(true)}>Editar meu cadastro</BotaoConta>
                             <BotaoSair type="button" onClick={sairDaConta}>Sair</BotaoSair>
                         </div>

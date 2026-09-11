@@ -262,7 +262,10 @@ export function CozinhaPage() {
 
   async function alterarStatus(id: string, status: string) {
     try {
-      const atualizado = await atualizarStatusPedidoApi(id, status);
+      // Registra quem preparou o pedido (rastreamento do fluxo) quando o
+      // cozinheiro avança para "em preparo" ou conclui ("pronto").
+      const preparadoPorId = ['em_preparo', 'pronto'].includes(status) ? funcionario?.id : undefined;
+      const atualizado = await atualizarStatusPedidoApi(id, status, undefined, preparadoPorId);
       setPedidos((atuais) => atuais.map((pedido) => pedido.pedidoId === id ? atualizado : pedido));
       setErro('');
     } catch (e) {

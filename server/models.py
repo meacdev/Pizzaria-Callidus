@@ -20,6 +20,9 @@ STATUS_PEDIDO_VALIDOS = (
     "cancelado",
 )
 STATUS_COMANDA_VALIDOS = ("aberta", "paga", "encerrada")
+STATUS_RESERVA_VALIDOS = ("pendente", "confirmada", "cancelada")
+# 1 ponto de fidelidade para cada R$10 gastos (arredondado para baixo).
+REAIS_POR_PONTO_FIDELIDADE = 10
 
 
 class Funcionario(db.Model):
@@ -87,6 +90,72 @@ class Gerente(Funcionario):
         return "/admin/gerente"
 
 
+class Cliente(db.Model):
+    """Cadastro de cliente da loja (programa de fidelidade). Totalmente
+    separado de Funcionario: um cliente nunca acessa as rotas /admin, só
+    a área /usuario e o checkout do site."""
+
+    __tablename__ = "clientes"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(160), unique=True, nullable=False, index=True)
+    telefone = db.Column(db.String(30), nullable=False)
+    cpf = db.Column(db.String(20), nullable=True)
+    login = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    senha_hash = db.Column(db.String(255), nullable=False)
+    pontos_fidelidade = db.Column(db.Integer, nullable=False, default=0)
+    criado_em = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def definir_senha(self, senha: str) -> None:
+        self.senha_hash = generate_password_hash(senha)
+
+    def verificar_senha(self, senha: str) -> bool:
+        return check_password_hash(self.senha_hash, senha)
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "email": self.email,
+            "telefone": self.telefone,
+            "cpf": self.cpf,
+            "login": self.login,
+            "pontosFidelidade": self.pontos_fidelidade,
+        }
+
+
+class Reserva(db.Model):
+    """Reserva de mesa feita pelo cliente pelo site — aparece para o
+    garçom no painel do balcão, separada das comandas (que são abertas só
+    quando o cliente já está fisicamente na mesa)."""
+
+    __tablename__ = "reservas"
+
+    id = db.Column(db.String(64), primary_key=True)
+    cliente_id = db.Column(db.Integer, db.ForeignKey("clientes.id"), nullable=True, index=True)
+    nome = db.Column(db.String(120), nullable=False)
+    telefone = db.Column(db.String(30), nullable=False)
+    mesa = db.Column(db.Integer, nullable=False, index=True)
+    pessoas = db.Column(db.Integer, nullable=False, default=1)
+    data_hora = db.Column(db.DateTime, nullable=False, index=True)
+    status = db.Column(db.String(20), nullable=False, default="pendente")
+    criada_em = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "clienteId": self.cliente_id,
+            "nome": self.nome,
+            "telefone": self.telefone,
+            "mesa": self.mesa,
+            "pessoas": self.pessoas,
+            "dataHora": self.data_hora.isoformat(),
+            "status": self.status,
+            "criadaEm": self.criada_em.isoformat(),
+        }
+
+
 class Comanda(db.Model):
     """Uma comanda individual dentro de uma mesa — permite que uma mesa
     tenha várias comandas abertas (uma por cliente/grupo), cada uma paga
@@ -126,8 +195,16 @@ class Pedido(db.Model):
     comanda_id = db.Column(db.String(64), db.ForeignKey("comandas.id"), nullable=True, index=True)
     # Funcionário "responsável" pelo pedido para fins de repasse de
     # gorjeta/taxa de serviço no relatório gerencial: o garçom que lançou
-    # o pedido na mesa, ou o entregador que saiu com ele para entrega.
+    # o pedido na mesa, ou o entregador que saiu com ele para entrega —
+    # também é o dado usado no rastreamento ("qual entregador atendeu qual
+    # cliente").
     funcionario_id = db.Column(db.Integer, db.ForeignKey("funcionarios.id"), nullable=True, index=True)
+    # Cliente cadastrado que fez o pedido pelo site (None para pedidos do
+    # totem/balcão, ou quando o cliente não estava logado no checkout).
+    cliente_id = db.Column(db.Integer, db.ForeignKey("clientes.id"), nullable=True, index=True)
+    # Cozinheiro que preparou o pedido — marcado quando ele avança o
+    # status para 'pronto', para fins de rastreamento do fluxo completo.
+    preparado_por_id = db.Column(db.Integer, db.ForeignKey("funcionarios.id"), nullable=True, index=True)
 
 
 CLASSE_POR_PROFISSAO = {

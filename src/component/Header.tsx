@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router';
 import { useCarrinhoStore } from '../store/carrinho.store';
+import { useClienteAuth } from '../features/clientes/context/ClienteAuthContext';
 
 export function Header() {
   const totalCarrinho = useCarrinhoStore((state) =>
@@ -8,6 +9,8 @@ export function Header() {
       0,
     ),
   );
+  const { cliente, autenticado } = useClienteAuth();
+
   return (
     <header className="cabecalho">
       <nav
@@ -32,7 +35,7 @@ export function Header() {
           Cardápio
         </NavLink>
         <NavLink
-          to="/categoria"
+          to="/compras"
           className={({ isActive }) =>
             isActive ? 'ativo' : ''
           }
@@ -55,6 +58,15 @@ export function Header() {
           </span>
         </NavLink>
       </nav>
+
+      <NavLink
+        to="/usuario"
+        className={({ isActive }) =>
+          `link-area-usuario${isActive ? ' ativo' : ''}`
+        }
+      >
+        {autenticado ? `Olá, ${cliente?.nome.split(' ')[0]}` : 'Área do usuário'}
+      </NavLink>
     </header>
   );
 }
