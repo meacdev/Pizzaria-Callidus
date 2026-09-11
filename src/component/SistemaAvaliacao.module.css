@@ -1,0 +1,183 @@
+.container {
+  width: calc(100% - 56px);
+  margin: 28px auto 38px;
+  padding: 28px;
+
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+
+  box-shadow: var(--shadow);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.cabecalho h2 {
+  margin: 8px 0 8px;
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.cabecalho p {
+  max-width: 680px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.resumo {
+  min-width: 185px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  padding: 18px;
+
+  background: var(--surface-light);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.resumo strong {
+  font-size: 42px;
+  line-height: 1;
+  color: var(--primary);
+}
+
+.resumo > span:last-child {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.estrelasMedia {
+  display: flex;
+  gap: 3px;
+  font-size: 18px;
+}
+
+.estrela,
+.estrelaAtiva {
+  line-height: 1;
+}
+
+.estrela {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.estrelaAtiva {
+  color: var(--warning);
+}
+
+.formulario {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  margin-top: 24px;
+  padding-top: 22px;
+
+  border-top: 1px solid var(--line);
+}
+
+.seletor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.estrelaBotao,
+.estrelaBotaoAtiva {
+  width: 46px;
+  height: 46px;
+
+  border: 0;
+  background: transparent;
+
+  font-size: 34px;
+  line-height: 1;
+
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
+}
+
+.estrelaBotao {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.estrelaBotaoAtiva {
+  color: var(--warning);
+}
+
+.estrelaBotao:hover,
+.estrelaBotaoAtiva:hover {
+  transform: translateY(-2px) scale(1.05);
+  color: var(--warning);
+}
+
+.estrelaBotao:focus-visible,
+.estrelaBotaoAtiva:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.mensagem {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .container {
+    width: calc(100% - 36px);
+    padding: 22px;
+    border-radius: 16px;
+  }
+
+  .cabecalho {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resumo {
+    width: 100%;
+  }
+
+  .formulario {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .seletor {
+    justify-content: center;
+  }
+
+  .formulario .botao-primario {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .container {
+    width: calc(100% - 24px);
+    padding: 18px;
+  }
+
+  .cabecalho h2 {
+    font-size: 24px;
+  }
+
+  .estrelaBotao,
+  .estrelaBotaoAtiva {
+    width: 40px;
+    height: 40px;
+    font-size: 29px;
+  }
+}
