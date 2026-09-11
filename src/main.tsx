@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router/dom';
 import { AuthProvider } from './features/admin/hooks/AuthContext';
 import { FuncionarioAuthProvider } from './features/funcionarios/context/FuncionarioAuthContext';
+import { ClienteAuthProvider } from './features/clientes/context/ClienteAuthContext';
 import { AppProviders } from './app/providers';
 import { router } from './app/router';
 
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')!).render(
         <AppProviders>
             <AuthProvider>
                 <FuncionarioAuthProvider>
-                    <RouterProvider router={router} />
+                    <ClienteAuthProvider>
+                        <RouterProvider router={router} />
+                    </ClienteAuthProvider>
                 </FuncionarioAuthProvider>
             </AuthProvider>
         </AppProviders>

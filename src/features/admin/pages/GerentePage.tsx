@@ -6,6 +6,7 @@ import { buscarRelatorioVendas } from '../api/relatorio.service';
 import { intervaloPeriodoAtual, PERIODO_LABEL } from '../utils/periodo.utils';
 import { gerarRelatorioVendasPdf } from '../utils/relatorioPdf.utils';
 import { FechamentoDiarioModal } from '../components/FechamentoDiarioModal';
+import { RastreamentoPedidos } from '../components/RastreamentoPedidos';
 import type { PeriodoRelatorio, RelatorioVendas } from '../types/relatorio';
 
 const PERIODOS: PeriodoRelatorio[] = ['dia', 'semana', 'mes', 'ano'];
@@ -516,6 +517,14 @@ export function GerentePage() {
                             </div>
                         </>
                     )}
+                </Secao>
+
+                <Secao>
+                    <CabecalhoSecao>
+                        <h2>Rastreamento de pedidos</h2>
+                        <span>Quem fez, quem preparou e quem entregou cada pedido</span>
+                    </CabecalhoSecao>
+                    <RastreamentoPedidos />
                 </Secao>
             </Container>
 

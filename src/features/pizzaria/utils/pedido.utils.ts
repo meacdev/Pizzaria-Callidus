@@ -60,9 +60,10 @@ export function gerarPedidoJSON(
 export async function enviarPedido(
   pedido: Pedido,
   infoPagamento: InfoPagamentoSimulado,
+  clienteId?: number | null,
 ): Promise<PedidoApi> {
   const payload = gerarPedidoPayload(pedido, infoPagamento);
-  const pedidoCriado = await criarPedido(payload);
+  const pedidoCriado = await criarPedido(payload, clienteId != null ? { clienteId } : undefined);
 
   console.log('[pedido] pedido enviado para o backend:', pedidoCriado);
   return pedidoCriado;

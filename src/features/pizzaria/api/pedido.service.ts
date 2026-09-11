@@ -11,6 +11,11 @@ export interface PedidoApi extends Omit<PedidoPayload, 'status'> {
    * no relatório gerencial — o garçom que lançou o pedido, ou o entregador
    * que saiu com ele para entrega. */
   readonly funcionarioId: number | null;
+  /** Cliente cadastrado que fez o pedido (null em pedidos do totem/balcão,
+   * ou quando o cliente não estava logado no checkout). */
+  readonly clienteId: number | null;
+  /** Cozinheiro que preparou o pedido — só para rastreamento do fluxo. */
+  readonly preparadoPorId: number | null;
 }
 
 async function requisicao<T>(url: string, init?: RequestInit): Promise<T> {
@@ -36,6 +41,9 @@ export interface AtribuicaoPedido {
   readonly comandaId?: string | null;
   /** Funcionário que lançou o pedido (garçom na mesa). */
   readonly funcionarioId?: number | null;
+  /** Cliente logado que fez o pedido pelo site (programa de fidelidade e
+   * histórico de compras). */
+  readonly clienteId?: number | null;
 }
 
 export function criarPedido(payload: PedidoPayload, atribuicao?: AtribuicaoPedido): Promise<PedidoApi> {
@@ -58,9 +66,14 @@ export function atualizarStatusPedidoApi(
   pedidoId: string,
   status: string,
   funcionarioId?: number | null,
+  preparadoPorId?: number | null,
 ): Promise<PedidoApi> {
   return requisicao<PedidoApi>(`/api/pedidos/${encodeURIComponent(pedidoId)}/status`, {
     method: 'PATCH',
-    body: JSON.stringify({ status, ...(funcionarioId != null ? { funcionarioId } : {}) }),
+    body: JSON.stringify({
+      status,
+      ...(funcionarioId != null ? { funcionarioId } : {}),
+      ...(preparadoPorId != null ? { preparadoPorId } : {}),
+    }),
   });
 }

@@ -15,6 +15,10 @@ import { ComboDetalhePage } from '../features/pizzaria/pages/ComboDetalhePage';
 import { AcompanhamentoPedidoPage } from '../features/pizzaria/pages/AcompanhamentoPedido';
 import { EntregadorPage } from '../features/entregador/pages/EntregadorPage';
 import { TotemPage } from '../features/totem/pages/TotemPage';
+import { UsuarioPage } from '../features/clientes/pages/UsuarioPage';
+import { ComprasPage } from '../features/clientes/pages/ComprasPage';
+import { ReservarMesaPage } from '../features/clientes/pages/ReservarMesaPage';
+import { ClienteAutenticadoRoute } from '../features/clientes/guards/ClienteAutenticadoRoute';
 
 // Admin
 import { LoginPage } from '../features/admin/pages/LoginPage';
@@ -29,6 +33,7 @@ import { ProtectedRoute } from '../features/admin/guards/ProtectedRoute';
 import { CadastroFuncionarioPage } from '../features/funcionarios/pages/CadastroFuncionarioPage';
 import { CozinhaPage } from '../features/funcionarios/pages/CozinhaPage';
 import { BalcaoPage } from '../features/funcionarios/pages/BalcaoPage';
+import { ReservasPage } from '../features/funcionarios/pages/ReservasPage';
 import { RoleRoute } from '../features/funcionarios/guards/RoleRoute';
 import { FuncionarioAutenticadoRoute } from '../features/funcionarios/guards/FuncionarioAutenticadoRoute';
 
@@ -48,6 +53,25 @@ export const router = createBrowserRouter(
         { path: 'checkout', Component: CheckoutPage },
         { path: 'pagamento', Component: PagamentoPage },
         { path: 'pedido/:id', Component: AcompanhamentoPedidoPage },
+        // Área do usuário (cliente): cadastro/login, programa de
+        // fidelidade, histórico de compras e reserva de mesa.
+        { path: 'usuario', Component: UsuarioPage },
+        {
+          path: 'usuario/reservar',
+          element: (
+            <ClienteAutenticadoRoute>
+              <ReservarMesaPage />
+            </ClienteAutenticadoRoute>
+          ),
+        },
+        {
+          path: 'compras',
+          element: (
+            <ClienteAutenticadoRoute>
+              <ComprasPage />
+            </ClienteAutenticadoRoute>
+          ),
+        },
         { path: '*', Component: NotFoundPage },
       ],
     },
@@ -105,6 +129,16 @@ export const router = createBrowserRouter(
           element: (
             <RoleRoute cargo="entregador">
               <EntregadorPage />
+            </RoleRoute>
+          ),
+        },
+        {
+          // Painel de reservas de mesa feitas pelos clientes pelo site
+          // (/usuario/reservar) — o garçom confirma ou cancela aqui.
+          path: 'reservas',
+          element: (
+            <RoleRoute cargo="garcom">
+              <ReservasPage />
             </RoleRoute>
           ),
         },
