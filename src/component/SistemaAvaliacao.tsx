@@ -41,7 +41,7 @@ export function SistemaAvaliacao() {
         <div>
           <span className="tag">Sua opinião importa</span>
           <h2 id="avaliacao-titulo">Avalie nosso atendimento</h2>
-          <p>Escolha de 1 a 5 estrelas. A média é atualizada automaticamente após cada avaliação.</p>
+          <p>Escolha de 1 a 5 estrelas.</p>
         </div>
 
         <div className={styles.resumo} aria-label={`${formatarMedia(media)} de 5 estrelas, ${quantidadeAvaliacoes} avaliações`}>
