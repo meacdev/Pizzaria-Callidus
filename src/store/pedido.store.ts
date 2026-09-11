@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { DadosCheckout } from '../features/pizzaria/types/checkout';
+import type { ItemCarrinho } from '../features/pizzaria/types/itemCarrinho';
 
 /**
  * De onde o pedido veio:
@@ -55,6 +56,13 @@ export interface Pedido {
   readonly status: StatusPedido;
   readonly dados: DadosCheckout;
   readonly itens: readonly ItemPedido[];
+  /**
+   * Cópia dos itens originais do carrinho (com personalização de pizza,
+   * objeto da bebida/combo etc.), usada para reconstruir o pedido quando o
+   * cliente quiser "pedir de novo" com um clique. `itens` acima continua
+   * existindo só para exibição (acompanhamento, admin).
+   */
+  readonly itensCarrinho: readonly ItemCarrinho[];
   readonly total: number;
   readonly gorjeta: GorjetaPedido | null;
   /** 'site' (padrão) = pedido pelo site, precisa de entrega. 'local' = totem/garçom, não vai para o entregador. */

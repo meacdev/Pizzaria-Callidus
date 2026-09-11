@@ -7,7 +7,7 @@ import { ListaCombos } from '../features/pizzaria/components/ListaCombos';
 import { ListaBebidas } from '../features/pizzaria/components/ListaBebidas';
 import { CarrosselPizza } from '../features/pizzaria/components/CarrosselPizza';
 import { EstabelecimentoInfo } from '../features/pizzaria/components/EstabelecimentoInfo';
-
+import { RepetirUltimoPedido } from '../features/pizzaria/components/RepetirUltimoPedido';
 import { usePizzas } from '../features/pizzaria/hooks/usePizzas';
 import { useCombos } from '../features/pizzaria/hooks/useCombo';
 import { useBebidas } from '../features/pizzaria/hooks/useBebidas';
@@ -85,6 +85,7 @@ export function HomePage() {
           </div>
         </div>
       </section>
+      <RepetirUltimoPedido />
       <CarrosselPizza
         titulo="Destaques"
         pizzas={pizzas.slice(0, 6)}
