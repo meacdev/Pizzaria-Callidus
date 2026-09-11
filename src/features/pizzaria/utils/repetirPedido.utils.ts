@@ -1,3 +1,7 @@
+/**
+ * @file repetirPedido.utils.ts
+ * @brief Reconstrói os itens de um pedido antigo para repetição, revalidando-os contra o cardápio atual.
+ */
 import type { Pedido } from '../../../store/pedido.store';
 import type { ItemCarrinho } from '../types/itemCarrinho';
 import type { Pizza } from '../types/pizza';

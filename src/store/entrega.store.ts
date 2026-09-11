@@ -1,7 +1,22 @@
+/**
+ * @file entrega.store.ts
+ * @brief Store (zustand) de acompanhamento e simulação da entrega dos pedidos.
+ *
+ * @details
+ * Mantém, por pedido, o histórico de status percorrido (@see
+ * iniciarAcompanhamento, @see avancarStatus) e pode simular a progressão
+ * automática do status em intervalos de tempo (@see
+ * iniciarSimulacaoAutomatica), útil para demonstração sem um backend real
+ * de logística. Também controla a rota do entregador (@see
+ * adicionarPedidoNaRota, @see concluirEntrega) e as notificações geradas
+ * quando uma entrega é concluída. Depende de @see pedido.store para ler e
+ * atualizar o status oficial do pedido.
+ */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { usePedidoStore, STATUS_PEDIDO_ORDEM, type StatusPedido } from './pedido.store';
 
+/** @brief Notificação exibida quando uma entrega é concluída pelo entregador. */
 export interface NotificacaoEntrega {
   readonly id: string;
   readonly pedidoId: string;
@@ -9,11 +24,13 @@ export interface NotificacaoEntrega {
   readonly criadaEm: string;
 }
 
+/** @brief Histórico de status de um pedido e o id do timer de simulação automática, se houver. */
 interface AcompanhamentoInfo {
   historico: { status: StatusPedido; timestamp: string }[];
   simulacaoTimerId?: number | null;
 }
 
+/** @brief Estado e ações do acompanhamento/simulação de entrega. */
 export interface EntregaState {
   intervaloMs: number;
   pedidosAtivos: Record<string, AcompanhamentoInfo>;
@@ -30,6 +47,7 @@ export interface EntregaState {
   concluirEntrega: (pedidoId: string) => void;
 }
 
+/** @brief Store de acompanhamento e simulação da entrega dos pedidos. */
 export const useEntregaStore = create<EntregaState>()(
   persist(
     (set, get) => ({

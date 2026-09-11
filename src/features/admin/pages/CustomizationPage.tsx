@@ -1,3 +1,13 @@
+/**
+ * @file CustomizationPage.tsx
+ * @brief Painel de customização da loja: identidade visual, contato, tema, horários, pagamento e entrega.
+ *
+ * @details
+ * Formulário controlado por react-hook-form cujos valores iniciais vêm do
+ * contexto de customização (@see CustomizationContext) e são persistidos
+ * via `updateCustomization` ao salvar. Também funciona como hub de
+ * navegação para as páginas de gestão de cardápio e de pedidos.
+ */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PainelLayout } from '../../funcionarios/components/PainelLayout';
@@ -15,6 +25,7 @@ import { AvisoSucesso } from '../components/AvisoSucesso';
 import { CardNavegacao } from '../components/CardNavegacao';
 import styles from './CustomizationPage.module.css';
 
+/** @brief Página de customização da loja: edita e salva as preferências visuais e operacionais da pizzaria. */
 export function CustomizationPage() {
     const { customization, updateCustomization } = useCustomization();
     const { register, handleSubmit, setValue, watch } = useForm<Customization>({ defaultValues: customization }); // + setValue, watch

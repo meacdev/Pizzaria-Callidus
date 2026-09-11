@@ -1,3 +1,15 @@
+/**
+ * @file imagem.utils.ts
+ * @brief Utilitário para redimensionar e comprimir imagens no navegador antes do upload (ex.: logo/banner da loja).
+ */
+
+/**
+ * @brief Redimensiona uma imagem (mantendo proporção) e a recomprime como JPEG, via canvas.
+ * @param arquivo Arquivo de imagem selecionado pelo usuário.
+ * @param larguraMaxima Largura máxima em pixels; a imagem só é reduzida, nunca ampliada.
+ * @param qualidade Qualidade de compressão JPEG (0 a 1).
+ * @return Promise que resolve para a imagem processada como data URL (`data:image/jpeg;base64,...`).
+ */
 export function redimensionarEComprimir(
     arquivo: File,
     larguraMaxima: number,

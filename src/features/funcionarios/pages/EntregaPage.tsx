@@ -1,3 +1,11 @@
+/**
+ * @file EntregaPage.tsx
+ * @brief Painel do entregador (rota /admin/entrega) — ainda em construção.
+ *
+ * @details
+ * Protegida por @see RoleRoute (cargo "entregador"). Usa @see
+ * PainelLayout.tsx para o cabeçalho do painel.
+ */
 import styled from 'styled-components';
 import { PainelLayout } from '../components/PainelLayout';
 import { useFuncionarioAuth } from '../context/FuncionarioAuthContext';
@@ -16,6 +24,7 @@ const Lista = styled.ul`
     line-height: 1.8;
 `;
 
+/** @brief Página inicial do painel do entregador. */
 export function EntregaPage() {
     const { funcionario } = useFuncionarioAuth();
 

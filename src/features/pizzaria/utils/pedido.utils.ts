@@ -1,8 +1,22 @@
+/**
+ * @file pedido.utils.ts
+ * @brief Monta e envia ao backend o pedido feito pelo carrinho/checkout do site.
+ *
+ * @details
+ * Para pedidos que não passam pelo carrinho do site (totem e garçom),
+ * @see pedidoLocal.utils.ts.
+ */
 import type { Pedido } from '../../../store/pedido.store';
 import type { InfoPagamentoSimulado } from '../types/pagamento';
 import type { PedidoPayload } from '../types/pedidoPayload';
 import { criarPedido, type PedidoApi } from '../api/pedido.service';
 
+/**
+ * @brief Monta o payload final do pedido (@see PedidoPayload) a partir do pedido do carrinho e da informação de pagamento.
+ * @param pedido Pedido montado no carrinho/checkout.
+ * @param infoPagamento Resultado do pagamento simulado.
+ * @return Payload pronto para ser enviado ao backend.
+ */
 export function gerarPedidoPayload(
   pedido: Pedido,
   infoPagamento: InfoPagamentoSimulado,
@@ -50,6 +64,12 @@ export function gerarPedidoPayload(
   };
 }
 
+/**
+ * @brief Gera a representação em JSON (indentado) do payload do pedido, útil para depuração/log.
+ * @param pedido Pedido montado no carrinho/checkout.
+ * @param infoPagamento Resultado do pagamento simulado.
+ * @return JSON formatado do payload do pedido.
+ */
 export function gerarPedidoJSON(
   pedido: Pedido,
   infoPagamento: InfoPagamentoSimulado,
@@ -57,6 +77,13 @@ export function gerarPedidoJSON(
   return JSON.stringify(gerarPedidoPayload(pedido, infoPagamento), null, 2);
 }
 
+/**
+ * @brief Monta o payload do pedido e o envia ao backend, vinculando ao cliente logado quando houver.
+ * @param pedido Pedido montado no carrinho/checkout.
+ * @param infoPagamento Resultado do pagamento simulado.
+ * @param clienteId Id do cliente autenticado, quando houver sessão ativa.
+ * @return Pedido criado, conforme retornado pela API.
+ */
 export async function enviarPedido(
   pedido: Pedido,
   infoPagamento: InfoPagamentoSimulado,

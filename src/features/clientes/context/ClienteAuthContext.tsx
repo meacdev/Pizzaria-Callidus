@@ -1,3 +1,14 @@
+/**
+ * @file ClienteAuthContext.tsx
+ * @brief Contexto de autenticação do cliente: guarda a sessão do cliente logado e expõe entrar/atualizar/sair.
+ *
+ * @details
+ * Mesma lógica do FuncionarioAuthContext (@see
+ * src/features/funcionarios/context), só que para a conta do cliente:
+ * guarda apenas a "sessão" no navegador (`localStorage`), para não
+ * deslogar ao dar F5 — o cadastro em si fica no back-end (@see
+ * cliente.service).
+ */
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { Cliente } from '../types/cliente';
 
@@ -16,6 +27,7 @@ const CHAVE_SESSAO = 'cliente_sessao';
 
 const ClienteAuthContext = createContext<ClienteAuthContextType | null>(null);
 
+/** @brief Lê a sessão do cliente salva no `localStorage`, descartando-a se estiver corrompida. */
 function lerSessaoSalva(): Cliente | null {
     const bruto = localStorage.getItem(CHAVE_SESSAO);
     if (!bruto) return null;
@@ -28,6 +40,7 @@ function lerSessaoSalva(): Cliente | null {
     }
 }
 
+/** @brief Provedor do contexto de autenticação do cliente; deve envolver as rotas que usam `useClienteAuth`. */
 export function ClienteAuthProvider({ children }: { children: ReactNode }) {
     const [cliente, setCliente] = useState<Cliente | null>(lerSessaoSalva);
 
@@ -53,6 +66,10 @@ export function ClienteAuthProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * @brief Hook para acessar o cliente autenticado e as ações de sessão (entrar/atualizar/sair).
+ * @return O contexto de autenticação do cliente.
+ */
 export function useClienteAuth() {
     const contexto = useContext(ClienteAuthContext);
     if (!contexto) {

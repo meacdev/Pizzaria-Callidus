@@ -1,3 +1,13 @@
+/**
+ * @file AcompanhamentoPedido.tsx
+ * @brief Página de acompanhamento do status de um pedido (rota /pedido/:id).
+ *
+ * @details
+ * Consulta o pedido periodicamente na API (@see obterPedido) e, enquanto
+ * o backend não responde, cai de volta para o pedido salvo localmente
+ * (@see pedido.store). O status atual também alimenta o acompanhamento
+ * de entrega (@see entrega.store).
+ */
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { usePedidoStore } from '../../../store/pedido.store';
@@ -6,8 +16,10 @@ import { obterPedido, type PedidoApi } from '../api/pedido.service';
 import { StatusTimeline } from '../components/StatusTimeline';
 import { MensagemErro } from '../../../component/MensagemErro';
 
+/** Intervalo de repolling do status do pedido junto à API. */
 const INTERVALO_ATUALIZACAO_MS = 3000;
 
+/** @brief Página que exibe e atualiza automaticamente o status de um pedido. */
 export function AcompanhamentoPedidoPage() {
   const { id } = useParams<{ id: string }>();
   const pedidoLocal = usePedidoStore((state) => state.pedidos.find((p) => p.id === id));

@@ -1,9 +1,16 @@
+/**
+ * @file extras.ts
+ * @brief Extras (adicionais) que podem ser escolhidos ao personalizar uma pizza.
+ */
+
+/** @brief Extra (adicional) que pode ser adicionado a uma pizza, como bacon ou catupiry. */
 export interface Extra {
   readonly id: string;
   readonly nome: string;
   readonly preco: string;
 }
 
+/** @brief Lista fixa de extras disponíveis para personalização de pizzas. */
 export const extras: readonly Extra[] = [
   {
     id: 'bacon',

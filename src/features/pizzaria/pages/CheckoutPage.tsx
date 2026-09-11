@@ -1,3 +1,15 @@
+/**
+ * @file CheckoutPage.tsx
+ * @brief Página de checkout (rota /checkout): dados do cliente, endereço
+ * de entrega (com busca automática por CEP), gorjeta e forma de
+ * pagamento.
+ *
+ * @details
+ * Ao confirmar, monta o pedido a partir do carrinho e o guarda em
+ * @see pedido.store antes de navegar para /pagamento (@see PagamentoPage).
+ * Quando o cliente está autenticado (@see ClienteAuthContext), os dados
+ * pessoais já vêm pré-preenchidos.
+ */
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
@@ -19,10 +31,12 @@ import { mascararCep, mascararCpf, mascararTelefone, validarFormularioCheckout }
 import { buscarEnderecoPorCep } from '../api/cep.service';
 import { useClienteAuth } from '../../clientes/context/ClienteAuthContext';
 
+/** @brief Formata um valor numérico como preço em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
 }
 
+/** @brief Página de checkout: formulário de dados do cliente, endereço, gorjeta e forma de pagamento. */
 export function CheckoutPage() {
   const navigate = useNavigate();
   const carrinho = useCarrinhoStore(

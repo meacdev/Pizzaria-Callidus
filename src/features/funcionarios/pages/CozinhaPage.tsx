@@ -1,3 +1,13 @@
+/**
+ * @file CozinhaPage.tsx
+ * @brief Painel da cozinha (rota /admin/cozinha): fila de produção e pedidos concluídos.
+ *
+ * @details
+ * Protegida por @see RoleRoute (cargo "cozinheiro"). Usa @see
+ * PainelLayout.tsx para o cabeçalho. Quando o cozinheiro marca um pedido
+ * como "pronto", ele fica disponível para o balcão/entregador (@see
+ * BalcaoPage.tsx).
+ */
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { PainelLayout } from '../components/PainelLayout';
@@ -233,10 +243,14 @@ const Vazio = styled.div`
     background: rgba(0, 0, 0, 0.08);
 `;
 
+/** @brief Formata um timestamp ISO na data/hora curta em pt-BR. */
 function formatarData(data: string) { return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(data)); }
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number) { return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(valor); }
+/** @brief Reduz um id de pedido (UUID) às 8 primeiras posições, em maiúsculas, para exibição. */
 function idCurto(id: string) { return id.slice(0, 8).toUpperCase(); }
 
+/** @brief Página do painel da cozinha, com a fila de produção e os pedidos já concluídos. */
 export function CozinhaPage() {
   const { funcionario } = useFuncionarioAuth();
   const [pedidos, setPedidos] = useState<PedidoApi[]>([]);

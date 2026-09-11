@@ -1,9 +1,16 @@
+/**
+ * @file cep.service.ts
+ * @brief Serviço de consulta de endereço por CEP usando a API pública ViaCEP.
+ */
+
+/** @brief Endereço resolvido a partir de um CEP. */
 export interface EnderecoViaCep {
   readonly rua: string;
   readonly bairro: string;
   readonly cidade: string;
 }
 
+/** @brief Formato bruto da resposta da API ViaCEP. */
 interface RespostaViaCep {
   readonly erro?: boolean;
   readonly logradouro?: string;
@@ -11,6 +18,12 @@ interface RespostaViaCep {
   readonly localidade?: string;
 }
 
+/**
+ * @brief Consulta o endereço correspondente a um CEP na API ViaCEP.
+ * @param cep CEP a consultar (com ou sem máscara — só os dígitos são usados).
+ * @param signal AbortSignal opcional para cancelar a requisição.
+ * @return Endereço encontrado, ou null quando o CEP não existe.
+ */
 export async function buscarEnderecoPorCep(
   cep: string,
   signal?: AbortSignal,

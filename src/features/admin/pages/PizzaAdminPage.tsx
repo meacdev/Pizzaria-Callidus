@@ -1,3 +1,12 @@
+/**
+ * @file PizzaAdminPage.tsx
+ * @brief Painel de gestão de pizzas (/admin/cardapio): criação, edição e exclusão das pizzas do cardápio.
+ *
+ * @details
+ * Estado e chamadas à API ficam no hook @see usePizzaAdmin; esta página
+ * só controla a exibição/ocultação do formulário (@see PizzaForm) e qual
+ * pizza está em edição.
+ */
 import { useState } from 'react';
 import { Link } from 'react-router';
 import type { Pizza } from '../../pizzaria/types/pizza';
@@ -7,6 +16,7 @@ import { PizzaForm } from '../components/PizzaForm';
 import { PizzaListaAdmin } from '../components/PizzaListaAdmin';
 import styles from './PizzaAdminPage.module.css';
 
+/** @brief Página de gestão de pizzas: lista o cardápio e permite criar, editar e excluir pizzas. */
 export function PizzaAdminPage() {
     const { pizzas, carregando, erro, criar, atualizar, excluir } = usePizzaAdmin();
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -27,6 +37,7 @@ export function PizzaAdminPage() {
         setPizzaEmEdicao(null);
     };
 
+    // @brief Salva a pizza do formulário: atualiza se já existe uma pizza em edição, senão cria uma nova.
     const salvar = async (dados: PizzaFormData) => {
         if (pizzaEmEdicao) {
             await atualizar(pizzaEmEdicao.id, dados);
@@ -36,6 +47,7 @@ export function PizzaAdminPage() {
         fecharFormulario();
     };
 
+    // @brief Pede confirmação ao usuário e, se aceito, exclui a pizza.
     const solicitarExclusao = async (pizza: Pizza) => {
         if (window.confirm(`Excluir a pizza "${pizza.nome}"?`)) {
             await excluir(pizza.id);

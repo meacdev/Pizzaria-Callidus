@@ -1,3 +1,11 @@
+/**
+ * @file EditarCadastroDialog.tsx
+ * @brief Modal para o funcionário editar seus próprios dados de cadastro (nome, idade, experiência, login e senha).
+ *
+ * @details
+ * A senha só é enviada em `atualizarFuncionario` (@see funcionario.service)
+ * quando o campo "nova senha" é preenchido; caso contrário mantém a atual.
+ */
 import { useState } from 'react';
 import styled from 'styled-components';
 import { ModalOverlay } from './ModalOverlay';
@@ -82,6 +90,10 @@ interface EditarCadastroDialogProps {
     readonly onFechar: () => void;
 }
 
+/**
+ * @brief Modal de edição do cadastro do funcionário logado.
+ * @param onFechar Callback chamado ao fechar o modal.
+ */
 export function EditarCadastroDialog({ onFechar }: Readonly<EditarCadastroDialogProps>) {
     const { funcionario, atualizar } = useFuncionarioAuth();
     const [nome, setNome] = useState(funcionario?.nome ?? '');

@@ -1,3 +1,7 @@
+/**
+ * @file BebidaCard.tsx
+ * @brief Card de bebida exibido nas listagens do cardápio (@see ListaBebidas).
+ */
 import { Link } from 'react-router';
 import type { Bebida } from '../types/bebida';
 
@@ -5,6 +9,7 @@ interface BebidaCardProps {
   readonly bebida: Bebida;
 }
 
+/** @brief Formata um valor numérico em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -12,6 +17,7 @@ function formatarPreco(preco: number): string {
   }).format(preco);
 }
 
+/** @brief Card clicável de uma bebida, levando à página de detalhes do produto. */
 export function BebidaCard({
   bebida,
 }: BebidaCardProps) {

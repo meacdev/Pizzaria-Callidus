@@ -1,3 +1,7 @@
+/**
+ * @file ListaCombos.tsx
+ * @brief Grade de combos do cardápio (@see ComboCard), com mensagem para lista vazia.
+ */
 import { ComboCard } from './ComboCard';
 import type { Combo } from '../types/combo';
 
@@ -8,6 +12,7 @@ interface ListaCombosProps {
   readonly mensagemVazia?: string;
 }
 
+/** @brief Seção com a grade de combos disponíveis no cardápio. */
 export function ListaCombos({
   combos,
   titulo,

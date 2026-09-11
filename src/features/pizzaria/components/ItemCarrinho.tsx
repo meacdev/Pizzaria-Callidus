@@ -1,3 +1,7 @@
+/**
+ * @file ItemCarrinho.tsx
+ * @brief Card de um item do carrinho (pizza, bebida ou combo), com controle de quantidade e remoção.
+ */
 import { Link } from 'react-router';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import type { ItemCarrinho as ItemCarrinhoType } from '../types/itemCarrinho';
@@ -6,6 +10,7 @@ interface ItemCarrinhoProps {
   readonly item: ItemCarrinhoType;
 }
 
+/** @brief Formata um valor numérico em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -13,6 +18,10 @@ function formatarPreco(preco: number): string {
   }).format(preco);
 }
 
+/**
+ * @brief Card de um item do carrinho, exibindo dados específicos conforme o
+ * tipo (pizza, bebida ou combo) e permitindo alterar a quantidade ou remover o item.
+ */
 export function ItemCarrinho({
   item,
 }: ItemCarrinhoProps) {

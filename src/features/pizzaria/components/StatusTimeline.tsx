@@ -1,3 +1,13 @@
+/**
+ * @file StatusTimeline.tsx
+ * @brief Linha do tempo visual do status de um pedido (recebido → em preparo → pronto → saiu para entrega → entregue/cancelado).
+ *
+ * @details
+ * Os status possíveis vêm de `StatusPedido` (@see pedido.store). A barra de
+ * progresso e o estado de cada etapa (concluído/atual/pendente) são
+ * calculados a partir da posição de `statusAtual` em `ORDEM_STATUS`; o
+ * status "cancelado" é tratado à parte, fora dessa ordem linear.
+ */
 import React from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import type { StatusPedido } from '../../../store/pedido.store';
@@ -7,6 +17,7 @@ interface StatusTimelineProps {
   className?: string;
 }
 
+/** @brief Rótulo, ícone e descrição exibidos para cada status possível de um pedido. */
 const STATUS_CONFIG: Record<
   StatusPedido,
   { label: string; icone: string; descricao: string }
@@ -43,6 +54,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
+/** @brief Ordem linear das etapas do pedido, usada para calcular progresso e o estado de cada passo (não inclui "cancelado"). */
 const ORDEM_STATUS: readonly StatusPedido[] = [
   'recebido',
   'em_preparo',
@@ -307,6 +319,12 @@ const TempoEstimado = styled.div`
   }
 `;
 
+/**
+ * @brief Determina o estado visual de uma etapa da timeline em relação ao status atual do pedido.
+ * @param stepStatus Status correspondente à etapa sendo avaliada.
+ * @param statusAtual Status atual do pedido.
+ * @return `'concluido'`, `'atual'`, `'pendente'` ou `'cancelado'`.
+ */
 function getEstadoStep(
   stepStatus: StatusPedido,
   statusAtual: StatusPedido
@@ -323,6 +341,7 @@ function getEstadoStep(
   return 'pendente';
 }
 
+/** @brief Calcula o percentual (0-100) de preenchimento da barra de progresso com base no status atual. */
 function calcularProgresso(statusAtual: StatusPedido): number {
   if (statusAtual === 'cancelado') return 0;
   const idx = ORDEM_STATUS.indexOf(statusAtual);
@@ -330,6 +349,7 @@ function calcularProgresso(statusAtual: StatusPedido): number {
   return (idx / (ORDEM_STATUS.length - 1)) * 100;
 }
 
+/** @brief Retorna o texto de tempo estimado (ou situação) a ser exibido para o status atual do pedido. */
 function calcularTempoEstimado(statusAtual: StatusPedido): string {
   switch (statusAtual) {
     case 'recebido':
@@ -347,6 +367,12 @@ function calcularTempoEstimado(statusAtual: StatusPedido): string {
   }
 }
 
+/**
+ * @brief Linha do tempo visual do status de um pedido, com barra de progresso,
+ * ícone/rótulo por etapa e tempo estimado; exibe uma mensagem especial quando cancelado.
+ * @param statusAtual Status atual do pedido a ser representado.
+ * @param className Classe CSS opcional aplicada ao container.
+ */
 export const StatusTimeline: React.FC<StatusTimelineProps> = ({
   statusAtual,
   className,

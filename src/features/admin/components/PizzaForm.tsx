@@ -1,3 +1,12 @@
+/**
+ * @file PizzaForm.tsx
+ * @brief Formulário de criação/edição de pizza no painel administrativo.
+ *
+ * @details
+ * Usado tanto para cadastrar uma pizza nova quanto para editar uma já
+ * existente — o modo é definido por `pizzaEmEdicao` (@see
+ * PizzaAdminPage.tsx, que fornece `onSalvar`/`onCancelar`).
+ */
 import {
   useState,
   type FormEvent,
@@ -16,6 +25,7 @@ import { BotaoSalvar } from './BotaoSalvar';
 
 import styles from '../pages/PizzaAdminPage.module.css';
 
+/** @brief Props do formulário de pizza: pizza em edição (ou `null` para criação), callback de salvar e de cancelar. */
 interface PizzaFormProps {
   pizzaEmEdicao: Pizza | null;
   onSalvar: (
@@ -24,6 +34,7 @@ interface PizzaFormProps {
   onCancelar: () => void;
 }
 
+/** @brief Tamanhos de pizza disponíveis para seleção no formulário, com o rótulo exibido ao usuário. */
 const TAMANHOS: {
   valor: TamanhosDisponiveis;
   nome: string;
@@ -46,6 +57,11 @@ const TAMANHOS: {
   },
 ];
 
+/**
+ * @brief Converte uma `Pizza` (ou `null`) no formato usado pelos campos do formulário.
+ * @param pizza Pizza a editar, ou `null` para os valores padrão de uma pizza nova.
+ * @return Dados prontos para popular o estado do formulário.
+ */
 function paraFormData(
   pizza: Pizza | null,
 ): PizzaFormData {
@@ -102,6 +118,7 @@ function paraFormData(
   };
 }
 
+/** @brief Formulário de cadastro/edição de pizza, com seleção de tamanhos disponíveis e borda recheada. */
 export function PizzaForm({
   pizzaEmEdicao,
   onSalvar,

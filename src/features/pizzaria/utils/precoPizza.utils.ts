@@ -1,6 +1,11 @@
+/**
+ * @file precoPizza.utils.ts
+ * @brief Cálculo do preço unitário de uma pizza personalizada.
+ */
 import type { Pizza, TamanhosDisponiveis } from '../types/pizza';
 import { extras as EXTRAS_DISPONIVEIS } from '../types/extras';
 
+/** @brief Valor adicional cobrado por tamanho de pizza. */
 export const ADICIONAL_TAMANHO: Record<TamanhosDisponiveis, number> = {
   P: 0,
   M: 5,
@@ -8,6 +13,7 @@ export const ADICIONAL_TAMANHO: Record<TamanhosDisponiveis, number> = {
   F: 15,
 };
 
+/** @brief Valor adicional cobrado por tipo de borda recheada. */
 export const ADICIONAL_BORDA: Record<string, number> = {
   catupiry: 7,
   cheddar: 7,

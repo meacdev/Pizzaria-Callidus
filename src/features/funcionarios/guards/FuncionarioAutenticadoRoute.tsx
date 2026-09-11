@@ -1,3 +1,11 @@
+/**
+ * @file FuncionarioAutenticadoRoute.tsx
+ * @brief Guard de rota que exige apenas um funcionário autenticado, sem checar o cargo.
+ *
+ * @details
+ * @see RoleRoute.tsx exige, além de estar autenticado, um cargo
+ * específico — este guard é usado onde qualquer funcionário serve.
+ */
 import { Navigate } from 'react-router';
 import { useFuncionarioAuth } from '../context/FuncionarioAuthContext';
 

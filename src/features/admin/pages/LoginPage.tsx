@@ -1,3 +1,13 @@
+/**
+ * @file LoginPage.tsx
+ * @brief Login do funcionário (rota /admin): autentica e redireciona para a tela do cargo.
+ *
+ * @details
+ * Após autenticar (@see funcionario.service), navega para a rota
+ * retornada pelo back-end conforme o cargo do funcionário (cozinha,
+ * balcão/garçom ou entrega). Compare com @see CustomLoginPage, que ignora
+ * o cargo e sempre leva à customização da loja.
+ */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
@@ -24,6 +34,7 @@ interface LoginFormData {
     senha: string;
 }
 
+/** @brief Página de login do funcionário, com atalho para a tela de cadastro. */
 export function LoginPage() {
     const { register, handleSubmit } = useForm<LoginFormData>();
     const { entrar } = useFuncionarioAuth();

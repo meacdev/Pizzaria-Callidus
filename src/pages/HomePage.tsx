@@ -1,3 +1,13 @@
+/**
+ * @file HomePage.tsx
+ * @brief Página inicial da loja (rota /): banner, destaques e status de funcionamento.
+ *
+ * @details
+ * Combina dados de pizzas, bebidas e combos (@see usePizzas, @see useBebidas,
+ * @see useCombos) com a customização visual/textual da loja (@see
+ * customization.store) para montar o hero, os carrosséis de destaque e o
+ * painel de "Mais informações" do estabelecimento (@see EstabelecimentoInfo).
+ */
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -19,6 +29,7 @@ import { estaAberto } from '../features/admin/utils/customization.utils';
 import bannerPadrao from '../assets/banner.jpg';
 import logoPadrao from '../assets/logo.png';
 
+/** @brief Página inicial da loja: hero com status de funcionamento e destaques do cardápio. */
 export function HomePage() {
   const customization = useCustomizationStore((state) => state.customization);
   const aberta = estaAberto(customization);

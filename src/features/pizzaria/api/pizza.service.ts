@@ -1,3 +1,13 @@
+/**
+ * @file pizza.service.ts
+ * @brief Serviço de acesso ao catálogo de pizzas, com cache em localStorage e normalização dos dados.
+ *
+ * @details
+ * Diferente de @see bebida.service.ts e @see combo.service.ts, aqui os
+ * dados são cacheados em localStorage (`STORAGE_KEY`) e "normalizados"
+ * (funções `normalizar*`) para tolerar formatos inválidos ou incompletos
+ * vindos do cache ou do arquivo estático.
+ */
 import type {
   Ingrediente,
   Pizza,
@@ -13,6 +23,7 @@ const TAMANHOS_PADRAO: readonly TamanhosDisponiveis[] = [
   'G',
 ];
 
+/** @brief Normaliza uma lista de ingredientes de origem não confiável (cache/JSON), descartando itens inválidos. */
 function normalizarIngredientes(
   ingredientes: unknown,
 ): Ingrediente[] {
@@ -39,6 +50,7 @@ function normalizarIngredientes(
     .filter((ingrediente) => ingrediente.nome.trim() !== '');
 }
 
+/** @brief Normaliza os tamanhos disponíveis de uma pizza, caindo para os tamanhos padrão (P/M/G) quando inválidos. */
 function normalizarTamanhos(
   tamanhos: unknown,
 ): TamanhosDisponiveis[] {
@@ -61,6 +73,12 @@ function normalizarTamanhos(
   return [...new Set(tamanhosValidos)];
 }
 
+/**
+ * @brief Normaliza os dados de uma pizza, preenchendo valores padrão sensatos para campos ausentes ou inválidos.
+ * @param pizza Dados brutos (parciais) da pizza.
+ * @param indice Posição da pizza na lista, usada para gerar nome/slug/id de fallback.
+ * @return A pizza normalizada.
+ */
 function normalizarPizza(
   pizza: Partial<Pizza>,
   indice: number,
@@ -116,6 +134,7 @@ function normalizarPizza(
   };
 }
 
+/** @brief Normaliza uma lista de pizzas de origem não confiável (cache/JSON). */
 function normalizarPizzas(
   pizzas: unknown,
 ): Pizza[] {
@@ -131,6 +150,10 @@ function normalizarPizzas(
   );
 }
 
+/**
+ * @brief Busca as pizzas do cardápio, usando o cache local quando disponível e buscando do servidor caso contrário.
+ * @return Lista de pizzas normalizada.
+ */
 export async function buscarPizzas(): Promise<Pizza[]> {
   const cache = localStorage.getItem(STORAGE_KEY);
 
@@ -172,6 +195,7 @@ export async function buscarPizzas(): Promise<Pizza[]> {
   return pizzas;
 }
 
+/** @brief Normaliza e salva a lista de pizzas no cache local (localStorage). @param pizzas Pizzas a salvar. */
 export function salvarPizzas(
   pizzas: Pizza[],
 ): void {

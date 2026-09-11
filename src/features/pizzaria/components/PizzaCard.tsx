@@ -1,3 +1,7 @@
+/**
+ * @file PizzaCard.tsx
+ * @brief Card de pizza exibido nas listagens do cardápio (@see ListaPizzas / CarrosselPizza).
+ */
 import { Link } from 'react-router';
 import type { Pizza } from '../types/pizza';
 import { nomeCategoria } from '../utils/pizza.utils';
@@ -7,6 +11,7 @@ interface PizzaCardProps {
   readonly compacto?: boolean;
 }
 
+/** @brief Formata um preço (string vinda da API) em reais (BRL); mantém o valor bruto se não for numérico. */
 function formatarPreco(preco: string): string {
   const valor = Number(preco);
 
@@ -20,6 +25,13 @@ function formatarPreco(preco: string): string {
   }).format(valor);
 }
 
+/**
+ * @brief Obtém a descrição da pizza a ser exibida no card, truncando-a em 130
+ * caracteres quando o modo compacto está ativo.
+ * @param pizza Pizza cuja descrição será exibida.
+ * @param compacto Se `true`, trunca a descrição quando ela for longa.
+ * @return Descrição completa ou truncada (com reticências).
+ */
 function obterDescricaoCard(
   pizza: Pizza,
   compacto: boolean,
@@ -31,6 +43,7 @@ function obterDescricaoCard(
   return `${pizza.descricao.slice(0, 130)}...`;
 }
 
+/** @brief Card clicável de uma pizza, levando à página de personalização do produto. */
 export function PizzaCard({
   pizza,
   compacto = false,
