@@ -163,6 +163,7 @@ export function CheckoutPage() {
           precoUnitario: item.precoUnitario,
         };
       }),
+      itensCarrinho,
       total: totalComGorjeta,
       gorjeta: gorjetaPercentual > 0 ? { percentual: gorjetaPercentual, valor: valorGorjeta } : null,
       origem: 'site',

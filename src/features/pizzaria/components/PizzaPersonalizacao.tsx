@@ -6,29 +6,12 @@ import type {
 } from '../types/pizza';
 import type { Extra } from '../types/extras';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
+import { ADICIONAL_TAMANHO, calcularPrecoPizza } from '../utils/precoPizza.utils';
 
 interface PizzaPersonalizacaoProps {
     readonly pizza: Pizza;
     readonly extras: readonly Extra[];
 }
-
-const ADICIONAL_TAMANHO: Record<
-    TamanhosDisponiveis,
-    number
-> = {
-    P: 0,
-    M: 5,
-    G: 10,
-    F: 15,
-};
-
-const ADICIONAL_BORDA: Record<
-    string,
-    number
-> = {
-    catupiry: 7,
-    cheddar: 7,
-};
 
 const TAMANHOS_PADRAO: readonly TamanhosDisponiveis[] =
     ['P', 'M', 'G'];
@@ -120,42 +103,21 @@ export function PizzaPersonalizacao({
         );
     }
 
-    const precoExtras =
-        useMemo(() => {
-            return extras
-                .filter((extra) =>
-                    extrasSelecionados.includes(
-                        extra.id,
-                    ),
-                )
-                .reduce(
-                    (total, extra) =>
-                        total +
-                        Number(extra.preco),
-                    0,
-                );
-        }, [
-            extras,
+    const precoFinal = useMemo(
+        () =>
+            calcularPrecoPizza(
+                pizza,
+                tamanhoSelecionado,
+                extrasSelecionados,
+                bordaSelecionada,
+            ),
+        [
+            pizza,
+            tamanhoSelecionado,
             extrasSelecionados,
-        ]);
-
-    const precoTamanho =
-        ADICIONAL_TAMANHO[
-        tamanhoSelecionado
-        ] ?? 0;
-
-    const precoBorda =
-        bordaSelecionada
-            ? ADICIONAL_BORDA[
-            bordaSelecionada
-            ] ?? 0
-            : 0;
-
-    const precoFinal =
-        Number(pizza.precoBase) +
-        precoTamanho +
-        precoExtras +
-        precoBorda;
+            bordaSelecionada,
+        ],
+    );
 
     function handleAdicionarAoCarrinho() {
         adicionarAoCarrinho({

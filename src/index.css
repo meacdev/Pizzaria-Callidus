@@ -450,6 +450,53 @@ button {
   flex-wrap: wrap;
 }
 
+/* =========================================
+   REPETIR ÚLTIMO PEDIDO
+   ========================================= */
+
+.repetir-pedido {
+  margin: 24px auto 0;
+  max-width: 1160px;
+  padding: 0 24px;
+}
+
+.repetir-pedido-conteudo {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow);
+}
+
+.repetir-pedido-conteudo h2 {
+  margin: 0;
+}
+
+.repetir-pedido-lista {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  color: var(--muted);
+}
+
+.repetir-pedido-total {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.repetir-pedido-aviso {
+  color: var(--warning);
+  font-size: 0.9rem;
+}
+
+.repetir-pedido-conteudo .botao-primario {
+  align-self: flex-start;
+}
+
 .botao-primario,
 .botao-secundario,
 .botao-perigo {
