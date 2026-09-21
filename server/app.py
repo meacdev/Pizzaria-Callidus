@@ -10,7 +10,7 @@ comandas, pedidos e relatórios gerenciais consumidas pelo front-end.
 Persistência: SQLite em server/data/pizzaria.db (pasta do próprio
 projeto). Isso é temporário: quando o projeto tiver um banco de dados
 "de verdade" em produção, basta trocar a SQLALCHEMY_DATABASE_URI abaixo
-e o restante do código (modelos e rotas) continua igual.
+e o restante do código (modelos e rotas) continua igual
 
 Como rodar:
     cd server
