@@ -6,22 +6,6 @@
 Responsável por cadastrar funcionários (cozinheiro, garçom, entregador e
 gerente) e clientes, autenticá-los e expor as rotas de reservas de mesa,
 comandas, pedidos e relatórios gerenciais consumidas pelo front-end.
-
-Persistência: SQLite em server/data/pizzaria.db (pasta do próprio
-projeto). Isso é temporário: quando o projeto tiver um banco de dados
-"de verdade" em produção, basta trocar a SQLALCHEMY_DATABASE_URI abaixo
-e o restante do código (modelos e rotas) continua igual.
-
-Como rodar:
-    cd server
-    python3 -m venv .venv
-    source .venv/bin/activate   (Windows: .venv\\Scripts\\activate)
-    pip install -r requirements.txt
-    python app.py
-
-O servidor sobe em http://localhost:5001 por padrão. O front-end (Vite)
-já está configurado para encaminhar chamadas de /api/* para essa porta
-em desenvolvimento (veja vite.config.ts).
 """
 
 import json
@@ -796,13 +780,10 @@ def registrar_rotas(app: Flask) -> None:
         @brief GET /api/relatorios/vendas — relatório gerencial de vendas em um período.
         @details Considera pedidos entre `inicio` e `fim` (query params,
         ISO 8601, inclusive), calculando o item mais vendido de
-        pizza/bebida/combo (e o ranking `topPizzas` das 5 mais vendidas), o
-        repasse de gorjetas por funcionário, a proporção de vendas
-        presenciais (totem/garçom) contra vendas por entrega (site) e a
-        série diária de vendas (`serieDiaria`) usada nos gráficos do
-        painel gerencial. Sem autenticação própria — também é consultado
-        pela home pública para destacar a pizza mais vendida. Pensado para
-        alimentar o relatório em PDF do painel gerencial.
+        pizza/bebida/combo, o repasse de gorjetas por funcionário e a
+        proporção de vendas presenciais (totem/garçom) contra vendas por
+        entrega (site). Pensado para alimentar o relatório em PDF do
+        painel gerencial.
         @return JSON com o resumo do período (200), ou erro (400) se `inicio`/`fim` forem inválidos.
         """
         inicio_texto = request.args.get("inicio")
