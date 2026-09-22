@@ -1,3 +1,12 @@
+/**
+ * @file EstabelecimentoInfo.tsx
+ * @brief Modal com informações da loja: sobre/contato, horário de funcionamento e formas de pagamento.
+ *
+ * @details
+ * As informações exibidas vêm da customização da loja configurada pelo
+ * lojista no painel administrativo (@see CustomizationContext /
+ * customization.store).
+ */
 import { useEffect, useState } from 'react';
 import { useCustomizationStore } from '../../../context/customization.store';
 import { DIAS_SEMANA_ORDEM, DIA_SEMANA_LABEL } from '../../../features/admin/types/customization';
@@ -8,8 +17,16 @@ interface EstabelecimentoInfoProps {
   readonly logo: string;
 }
 
+/** @brief Aba atualmente selecionada dentro do modal de informações do estabelecimento. */
 type Aba = 'sobre' | 'horario' | 'pagamento';
 
+/**
+ * @brief Modal de informações do estabelecimento, com abas de sobre/contato,
+ * horário de funcionamento e formas de pagamento aceitas.
+ * @param aberto Controla se o modal está visível.
+ * @param onFechar Callback chamado ao fechar o modal (botão, tecla Esc ou clique fora).
+ * @param logo URL da logo da loja, exibida na aba "Sobre".
+ */
 export function EstabelecimentoInfo({ aberto, onFechar, logo }: EstabelecimentoInfoProps) {
   const customization = useCustomizationStore((state) => state.customization);
   const [abaSelecionada, setAbaSelecionada] = useState<Aba>('sobre');

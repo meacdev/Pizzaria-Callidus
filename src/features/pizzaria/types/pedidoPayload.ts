@@ -1,3 +1,7 @@
+/**
+ * @file pedidoPayload.ts
+ * @brief Formato final do pedido enviado ao backend (payload da API de pedidos).
+ */
 import type { ItemPedido, OrigemPedido } from '../../../store/pedido.store';
 
 /**
@@ -13,6 +17,7 @@ import type { ItemPedido, OrigemPedido } from '../../../store/pedido.store';
  */
 export type CanalPedido = 'site' | 'totem' | 'garcom';
 
+/** @brief Item do pedido no formato enviado ao backend, já com o subtotal calculado. */
 export interface ItemPedidoPayload {
   readonly id: string;
   readonly tipo: ItemPedido['tipo'];
@@ -22,12 +27,14 @@ export interface ItemPedidoPayload {
   readonly subtotal: number;
 }
 
+/** @brief Dados do cliente no formato enviado ao backend. */
 export interface ClientePedidoPayload {
   readonly nome: string;
   readonly email: string;
   readonly telefone: string;
 }
 
+/** @brief Endereço de entrega no formato enviado ao backend. */
 export interface EnderecoPedidoPayload {
   readonly cep: string;
   readonly rua: string;
@@ -37,6 +44,7 @@ export interface EnderecoPedidoPayload {
   readonly cidade: string;
 }
 
+/** @brief Dados do pagamento (real ou simulado) no formato enviado ao backend. */
 export interface PagamentoPedidoPayload {
   readonly forma: string;
   readonly identificador: string;
@@ -44,9 +52,16 @@ export interface PagamentoPedidoPayload {
   readonly confirmadoEm: string;
 }
 
+/** @brief Gorjeta escolhida pelo cliente, com o percentual aplicado e o valor calculado. */
 export interface GorjetaPedidoPayload {
   readonly percentual: number;
   readonly valor: number;
+}
+
+/** @brief Cupom de desconto aplicado no checkout, com o código informado e o valor descontado. */
+export interface CupomPedidoPayload {
+  readonly codigo: string;
+  readonly desconto: number;
 }
 
 /**
@@ -66,5 +81,6 @@ export interface PedidoPayload {
   readonly observacoes: string;
   readonly pagamento: PagamentoPedidoPayload;
   readonly gorjeta: GorjetaPedidoPayload | null;
+  readonly cupom: CupomPedidoPayload | null;
   readonly total: number;
 }

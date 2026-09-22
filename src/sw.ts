@@ -6,6 +6,17 @@
 // IMPORTANTE: rode `npm install workbox-expiration` — é o único pacote workbox
 // usado aqui que ainda não está no seu package.json (os outros quatro já estão).
 
+/**
+ * @file sw.ts
+ * @brief Service Worker do PWA: pré-cache dos assets do build e estratégias
+ * de cache em tempo de execução (API, imagens e navegação).
+ *
+ * @details
+ * O manifesto de assets (`self.__WB_MANIFEST`) é injetado automaticamente
+ * pelo vite-plugin-pwa durante o build. As estratégias de cache usam
+ * Workbox: StaleWhileRevalidate para a API do cardápio, CacheFirst para
+ * imagens e NetworkFirst para navegação entre rotas do app.
+ */
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate, CacheFirst, NetworkFirst } from 'workbox-strategies';

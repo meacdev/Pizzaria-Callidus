@@ -1,5 +1,14 @@
+/**
+ * @file combo.utils.ts
+ * @brief Funções de busca e rotulagem de combos do cardápio.
+ */
 import type { Combo } from '../types/combo';
 
+/**
+ * @brief Normaliza um texto removendo acentos, convertendo para minúsculas e aparando espaços, para comparação de busca.
+ * @param texto Texto a normalizar.
+ * @return Texto normalizado.
+ */
 export function normalizarTexto(texto: string): string {
   return texto
     .normalize('NFD')
@@ -8,6 +17,12 @@ export function normalizarTexto(texto: string): string {
     .trim();
 }
 
+/**
+ * @brief Filtra combos cujo nome, descrição, categoria ou itens contenham o termo buscado.
+ * @param combos Lista de combos a filtrar.
+ * @param termo Termo de busca digitado pelo usuário.
+ * @return Combos que casam com o termo; a lista completa se o termo for vazio.
+ */
 export function filtrarCombosPorTermo(
   combos: readonly Combo[],
   termo: string,
@@ -30,6 +45,11 @@ export function filtrarCombosPorTermo(
   });
 }
 
+/**
+ * @brief Retorna o nome em português (com inicial maiúscula) de uma categoria de combo.
+ * @param categoria Categoria do combo.
+ * @return Nome da categoria formatado para exibição.
+ */
 export function nomeCategoriaCombo(
   categoria: Combo['categoria'],
 ): string {

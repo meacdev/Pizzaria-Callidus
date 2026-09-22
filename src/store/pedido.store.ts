@@ -1,3 +1,14 @@
+/**
+ * @file pedido.store.ts
+ * @brief Store (zustand) do pedido atual e do histórico de pedidos do cliente.
+ *
+ * @details
+ * Define os tipos de domínio do pedido (@see Pedido, @see StatusPedido,
+ * @see OrigemPedido) e persiste a lista de pedidos e o pedido corrente no
+ * localStorage (`pizzaria-pedido`). O status de cada pedido é avançado por
+ * @see entrega.store, que também lê `STATUS_PEDIDO_ORDEM` para saber a
+ * sequência esperada de status.
+ */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { DadosCheckout } from '../features/pizzaria/types/checkout';
@@ -51,6 +62,14 @@ export interface GorjetaPedido {
   readonly valor: number;
 }
 
+/** @brief Cupom de desconto aplicado a um pedido no checkout (@see CheckoutPage). */
+export interface CupomPedido {
+  /** Código do cupom informado pelo cliente (ex.: "BEMVINDO10"). */
+  readonly codigo: string;
+  /** Valor em reais já descontado do subtotal (independe de ser percentual ou fixo). */
+  readonly desconto: number;
+}
+
 export interface Pedido {
   readonly id: string;
   readonly status: StatusPedido;
@@ -65,6 +84,8 @@ export interface Pedido {
   readonly itensCarrinho: readonly ItemCarrinho[];
   readonly total: number;
   readonly gorjeta: GorjetaPedido | null;
+  /** Cupom de desconto aplicado no checkout, ou `null` se nenhum foi usado. */
+  readonly cupom: CupomPedido | null;
   /** 'site' (padrão) = pedido pelo site, precisa de entrega. 'local' = totem/garçom, não vai para o entregador. */
   readonly origem: OrigemPedido;
   /** Número da mesa, quando o pedido foi lançado pelo garçom numa mesa. Null para site e totem (retirada no balcão). */
@@ -73,8 +94,10 @@ export interface Pedido {
   readonly atualizadoEm: string;
 }
 
+/** @brief Dados de um pedido ainda não criado (sem id e sem status, atribuídos ao ser registrado). */
 export type NovoPedido = Omit<Pedido, 'id' | 'status'>;
 
+/** @brief Estado e ações do pedido atual e do histórico de pedidos. */
 interface PedidoState {
   readonly pedido: Pedido | null;
   readonly pedidos: readonly Pedido[];
@@ -83,6 +106,7 @@ interface PedidoState {
   readonly limparPedido: () => void;
 }
 
+/** @brief Store do pedido atual e do histórico de pedidos do cliente. */
 export const usePedidoStore = create<PedidoState>()(
   persist(
     (set) => ({

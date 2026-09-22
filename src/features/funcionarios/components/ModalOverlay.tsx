@@ -1,3 +1,12 @@
+/**
+ * @file ModalOverlay.tsx
+ * @brief Modal genérico (fundo escurecido + cartão) usado pelos diálogos da área do funcionário.
+ *
+ * @details
+ * Fecha ao clicar fora do cartão, ao clicar no botão de fechar ou ao
+ * pressionar Esc. Usado, por exemplo, por @see EditarCadastroDialog e
+ * @see NovoPedidoMesaDialog.
+ */
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import styled from 'styled-components';
@@ -72,6 +81,14 @@ interface ModalOverlayProps {
     readonly children: ReactNode;
 }
 
+/**
+ * @brief Modal reutilizável com título, descrição opcional e botão de fechar.
+ * @param titulo Título exibido no topo do modal.
+ * @param descricao Texto de apoio opcional abaixo do título.
+ * @param largura Largura máxima do cartão (padrão "480px").
+ * @param onFechar Callback chamado ao fechar o modal (clique fora, botão de fechar ou tecla Esc).
+ * @param children Conteúdo do modal.
+ */
 export function ModalOverlay({ titulo, descricao, largura = '480px', onFechar, children }: Readonly<ModalOverlayProps>) {
     useEffect(() => {
         function aoTeclar(evento: KeyboardEvent) {

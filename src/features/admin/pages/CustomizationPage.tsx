@@ -1,3 +1,13 @@
+/**
+ * @file CustomizationPage.tsx
+ * @brief Painel de customização da loja: identidade visual, contato, tema, horários, pagamento e entrega.
+ *
+ * @details
+ * Formulário controlado por react-hook-form cujos valores iniciais vêm do
+ * contexto de customização (@see CustomizationContext) e são persistidos
+ * via `updateCustomization` ao salvar. Também funciona como hub de
+ * navegação para as páginas de gestão de cardápio e de pedidos.
+ */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PainelLayout } from '../../funcionarios/components/PainelLayout';
@@ -10,11 +20,13 @@ import { CampoCheckbox } from '../components/CampoCheckbox';
 import { CampoHorarioSemana } from '../components/CampoHorarioSemana';
 import { CampoImagem } from '../components/CampoImagem';
 import { CampoNumero } from '../components/CampoNumero';
+import { CampoCupons } from '../components/CampoCupons';
 import { BotaoSalvar } from '../components/BotaoSalvar';
 import { AvisoSucesso } from '../components/AvisoSucesso';
 import { CardNavegacao } from '../components/CardNavegacao';
 import styles from './CustomizationPage.module.css';
 
+/** @brief Página de customização da loja: edita e salva as preferências visuais e operacionais da pizzaria. */
 export function CustomizationPage() {
     const { customization, updateCustomization } = useCustomization();
     const { register, handleSubmit, setValue, watch } = useForm<Customization>({ defaultValues: customization }); // + setValue, watch
@@ -114,6 +126,18 @@ export function CustomizationPage() {
                 <BotaoSalvar>Salvar alterações</BotaoSalvar>
                 {salvo && <AvisoSucesso mensagem="Alterações salvas com sucesso!" />}
             </form>
+
+            {/*
+              Cupons têm sua própria store (@see cupom.store) e salvam na
+              hora — por isso ficam fora do <form> do react-hook-form acima,
+              embora visualmente sigam o mesmo padrão de seção da customização.
+            */}
+            <SecaoFormulario titulo="Cupons">
+                <p className={styles.descricaoTema}>
+                    Cupons exibidos no carrossel da home e na página /cupons. Cada alteração é salva na hora.
+                </p>
+                <CampoCupons />
+            </SecaoFormulario>
 
             <div className={styles.secaoNavegacao}>
                 <CardNavegacao icone="🍕" titulo="Gestão de Cardápio" descricao="Adicione, edite ou remova pizzas, bebidas e combos do cardápio." rota="/admin/cardapio" />

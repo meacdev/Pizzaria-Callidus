@@ -1,3 +1,12 @@
+/**
+ * @file RastreamentoPedidos.tsx
+ * @brief Painel de rastreamento de pedidos: quem fez, quem preparou e quem entregou/atendeu cada pedido.
+ *
+ * @details
+ * Consulta @see buscarRastreamentoPedidos (rastreamento.service.ts), com
+ * busca com debounce de 300ms. Pensado para o gerente localizar
+ * rapidamente o responsável por um pedido em caso de reclamação.
+ */
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { buscarRastreamentoPedidos } from '../api/rastreamento.service';
@@ -71,6 +80,7 @@ const Vazio = styled.div`
     background: rgba(0, 0, 0, 0.08);
 `;
 
+/** @brief Rótulos em português para cada status de pedido, exibidos na tabela de rastreamento. */
 const STATUS_LABEL: Record<string, string> = {
     recebido: 'Na fila',
     em_preparo: 'Em preparo',
@@ -80,10 +90,12 @@ const STATUS_LABEL: Record<string, string> = {
     cancelado: 'Cancelado',
 };
 
+/** @brief Reduz um id de pedido (UUID) às 8 primeiras posições, em maiúsculas, para exibição. */
 function idCurto(id: string) {
     return id.slice(0, 8).toUpperCase();
 }
 
+/** @brief Formata um timestamp ISO como data/hora curta em pt-BR. */
 function formatarData(data: string) {
     return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(data));
 }

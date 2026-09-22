@@ -1,3 +1,7 @@
+/**
+ * @file PedidoListaAdmin.tsx
+ * @brief Tabela de pedidos do painel administrativo, com troca de status por pedido.
+ */
 import {
     STATUS_PEDIDO_LABEL,
     STATUS_PEDIDO_ORDEM,
@@ -6,25 +10,32 @@ import {
 } from '../../../store/pedido.store';
 import styles from '../pages/PedidosAdminPage.module.css';
 
+/** @brief Propriedades do componente {@link PedidoListaAdmin}. */
 interface PedidoListaAdminProps {
+    /** @brief Lista de pedidos a serem exibidos na tabela. */
     pedidos: readonly Pedido[];
+    /** @brief Callback disparado ao alterar o status de um pedido pelo select. */
     onAtualizarStatus: (id: string, status: StatusPedido) => void;
 }
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(preco: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
 }
 
+/** @brief Formata um timestamp ISO na data/hora curta em pt-BR. */
 function formatarData(criadoEm: string): string {
     return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(
         new Date(criadoEm),
     );
 }
 
+/** @brief Resume os itens de um pedido em uma única linha de texto ("2x Calabresa, 1x Coca"). */
 function resumoItens(pedido: Pedido): string {
     return pedido.itens.map((item) => `${item.quantidade}x ${item.nome}`).join(', ');
 }
 
+/** @brief Classe CSS aplicada ao select de status conforme o status atual do pedido. */
 const CLASSE_STATUS: Record<StatusPedido, string> = {
     recebido: styles.statusRecebido,
     em_preparo: styles.statusEmPreparo,
@@ -34,6 +45,7 @@ const CLASSE_STATUS: Record<StatusPedido, string> = {
     cancelado: styles.statusCancelado,
 };
 
+/** @brief Tabela com os pedidos recebidos, permitindo atualizar o status de cada um. */
 export function PedidoListaAdmin({ pedidos, onAtualizarStatus }: Readonly<PedidoListaAdminProps>) {
     if (pedidos.length === 0) {
         return <p className={styles.vazio}>Nenhum pedido recebido ainda.</p>;

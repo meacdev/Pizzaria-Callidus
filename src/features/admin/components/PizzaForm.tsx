@@ -1,3 +1,12 @@
+/**
+ * @file PizzaForm.tsx
+ * @brief Formulário de criação/edição de pizza no painel administrativo.
+ *
+ * @details
+ * Usado tanto para cadastrar uma pizza nova quanto para editar uma já
+ * existente — o modo é definido por `pizzaEmEdicao` (@see
+ * PizzaAdminPage.tsx, que fornece `onSalvar`/`onCancelar`).
+ */
 import {
   useState,
   type FormEvent,
@@ -5,6 +14,7 @@ import {
 
 import type {
     Categoria,
+  DescontoPizza,
   Pizza,
   TamanhosDisponiveis,
 } from '../../pizzaria/types/pizza';
@@ -16,6 +26,7 @@ import { BotaoSalvar } from './BotaoSalvar';
 
 import styles from '../pages/PizzaAdminPage.module.css';
 
+/** @brief Props do formulário de pizza: pizza em edição (ou `null` para criação), callback de salvar e de cancelar. */
 interface PizzaFormProps {
   pizzaEmEdicao: Pizza | null;
   onSalvar: (
@@ -24,6 +35,7 @@ interface PizzaFormProps {
   onCancelar: () => void;
 }
 
+/** @brief Tamanhos de pizza disponíveis para seleção no formulário, com o rótulo exibido ao usuário. */
 const TAMANHOS: {
   valor: TamanhosDisponiveis;
   nome: string;
@@ -46,6 +58,11 @@ const TAMANHOS: {
   },
 ];
 
+/**
+ * @brief Converte uma `Pizza` (ou `null`) no formato usado pelos campos do formulário.
+ * @param pizza Pizza a editar, ou `null` para os valores padrão de uma pizza nova.
+ * @return Dados prontos para popular o estado do formulário.
+ */
 function paraFormData(
   pizza: Pizza | null,
 ): PizzaFormData {
@@ -99,9 +116,25 @@ function paraFormData(
 
     permiteBorda:
       pizza.permiteBorda,
+
+    desconto:
+      pizza.desconto ?? null,
   };
 }
 
+/** @brief Data de hoje no formato "AAAA-MM-DD", usada como início padrão de uma nova promoção. */
+function hojeIso(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** @brief Data de 7 dias a partir de hoje no formato "AAAA-MM-DD", usada como fim padrão de uma nova promoção. */
+function daquiAUmaSemanaIso(): string {
+  const data = new Date();
+  data.setDate(data.getDate() + 7);
+  return data.toISOString().slice(0, 10);
+}
+
+/** @brief Formulário de cadastro/edição de pizza, com seleção de tamanhos disponíveis e borda recheada. */
 export function PizzaForm({
   pizzaEmEdicao,
   onSalvar,
@@ -117,6 +150,41 @@ export function PizzaForm({
 
   const [salvando, setSalvando] =
     useState(false);
+
+  const [promocaoAtiva, setPromocaoAtiva] =
+    useState(
+      !!pizzaEmEdicao?.desconto,
+    );
+
+  const [descontoRascunho, setDescontoRascunho] =
+    useState<DescontoPizza>(
+      () =>
+        pizzaEmEdicao?.desconto ?? {
+          percentual: 10,
+          inicio: hojeIso(),
+          fim: daquiAUmaSemanaIso(),
+        },
+    );
+
+  /** @brief Atualiza um campo do desconto em edição e já reflete a mudança em `dados.desconto` quando a promoção está ativa. */
+  function atualizarDesconto<K extends keyof DescontoPizza>(
+    campo: K,
+    valor: DescontoPizza[K],
+  ) {
+    setDescontoRascunho((atual) => {
+      const novoDesconto = { ...atual, [campo]: valor };
+      if (promocaoAtiva) {
+        atualizarCampo('desconto', novoDesconto);
+      }
+      return novoDesconto;
+    });
+  }
+
+  /** @brief Liga/desliga a promoção da pizza, refletindo em `dados.desconto` (objeto quando ativa, `null` quando não). */
+  function alternarPromocao(ativa: boolean) {
+    setPromocaoAtiva(ativa);
+    atualizarCampo('desconto', ativa ? descontoRascunho : null);
+  }
 
   const atualizarCampo = <
     K extends keyof PizzaFormData
@@ -404,6 +472,67 @@ export function PizzaForm({
 
           Permitir borda recheada
         </label>
+      </Campo>
+
+      <Campo label="Promoção">
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            marginBottom: promocaoAtiva ? '10px' : 0,
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={promocaoAtiva}
+            onChange={(e) => alternarPromocao(e.target.checked)}
+          />
+          Pizza em promoção (desconto temporário)
+        </label>
+
+        {promocaoAtiva && (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '12px',
+            }}
+          >
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              Desconto (%)
+              <input
+                className={styles.input}
+                type="number"
+                min={1}
+                max={90}
+                value={descontoRascunho.percentual}
+                onChange={(e) => atualizarDesconto('percentual', Number(e.target.value))}
+                style={{ width: '90px' }}
+              />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              Início
+              <input
+                className={styles.input}
+                type="date"
+                value={descontoRascunho.inicio}
+                onChange={(e) => atualizarDesconto('inicio', e.target.value)}
+              />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              Fim
+              <input
+                className={styles.input}
+                type="date"
+                value={descontoRascunho.fim}
+                min={descontoRascunho.inicio}
+                onChange={(e) => atualizarDesconto('fim', e.target.value)}
+              />
+            </label>
+          </div>
+        )}
       </Campo>
 
       <div

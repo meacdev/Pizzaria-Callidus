@@ -1,3 +1,13 @@
+/**
+ * @file HomePage.tsx
+ * @brief Página inicial da loja (rota /): banner, destaques e status de funcionamento.
+ *
+ * @details
+ * Combina dados de pizzas, bebidas e combos (@see usePizzas, @see useBebidas,
+ * @see useCombos) com a customização visual/textual da loja (@see
+ * customization.store) para montar o hero, os carrosséis de destaque e o
+ * painel de "Mais informações" do estabelecimento (@see EstabelecimentoInfo).
+ */
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -15,10 +25,14 @@ import { useCombos } from '../features/pizzaria/hooks/useCombo';
 import { useBebidas } from '../features/pizzaria/hooks/useBebidas';
 import { useCustomizationStore } from '../context/customization.store';
 import { estaAberto } from '../features/admin/utils/customization.utils';
+import { pizzaEmPromocao } from '../features/pizzaria/utils/pizza.utils';
+import { CarrosselCupons } from '../features/pizzaria/components/CarrosselCupons';
+import { DestaquePizzaMaisVendida } from '../features/pizzaria/components/DestaquePizzaMaisVendida';
 
 import bannerPadrao from '../assets/banner.jpg';
 import logoPadrao from '../assets/logo.png';
 
+/** @brief Página inicial da loja: hero com status de funcionamento e destaques do cardápio. */
 export function HomePage() {
   const customization = useCustomizationStore((state) => state.customization);
   const aberta = estaAberto(customization);
@@ -32,6 +46,8 @@ export function HomePage() {
     isLoading,
     isError,
   } = usePizzas();
+
+  const pizzasEmPromocao = pizzas.filter((pizza) => pizzaEmPromocao(pizza));
 
   const {
     data: bebidas = [],
@@ -88,6 +104,15 @@ export function HomePage() {
         </div>
       </section>
       <RepetirUltimoPedido />
+      <CarrosselCupons />
+      <DestaquePizzaMaisVendida pizzas={pizzas} />
+      {pizzasEmPromocao.length > 0 && (
+        <CarrosselPizza
+          titulo="🔥 Promoções do dia"
+          pizzas={pizzasEmPromocao}
+          compacto
+        />
+      )}
       <CarrosselPizza
         titulo="Destaques"
         pizzas={pizzas.slice(0, 6)}

@@ -1,3 +1,14 @@
+/**
+ * @file PagamentoPage.tsx
+ * @brief Página de pagamento (rota /pagamento): simula o pagamento do
+ * pedido montado no checkout (@see CheckoutPage), via Pix, cartão ou
+ * dinheiro na entrega.
+ *
+ * @details
+ * Nenhum dado de pagamento é enviado a um serviço externo — todo o fluxo
+ * é simulado (@see pagamento.utils). Ao confirmar o pagamento, o pedido é
+ * enviado à API (@see pedido.utils / pedido.service).
+ */
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { MensagemErro } from '../../../component/MensagemErro';
@@ -28,6 +39,7 @@ import { useClienteAuth } from '../../clientes/context/ClienteAuthContext';
 
 const DURACAO_PIX_SEGUNDOS = 5 * 60;
 
+/** @brief Formata um valor numérico como preço em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -35,12 +47,14 @@ function formatarPreco(preco: number): string {
   }).format(preco);
 }
 
+/** @brief Formata uma quantidade de segundos como "MM:SS". */
 function formatarTempo(segundos: number): string {
   const minutos = Math.floor(segundos / 60);
   const resto = segundos % 60;
   return `${String(minutos).padStart(2, '0')}:${String(resto).padStart(2, '0')}`;
 }
 
+/** @brief Página de pagamento simulado do pedido, com fluxo específico para Pix, cartão e dinheiro. */
 export function PagamentoPage() {
   const pedido = usePedidoStore((state) => state.pedido);
   const limparPedido = usePedidoStore((state) => state.limparPedido);
@@ -365,6 +379,8 @@ export function PagamentoPage() {
           total={pedido.total}
           taxaEntrega={customization.taxaEntrega}
           gorjeta={pedido.gorjeta?.valor ?? 0}
+          desconto={pedido.cupom?.desconto ?? 0}
+          cupomCodigo={pedido.cupom?.codigo}
         />
       </div>
     </>

@@ -1,3 +1,16 @@
+/**
+ * @file TotemPage.tsx
+ * @brief Totem de autoatendimento (rota /totem): fluxo completo de pedido em
+ * tela cheia, pensado para tablet/quiosque dentro do restaurante.
+ *
+ * @details
+ * Fica fora do @see Layout da loja (sem cabeçalho/rodapé — @see router.tsx).
+ * O fluxo passa pelas etapas `boasVindas` → `cardapio` → `carrinho` →
+ * `entrega` → `pagamento` → `processando` → `sucesso`, reaproveitando os
+ * mesmos utilitários de pagamento simulado do checkout normal da loja
+ * (@see pagamento.utils). Ao concluir, reinicia sozinho após uma
+ * contagem regressiva, para atender o próximo cliente.
+ */
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import styled from 'styled-components';
@@ -29,11 +42,15 @@ type Etapa = 'boasVindas' | 'cardapio' | 'carrinho' | 'entrega' | 'pagamento' | 
 type CategoriaCardapio = 'pizza' | 'bebida' | 'combo';
 type ModoConsumo = 'mesa' | 'balcao' | '';
 
+/** @brief Segundos de contagem regressiva na tela de sucesso antes do totem reiniciar sozinho. */
 const SEGUNDOS_PARA_REINICIAR = 25;
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
+
+// --- Componentes estilizados (styled-components) usados só nesta página ---
 
 const Tela = styled.div`
   min-height: 100vh;
@@ -540,6 +557,7 @@ const SucessoWrap = styled.div`
   }
 `;
 
+/** @brief Props do componente interno @see ListaCardapio. */
 interface CardapioListaProps {
   readonly vazio: string;
   readonly itens: readonly ItemSelecionavel[];
@@ -549,6 +567,7 @@ interface CardapioListaProps {
   readonly onRemover: (chave: string) => void;
 }
 
+/** @brief Grade de itens do cardápio (pizzas, bebidas ou combos) com controles de quantidade. */
 function ListaCardapio({ vazio, itens, descricoes, quantidades, onAdicionar, onRemover }: Readonly<CardapioListaProps>) {
   if (itens.length === 0) {
     return <p style={{ color: '#d7c9c4' }}>{vazio}</p>;
@@ -581,6 +600,7 @@ function ListaCardapio({ vazio, itens, descricoes, quantidades, onAdicionar, onR
   );
 }
 
+/** @brief Página do totem de autoatendimento: conduz o cliente do cardápio ao pagamento sem intervenção do balcão. */
 export function TotemPage() {
   const [etapa, setEtapa] = useState<Etapa>('boasVindas');
   const [categoria, setCategoria] = useState<CategoriaCardapio>('pizza');
