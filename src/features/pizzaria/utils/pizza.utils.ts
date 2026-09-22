@@ -1,8 +1,44 @@
 /**
  * @file pizza.utils.ts
- * @brief Funções de busca, montagem de carrinho e rotulagem de pizzas do cardápio.
+ * @brief Funções de busca, montagem de carrinho, rotulagem e cálculo de promoção de pizzas do cardápio.
  */
 import type { Pizza } from '../types/pizza';
+
+/**
+ * @brief Data de hoje no formato "AAAA-MM-DD" (fuso local), para comparar com o intervalo de uma promoção.
+ * @return Data de hoje formatada.
+ */
+function hojeIso(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, '0');
+  const dia = String(agora.getDate()).padStart(2, '0');
+  return `${ano}-${mes}-${dia}`;
+}
+
+/**
+ * @brief Indica se uma pizza está com desconto temporário ativo hoje.
+ * @param pizza Pizza a verificar.
+ * @param hoje Data de referência no formato "AAAA-MM-DD" (padrão: hoje, no fuso local).
+ * @return `true` se a pizza tem um `desconto` configurado, com percentual maior que zero, cujo intervalo [inicio, fim] inclui a data de referência.
+ */
+export function pizzaEmPromocao(pizza: Pizza, hoje: string = hojeIso()): boolean {
+  const desconto = pizza.desconto;
+  if (!desconto || desconto.percentual <= 0) return false;
+  return desconto.inicio <= hoje && hoje <= desconto.fim;
+}
+
+/**
+ * @brief Calcula o preço promocional de uma pizza (preço base menos o percentual de desconto), arredondado a 2 casas.
+ * @param pizza Pizza em promoção (@see pizzaEmPromocao).
+ * @return O preço com desconto aplicado; o próprio `precoBase` (convertido) se a pizza não estiver em promoção.
+ */
+export function precoComDesconto(pizza: Pizza): number {
+  const precoBase = Number(pizza.precoBase) || 0;
+  if (!pizzaEmPromocao(pizza)) return precoBase;
+  const percentual = pizza.desconto?.percentual ?? 0;
+  return Math.round(precoBase * (1 - percentual / 100) * 100) / 100;
+}
 
 /**
  * @brief Normaliza um texto removendo acentos, convertendo para minúsculas e aparando espaços, para comparação de busca.

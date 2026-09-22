@@ -14,8 +14,11 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { usePedidoStore } from '../../../store/pedido.store';
+import { useCupomStore } from '../../../store/cupom.store';
 import { ResumoPedido } from '../components/ResumoPedido';
 import { useCustomizationStore } from '../../../context/customization.store';
+import type { Cupom } from '../../cupons/types/cupom';
+import { cupomDisponivel } from '../../cupons/utils/cupom.utils';
 import {
   DADOS_CHECKOUT_INICIAIS,
   FORMAS_PAGAMENTO,
@@ -50,13 +53,50 @@ export function CheckoutPage() {
   );
   const itensCarrinho = carrinho;
   const customization = useCustomizationStore((state) => state.customization);
+  const cupons = useCupomStore((state) => state.cupons);
 
   const subtotal = itensCarrinho.reduce(
     (soma, item) => soma + item.precoUnitario * item.quantidade,
     0
   );
 
-  const total = subtotal + customization.taxaEntrega;
+  const [cupomCodigo, setCupomCodigo] = useState('');
+  const [cupomAplicado, setCupomAplicado] = useState<Cupom | null>(null);
+  const [erroCupom, setErroCupom] = useState<string | null>(null);
+
+  const descontoCupom = cupomAplicado
+    ? cupomAplicado.tipoDesconto === 'percentual'
+      ? Number(((subtotal * cupomAplicado.valor) / 100).toFixed(2))
+      : Math.min(cupomAplicado.valor, subtotal)
+    : 0;
+
+  function aplicarCupom() {
+    const codigo = cupomCodigo.trim().toUpperCase();
+
+    if (!codigo) {
+      setErroCupom('Digite um código de cupom.');
+      return;
+    }
+
+    const encontrado = cupons.find((cupom) => cupom.codigo.toUpperCase() === codigo);
+
+    if (!encontrado || !cupomDisponivel(encontrado)) {
+      setCupomAplicado(null);
+      setErroCupom('Cupom inválido ou expirado.');
+      return;
+    }
+
+    setCupomAplicado(encontrado);
+    setErroCupom(null);
+  }
+
+  function removerCupomAplicado() {
+    setCupomAplicado(null);
+    setCupomCodigo('');
+    setErroCupom(null);
+  }
+
+  const total = subtotal - descontoCupom + customization.taxaEntrega;
 
   const [gorjetaPercentual, setGorjetaPercentual] = useState(0);
   const valorGorjeta = Number(((total * gorjetaPercentual) / 100).toFixed(2));
@@ -194,6 +234,7 @@ export function CheckoutPage() {
       itensCarrinho,
       total: totalComGorjeta,
       gorjeta: gorjetaPercentual > 0 ? { percentual: gorjetaPercentual, valor: valorGorjeta } : null,
+      cupom: cupomAplicado ? { codigo: cupomAplicado.codigo, desconto: descontoCupom } : null,
       origem: 'site',
       mesa: null,
       criadoEm: new Date().toISOString(),
@@ -389,6 +430,41 @@ export function CheckoutPage() {
           </fieldset>
 
           <fieldset className="grupo-formulario">
+            <legend>Cupom de desconto (opcional)</legend>
+
+            {!cupomAplicado ? (
+              <div className="campo-formulario campo-cupom">
+                <label htmlFor="checkout-cupom">Código do cupom</label>
+                <div className="campo-cupom-linha">
+                  <input
+                    id="checkout-cupom"
+                    type="text"
+                    placeholder="Ex: BEMVINDO10"
+                    value={cupomCodigo}
+                    onChange={(e) => {
+                      setCupomCodigo(e.target.value);
+                      if (erroCupom) setErroCupom(null);
+                    }}
+                    aria-invalid={Boolean(erroCupom)}
+                    aria-describedby={erroCupom ? 'checkout-cupom-erro' : undefined}
+                  />
+                  <button type="button" className="botao-secundario" onClick={aplicarCupom}>
+                    Aplicar
+                  </button>
+                </div>
+                {erroCupom && <span id="checkout-cupom-erro" className="erro-campo">{erroCupom}</span>}
+              </div>
+            ) : (
+              <p className="gorjeta-resumo">
+                Cupom <strong>{cupomAplicado.codigo}</strong> aplicado — desconto de {formatarPreco(descontoCupom)}.{' '}
+                <button type="button" className="botao-link" onClick={removerCupomAplicado}>
+                  Remover
+                </button>
+              </p>
+            )}
+          </fieldset>
+
+          <fieldset className="grupo-formulario">
             <legend>Gorjeta (opcional)</legend>
             <p>Quer deixar uma gorjeta para o entregador?</p>
             <div className="opcoes-gorjeta" role="radiogroup" aria-label="Escolha uma porcentagem de gorjeta">
@@ -500,6 +576,8 @@ export function CheckoutPage() {
           total={totalComGorjeta}
           taxaEntrega={customization.taxaEntrega}
           gorjeta={valorGorjeta}
+          desconto={descontoCupom}
+          cupomCodigo={cupomAplicado?.codigo}
         />
       </div>
     </>

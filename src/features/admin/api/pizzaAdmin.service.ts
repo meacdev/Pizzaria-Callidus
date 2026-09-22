@@ -10,6 +10,7 @@
  */
 import type {
   Categoria,
+  DescontoPizza,
   Ingrediente,
   Pizza,
   TamanhosDisponiveis,
@@ -29,6 +30,8 @@ export interface PizzaFormData {
   ingredientes: string;
   tamanhosDisponiveis?: TamanhosDisponiveis[];
   permiteBorda?: boolean;
+  /** Desconto temporário ("pizza em promoção"), ou `null` se a pizza não estiver em promoção. */
+  desconto?: DescontoPizza | null;
 }
 
 const TAMANHOS_PADRAO: TamanhosDisponiveis[] =
@@ -129,6 +132,9 @@ function montarPizza(
       converterIngredientes(
         dados.ingredientes,
       ),
+
+    desconto:
+      dados.desconto ?? null,
   };
 }
 

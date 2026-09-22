@@ -22,6 +22,21 @@ export interface Ingrediente {
   readonly nome: string;
 }
 
+/**
+ * @brief Desconto temporário ("pizza em promoção") configurado na gestão de
+ * cardápio. `inicio`/`fim` são datas no formato "AAAA-MM-DD" (inclusive) —
+ * a pizza só é considerada em promoção nesse intervalo (@see
+ * pizzaEmPromocao em pizza.utils.ts).
+ */
+export interface DescontoPizza {
+  /** Percentual de desconto sobre `precoBase`, de 1 a 90. */
+  readonly percentual: number;
+  /** Data de início da promoção, no formato "AAAA-MM-DD". */
+  readonly inicio: string;
+  /** Data de fim da promoção (inclusive), no formato "AAAA-MM-DD". */
+  readonly fim: string;
+}
+
 /** @brief Pizza disponível no cardápio da pizzaria. */
 export interface Pizza {
   readonly id: string;
@@ -39,4 +54,7 @@ export interface Pizza {
 
   readonly ingredientes:
     readonly Ingrediente[];
+
+  /** Desconto temporário ativo/agendado, ou `null`/`undefined` se a pizza não está em promoção. */
+  readonly desconto?: DescontoPizza | null;
 }

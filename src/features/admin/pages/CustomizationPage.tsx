@@ -20,6 +20,7 @@ import { CampoCheckbox } from '../components/CampoCheckbox';
 import { CampoHorarioSemana } from '../components/CampoHorarioSemana';
 import { CampoImagem } from '../components/CampoImagem';
 import { CampoNumero } from '../components/CampoNumero';
+import { CampoCupons } from '../components/CampoCupons';
 import { BotaoSalvar } from '../components/BotaoSalvar';
 import { AvisoSucesso } from '../components/AvisoSucesso';
 import { CardNavegacao } from '../components/CardNavegacao';
@@ -125,6 +126,18 @@ export function CustomizationPage() {
                 <BotaoSalvar>Salvar alterações</BotaoSalvar>
                 {salvo && <AvisoSucesso mensagem="Alterações salvas com sucesso!" />}
             </form>
+
+            {/*
+              Cupons têm sua própria store (@see cupom.store) e salvam na
+              hora — por isso ficam fora do <form> do react-hook-form acima,
+              embora visualmente sigam o mesmo padrão de seção da customização.
+            */}
+            <SecaoFormulario titulo="Cupons">
+                <p className={styles.descricaoTema}>
+                    Cupons exibidos no carrossel da home e na página /cupons. Cada alteração é salva na hora.
+                </p>
+                <CampoCupons />
+            </SecaoFormulario>
 
             <div className={styles.secaoNavegacao}>
                 <CardNavegacao icone="🍕" titulo="Gestão de Cardápio" descricao="Adicione, edite ou remova pizzas, bebidas e combos do cardápio." rota="/admin/cardapio" />

@@ -796,10 +796,13 @@ def registrar_rotas(app: Flask) -> None:
         @brief GET /api/relatorios/vendas — relatório gerencial de vendas em um período.
         @details Considera pedidos entre `inicio` e `fim` (query params,
         ISO 8601, inclusive), calculando o item mais vendido de
-        pizza/bebida/combo, o repasse de gorjetas por funcionário e a
-        proporção de vendas presenciais (totem/garçom) contra vendas por
-        entrega (site). Pensado para alimentar o relatório em PDF do
-        painel gerencial.
+        pizza/bebida/combo (e o ranking `topPizzas` das 5 mais vendidas), o
+        repasse de gorjetas por funcionário, a proporção de vendas
+        presenciais (totem/garçom) contra vendas por entrega (site) e a
+        série diária de vendas (`serieDiaria`) usada nos gráficos do
+        painel gerencial. Sem autenticação própria — também é consultado
+        pela home pública para destacar a pizza mais vendida. Pensado para
+        alimentar o relatório em PDF do painel gerencial.
         @return JSON com o resumo do período (200), ou erro (400) se `inicio`/`fim` forem inválidos.
         """
         inicio_texto = request.args.get("inicio")
@@ -840,6 +843,9 @@ def registrar_rotas(app: Flask) -> None:
         presencial = {"quantidade": 0, "total": 0.0}
         entrega = {"quantidade": 0, "total": 0.0}
         repasse_por_funcionario: dict[int, dict] = {}
+        # Bucket de vendas por dia (chave "AAAA-MM-DD"), para o gráfico de
+        # vendas por dia do painel gerencial — @see serie_diaria abaixo.
+        vendas_por_dia: dict[str, dict] = {}
 
         for pedido in pedidos:
             try:
@@ -865,6 +871,11 @@ def registrar_rotas(app: Flask) -> None:
             destino["quantidade"] += 1
             destino["total"] += total_pedido
 
+            chave_dia = pedido.criado_em.date().isoformat()
+            dia = vendas_por_dia.setdefault(chave_dia, {"pedidos": 0, "total": 0.0})
+            dia["pedidos"] += 1
+            dia["total"] += total_pedido
+
             for item in payload.get("itens") or []:
                 tipo = item.get("tipo")
                 if tipo not in quantidade_por_item:
@@ -884,6 +895,22 @@ def registrar_rotas(app: Flask) -> None:
                 return None
             nome, quantidade = max(itens.items(), key=lambda par: par[1])
             return {"nome": nome, "quantidade": quantidade}
+
+        def top_itens(tipo, limite=5):
+            """!
+            @brief Ranking dos itens mais vendidos de um tipo no período, do maior para o menor.
+            @param tipo Chave do tipo de item ("pizza", "bebida" ou "combo").
+            @param limite Quantidade máxima de itens no ranking (padrão 5).
+            @return Lista de dicionários {nome, quantidade}, ordenada por quantidade decrescente.
+            """
+            itens = quantidade_por_item[tipo]
+            ranking = sorted(itens.items(), key=lambda par: par[1], reverse=True)
+            return [{"nome": nome, "quantidade": quantidade} for nome, quantidade in ranking[:limite]]
+
+        serie_diaria = [
+            {"data": dia, "pedidos": valores["pedidos"], "total": round(valores["total"], 2)}
+            for dia, valores in sorted(vendas_por_dia.items())
+        ]
 
         repasses = []
         for funcionario_id, info in repasse_por_funcionario.items():
@@ -913,8 +940,10 @@ def registrar_rotas(app: Flask) -> None:
                 "maisVendidoPizza": mais_vendido("pizza"),
                 "maisVendidoBebida": mais_vendido("bebida"),
                 "maisVendidoCombo": mais_vendido("combo"),
+                "topPizzas": top_itens("pizza"),
                 "presencial": {"quantidade": presencial["quantidade"], "total": round(presencial["total"], 2)},
                 "entrega": {"quantidade": entrega["quantidade"], "total": round(entrega["total"], 2)},
+                "serieDiaria": serie_diaria,
             }
         )
 

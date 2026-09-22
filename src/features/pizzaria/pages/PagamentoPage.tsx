@@ -379,6 +379,8 @@ export function PagamentoPage() {
           total={pedido.total}
           taxaEntrega={customization.taxaEntrega}
           gorjeta={pedido.gorjeta?.valor ?? 0}
+          desconto={pedido.cupom?.desconto ?? 0}
+          cupomCodigo={pedido.cupom?.codigo}
         />
       </div>
     </>

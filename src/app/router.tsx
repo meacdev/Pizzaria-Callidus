@@ -28,6 +28,7 @@ import { AcompanhamentoPedidoPage } from '../features/pizzaria/pages/Acompanhame
 import { EntregadorPage } from '../features/entregador/pages/EntregadorPage';
 import { TotemPage } from '../features/totem/pages/TotemPage';
 import { UsuarioPage } from '../features/clientes/pages/UsuarioPage';
+import { CuponsPage } from '../features/cupons/pages/CuponsPage';
 import { ComprasPage } from '../features/clientes/pages/ComprasPage';
 import { ReservarMesaPage } from '../features/clientes/pages/ReservarMesaPage';
 import { ClienteAutenticadoRoute } from '../features/clientes/guards/ClienteAutenticadoRoute';
@@ -58,6 +59,7 @@ export const router = createBrowserRouter(
       children: [
         { index: true, Component: HomePage },
         { path: 'cardapio', Component: CardapioPage },
+        { path: 'cupons', Component: CuponsPage },
         { path: 'categoria', Component: CategoriaPage },
         { path: 'pizza/:slug', Component: PizzaDetalhePage },
         { path: 'bebida/:id', Component: BebidaDetalhePage },

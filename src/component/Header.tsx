@@ -52,6 +52,14 @@ export function Header() {
           Cardápio
         </NavLink>
         <NavLink
+          to="/cupons"
+          className={({ isActive }) =>
+            isActive ? 'ativo' : ''
+          }
+        >
+          Cupons
+        </NavLink>
+        <NavLink
           to="/compras"
           className={({ isActive }) =>
             isActive ? 'ativo' : ''

@@ -101,6 +101,9 @@ export async function enviarPedidoLocal(input: NovoPedidoLocalInput): Promise<Pe
     observacoes: input.observacoes ?? '',
     pagamento: input.pagamento,
     gorjeta: input.gorjeta,
+    // Pedidos locais (totem/garçom) não passam pelo checkout do site, então
+    // não têm cupom de desconto aplicado.
+    cupom: null,
     total,
   };
 

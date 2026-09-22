@@ -60,6 +60,7 @@ export function gerarPedidoPayload(
       confirmadoEm: infoPagamento.confirmadoEm,
     },
     gorjeta: pedido.gorjeta,
+    cupom: pedido.cupom,
     total: pedido.total,
   };
 }

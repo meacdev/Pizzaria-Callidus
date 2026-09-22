@@ -18,6 +18,8 @@ import { intervaloPeriodoAtual, PERIODO_LABEL } from '../utils/periodo.utils';
 import { gerarRelatorioVendasPdf } from '../utils/relatorioPdf.utils';
 import { FechamentoDiarioModal } from '../components/FechamentoDiarioModal';
 import { RastreamentoPedidos } from '../components/RastreamentoPedidos';
+import { GraficoVendasPorDia } from '../components/GraficoVendasPorDia';
+import { GraficoTopPizzas } from '../components/GraficoTopPizzas';
 import type { PeriodoRelatorio, RelatorioVendas } from '../types/relatorio';
 
 const PERIODOS: PeriodoRelatorio[] = ['dia', 'semana', 'mes', 'ano'];
@@ -355,6 +357,7 @@ export function GerentePage() {
         gerarRelatorioVendasPdf(relatorio, periodo, inicio, fim);
     }
 
+    const ticketMedio = relatorio && relatorio.totalPedidos > 0 ? relatorio.totalVendas / relatorio.totalPedidos : 0;
     const totalCanais = relatorio ? relatorio.presencial.quantidade + relatorio.entrega.quantidade : 0;
     const percentualPresencial = totalCanais > 0 ? (relatorio!.presencial.quantidade / totalCanais) * 100 : 0;
     const percentualEntrega = totalCanais > 0 ? (relatorio!.entrega.quantidade / totalCanais) * 100 : 0;
@@ -445,7 +448,35 @@ export function GerentePage() {
                                     <IndicadorLabel>Total em vendas</IndicadorLabel>
                                     <IndicadorValor>{formatarPreco(relatorio.totalVendas)}</IndicadorValor>
                                 </Indicador>
+                                <Indicador>
+                                    <IndicadorLabel>Ticket médio</IndicadorLabel>
+                                    <IndicadorValor>{formatarPreco(ticketMedio)}</IndicadorValor>
+                                </Indicador>
+                                <Indicador>
+                                    <IndicadorLabel>Faturamento da loja</IndicadorLabel>
+                                    <IndicadorValor>{formatarPreco(relatorio.faturamentoLoja)}</IndicadorValor>
+                                </Indicador>
                             </Resumo>
+
+                            <div style={{ marginTop: '1.5rem' }}>
+                                <CabecalhoSecao>
+                                    <h2 style={{ fontSize: '1.1rem' }}>Vendas por dia</h2>
+                                    <span>Total vendido em cada dia do período</span>
+                                </CabecalhoSecao>
+                                <Card>
+                                    <GraficoVendasPorDia serie={relatorio.serieDiaria} />
+                                </Card>
+                            </div>
+
+                            <div style={{ marginTop: '1.5rem' }}>
+                                <CabecalhoSecao>
+                                    <h2 style={{ fontSize: '1.1rem' }}>Ranking de pizzas</h2>
+                                    <span>As 5 pizzas mais vendidas do período</span>
+                                </CabecalhoSecao>
+                                <Card>
+                                    <GraficoTopPizzas itens={relatorio.topPizzas} />
+                                </Card>
+                            </div>
 
                             <div style={{ marginTop: '1.5rem' }}>
                                 <CabecalhoSecao>

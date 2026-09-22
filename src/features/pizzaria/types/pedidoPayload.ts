@@ -58,6 +58,12 @@ export interface GorjetaPedidoPayload {
   readonly valor: number;
 }
 
+/** @brief Cupom de desconto aplicado no checkout, com o código informado e o valor descontado. */
+export interface CupomPedidoPayload {
+  readonly codigo: string;
+  readonly desconto: number;
+}
+
 /**
  * Formato "final" do pedido, pensado para já sair no shape
  * que uma futura API de pedidos provavelmente esperaria.
@@ -75,5 +81,6 @@ export interface PedidoPayload {
   readonly observacoes: string;
   readonly pagamento: PagamentoPedidoPayload;
   readonly gorjeta: GorjetaPedidoPayload | null;
+  readonly cupom: CupomPedidoPayload | null;
   readonly total: number;
 }

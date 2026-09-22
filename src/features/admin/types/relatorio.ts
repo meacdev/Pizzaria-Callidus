@@ -9,6 +9,14 @@ export interface ItemMaisVendido {
     readonly quantidade: number;
 }
 
+/** @brief Vendas de um único dia do período (usado no gráfico de vendas por dia). */
+export interface VendasDoDia {
+    /** Data no formato "AAAA-MM-DD". */
+    readonly data: string;
+    readonly pedidos: number;
+    readonly total: number;
+}
+
 /** @brief Quantidade de pedidos e total vendido em um canal de venda (presencial ou entrega). */
 export interface CanalVendas {
     readonly quantidade: number;
@@ -45,8 +53,12 @@ export interface RelatorioVendas {
     readonly maisVendidoPizza: ItemMaisVendido | null;
     readonly maisVendidoBebida: ItemMaisVendido | null;
     readonly maisVendidoCombo: ItemMaisVendido | null;
+    /** Ranking das 5 pizzas mais vendidas do período, da mais para a menos vendida. */
+    readonly topPizzas: readonly ItemMaisVendido[];
     readonly presencial: CanalVendas;
     readonly entrega: CanalVendas;
+    /** Vendas agrupadas por dia dentro do período, em ordem cronológica. */
+    readonly serieDiaria: readonly VendasDoDia[];
 }
 
 /** @brief Períodos de busca exigidos: dia, semana, mês e ano — cada um com um

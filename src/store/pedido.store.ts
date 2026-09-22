@@ -62,6 +62,14 @@ export interface GorjetaPedido {
   readonly valor: number;
 }
 
+/** @brief Cupom de desconto aplicado a um pedido no checkout (@see CheckoutPage). */
+export interface CupomPedido {
+  /** Código do cupom informado pelo cliente (ex.: "BEMVINDO10"). */
+  readonly codigo: string;
+  /** Valor em reais já descontado do subtotal (independe de ser percentual ou fixo). */
+  readonly desconto: number;
+}
+
 export interface Pedido {
   readonly id: string;
   readonly status: StatusPedido;
@@ -76,6 +84,8 @@ export interface Pedido {
   readonly itensCarrinho: readonly ItemCarrinho[];
   readonly total: number;
   readonly gorjeta: GorjetaPedido | null;
+  /** Cupom de desconto aplicado no checkout, ou `null` se nenhum foi usado. */
+  readonly cupom: CupomPedido | null;
   /** 'site' (padrão) = pedido pelo site, precisa de entrega. 'local' = totem/garçom, não vai para o entregador. */
   readonly origem: OrigemPedido;
   /** Número da mesa, quando o pedido foi lançado pelo garçom numa mesa. Null para site e totem (retirada no balcão). */

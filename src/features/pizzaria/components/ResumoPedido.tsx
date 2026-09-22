@@ -16,6 +16,10 @@ interface ResumoPedidoProps {
   readonly total: number;
   readonly taxaEntrega?: number; // novo
   readonly gorjeta?: number;
+  /** Valor em reais descontado por um cupom aplicado (@see CarrinhoPage / CheckoutPage). */
+  readonly desconto?: number;
+  /** Código do cupom aplicado, exibido junto ao desconto quando `desconto` > 0. */
+  readonly cupomCodigo?: string | null;
 }
 
 /** @brief Formata um valor numérico em reais (BRL). */
@@ -25,7 +29,7 @@ function formatarPreco(preco: number): string {
 
 
 /** @brief Painel lateral com o resumo do pedido: itens, taxa de entrega (opcional), gorjeta (opcional) e total. */
-export function ResumoPedido({ itens, total, taxaEntrega = 0, gorjeta = 0 }: ResumoPedidoProps) {
+export function ResumoPedido({ itens, total, taxaEntrega = 0, gorjeta = 0, desconto = 0, cupomCodigo = null }: ResumoPedidoProps) {
   return (
     <aside className="resumo-pedido">
       <h2>Resumo do pedido</h2>
@@ -37,6 +41,12 @@ export function ResumoPedido({ itens, total, taxaEntrega = 0, gorjeta = 0 }: Res
           </li>
         ))}
       </ul>
+      {desconto > 0 && (
+        <div className="resumo-pedido-taxa resumo-pedido-desconto">
+          <span>Cupom{cupomCodigo ? ` (${cupomCodigo})` : ''}</span>
+          <span>-{formatarPreco(desconto)}</span>
+        </div>
+      )}
       {taxaEntrega > 0 && (
         <div className="resumo-pedido-taxa">
           <span>Taxa de entrega</span>

@@ -9,6 +9,7 @@
  * vindos do cache ou do arquivo estático.
  */
 import type {
+  DescontoPizza,
   Ingrediente,
   Pizza,
   TamanhosDisponiveis,
@@ -73,6 +74,50 @@ function normalizarTamanhos(
   return [...new Set(tamanhosValidos)];
 }
 
+/** @brief Normaliza o desconto temporário de uma pizza de origem não confiável (cache/JSON), descartando-o se inválido. */
+function normalizarDesconto(
+  desconto: unknown,
+): DescontoPizza | null {
+  if (
+    typeof desconto !== 'object' ||
+    desconto === null
+  ) {
+    return null;
+  }
+
+  const bruto = desconto as Record<string, unknown>;
+
+  const percentual =
+    typeof bruto.percentual === 'number'
+      ? bruto.percentual
+      : Number(bruto.percentual);
+
+  const inicio =
+    typeof bruto.inicio === 'string'
+      ? bruto.inicio
+      : '';
+
+  const fim =
+    typeof bruto.fim === 'string'
+      ? bruto.fim
+      : '';
+
+  if (
+    !Number.isFinite(percentual) ||
+    percentual <= 0 ||
+    !inicio ||
+    !fim
+  ) {
+    return null;
+  }
+
+  return {
+    percentual: Math.min(90, Math.max(1, Math.round(percentual))),
+    inicio,
+    fim,
+  };
+}
+
 /**
  * @brief Normaliza os dados de uma pizza, preenchendo valores padrão sensatos para campos ausentes ou inválidos.
  * @param pizza Dados brutos (parciais) da pizza.
@@ -131,6 +176,9 @@ function normalizarPizza(
 
     ingredientes:
       normalizarIngredientes(pizza.ingredientes),
+
+    desconto:
+      normalizarDesconto(pizza.desconto),
   };
 }
 

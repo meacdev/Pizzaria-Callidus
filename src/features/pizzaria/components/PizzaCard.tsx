@@ -4,11 +4,19 @@
  */
 import { Link } from 'react-router';
 import type { Pizza } from '../types/pizza';
-import { nomeCategoria } from '../utils/pizza.utils';
+import { nomeCategoria, pizzaEmPromocao, precoComDesconto } from '../utils/pizza.utils';
 
 interface PizzaCardProps {
   readonly pizza: Pizza;
   readonly compacto?: boolean;
+}
+
+/** @brief Formata um preço numérico em reais (BRL). */
+function formatarPrecoNumero(valor: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(valor);
 }
 
 /** @brief Formata um preço (string vinda da API) em reais (BRL); mantém o valor bruto se não for numérico. */
@@ -19,10 +27,7 @@ function formatarPreco(preco: string): string {
     return `R$ ${preco}`;
   }
 
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(valor);
+  return formatarPrecoNumero(valor);
 }
 
 /**
@@ -48,6 +53,8 @@ export function PizzaCard({
   pizza,
   compacto = false,
 }: PizzaCardProps) {
+  const emPromocao = pizzaEmPromocao(pizza);
+
   return (<article className="card">
 
     <Link
@@ -55,6 +62,9 @@ export function PizzaCard({
       to={`/pizza/${pizza.slug}`}
       aria-label={`Ver ${pizza.nome}`}
     >
+      {emPromocao && (
+        <span className="selo-promocao">-{pizza.desconto?.percentual}%</span>
+      )}
       <img
         src={pizza.imgURL}
         alt={`Capa da pizza ${pizza.nome}`}
@@ -81,9 +91,16 @@ export function PizzaCard({
       </p>
 
       <div className="card-rodape">
-        <strong className="preco">
-          {formatarPreco(pizza.precoBase)}
-        </strong>
+        {emPromocao ? (
+          <span className="preco-promocao">
+            <span className="preco-riscado">{formatarPreco(pizza.precoBase)}</span>
+            <strong className="preco">{formatarPrecoNumero(precoComDesconto(pizza))}</strong>
+          </span>
+        ) : (
+          <strong className="preco">
+            {formatarPreco(pizza.precoBase)}
+          </strong>
+        )}
 
         <div className="card-acoes">
           <Link
