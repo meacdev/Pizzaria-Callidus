@@ -1,9 +1,18 @@
+/**
+ * @file SistemaAvaliacao.tsx
+ * @brief Widget de avaliação por estrelas (1 a 5) do atendimento da loja.
+ *
+ * @details
+ * Lê e grava as avaliações via @see avaliacao.store; cada cliente só pode
+ * avaliar uma vez (`jaAvaliou`), controlado pela store.
+ */
 import { useMemo, useState } from 'react';
 import { calcularMediaAvaliacao, useAvaliacaoStore } from '../store/avaliacao.store';
 import styles from './SistemaAvaliacao.module.css';
 
 const ESTRELAS = [1, 2, 3, 4, 5] as const;
 
+/** @brief Formata a nota média com uma casa decimal, no padrão pt-BR. */
 function formatarMedia(media: number): string {
   return media.toLocaleString('pt-BR', {
     minimumFractionDigits: 1,
@@ -11,6 +20,7 @@ function formatarMedia(media: number): string {
   });
 }
 
+/** @brief Widget com a média de avaliações da loja e o formulário para enviar uma nova avaliação. */
 export function SistemaAvaliacao() {
   const avaliacoes = useAvaliacaoStore((state) => state.avaliacoes);
   const avaliar = useAvaliacaoStore((state) => state.avaliar);

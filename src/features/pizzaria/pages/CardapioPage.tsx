@@ -1,3 +1,9 @@
+/**
+ * @file CardapioPage.tsx
+ * @brief Página do cardápio completo (rota /cardapio): busca e filtros de
+ * pizzas por categoria/ingrediente/tamanho, além das listas de combos e
+ * bebidas.
+ */
 import { useMemo, useState } from 'react';
 import { CampoBusca } from '../../../component/CampoBusca';
 import { Loading } from '../../../component/Loading';
@@ -18,6 +24,7 @@ import type {
   TamanhosDisponiveis,
 } from '../types/pizza';
 
+/** @brief Página do cardápio, com busca por termo e filtros de categoria, ingrediente e tamanho de pizza. */
 export function CardapioPage() {
   const [termoBusca, setTermoBusca] =
     useState('');

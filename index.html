@@ -7,6 +7,27 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Pizza Paradiso</title>
+    <script>
+      // Aplica o tema (claro/escuro) ANTES do React montar, pra não piscar
+      // o tema errado por uma fração de segundo (FOUC). Mesma lógica usada
+      // pelo ThemeContext (src/context/ThemeContext.tsx) — se o usuário já
+      // escolheu um tema manualmente, usa o salvo; senão segue o tema do
+      // sistema operacional.
+      (function () {
+        try {
+          var salvo = localStorage.getItem('tema_preferido');
+          var tema =
+            salvo === 'claro' || salvo === 'escuro'
+              ? salvo
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'escuro'
+                : 'claro';
+          document.documentElement.setAttribute('data-tema', tema);
+        } catch (erro) {
+          document.documentElement.setAttribute('data-tema', 'escuro');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

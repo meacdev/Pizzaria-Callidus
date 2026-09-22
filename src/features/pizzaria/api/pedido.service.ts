@@ -1,6 +1,16 @@
+/**
+ * @file pedido.service.ts
+ * @brief Serviço de acesso aos pedidos (criar, buscar, listar, atualizar status) e o tipo PedidoApi.
+ *
+ * @details
+ * PedidoApi é usado por praticamente todas as páginas de painel (@see
+ * BalcaoPage.tsx, @see CozinhaPage.tsx, @see ReservasPage.tsx e outras) e
+ * também pela área do cliente (@see ComprasPage.tsx).
+ */
 import type { PedidoPayload } from '../types/pedidoPayload';
 import type { StatusPedido } from '../../../store/pedido.store';
 
+/** @brief Formato de um pedido como devolvido pela API. */
 export interface PedidoApi extends Omit<PedidoPayload, 'status'> {
   readonly status: StatusPedido;
   readonly atualizadoEm: string;
@@ -18,6 +28,7 @@ export interface PedidoApi extends Omit<PedidoPayload, 'status'> {
   readonly preparadoPorId: number | null;
 }
 
+/** @brief Faz uma requisição JSON à API e lança erro com a mensagem do back-end quando a resposta não é ok. */
 async function requisicao<T>(url: string, init?: RequestInit): Promise<T> {
   const resposta = await fetch(url, {
     ...init,
@@ -36,6 +47,7 @@ async function requisicao<T>(url: string, init?: RequestInit): Promise<T> {
   return dados;
 }
 
+/** @brief Vínculos opcionais atribuídos a um pedido ao criá-lo (comanda, garçom, cliente). */
 export interface AtribuicaoPedido {
   /** Comanda da mesa a que esse pedido deve ser vinculado. */
   readonly comandaId?: string | null;
@@ -46,6 +58,12 @@ export interface AtribuicaoPedido {
   readonly clienteId?: number | null;
 }
 
+/**
+ * @brief Cria um novo pedido.
+ * @param payload Dados do pedido (cliente, itens, pagamento etc.).
+ * @param atribuicao Vínculos opcionais (comanda, garçom, cliente logado).
+ * @return O pedido criado.
+ */
 export function criarPedido(payload: PedidoPayload, atribuicao?: AtribuicaoPedido): Promise<PedidoApi> {
   return requisicao<PedidoApi>('/api/pedidos', {
     method: 'POST',
@@ -53,15 +71,25 @@ export function criarPedido(payload: PedidoPayload, atribuicao?: AtribuicaoPedid
   });
 }
 
+/** @brief Busca um pedido pelo id. @param pedidoId Id do pedido. @return O pedido encontrado. */
 export function obterPedido(pedidoId: string): Promise<PedidoApi> {
   return requisicao<PedidoApi>(`/api/pedidos/${encodeURIComponent(pedidoId)}`);
 }
 
+/** @brief Lista pedidos, opcionalmente filtrados por status. @param status Status a filtrar (opcional). @return Pedidos encontrados. */
 export function listarPedidos(status?: string): Promise<PedidoApi[]> {
   const query = status ? `?status=${encodeURIComponent(status)}` : '';
   return requisicao<PedidoApi[]>(`/api/pedidos${query}`);
 }
 
+/**
+ * @brief Atualiza o status de um pedido, opcionalmente registrando quem lançou ou preparou.
+ * @param pedidoId Id do pedido.
+ * @param status Novo status.
+ * @param funcionarioId Funcionário responsável pelo pedido (garçom/entregador), se aplicável.
+ * @param preparadoPorId Cozinheiro que preparou o pedido, se aplicável.
+ * @return O pedido atualizado.
+ */
 export function atualizarStatusPedidoApi(
   pedidoId: string,
   status: string,

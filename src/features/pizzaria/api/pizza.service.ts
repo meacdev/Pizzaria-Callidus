@@ -1,4 +1,15 @@
+/**
+ * @file pizza.service.ts
+ * @brief Serviço de acesso ao catálogo de pizzas, com cache em localStorage e normalização dos dados.
+ *
+ * @details
+ * Diferente de @see bebida.service.ts e @see combo.service.ts, aqui os
+ * dados são cacheados em localStorage (`STORAGE_KEY`) e "normalizados"
+ * (funções `normalizar*`) para tolerar formatos inválidos ou incompletos
+ * vindos do cache ou do arquivo estático.
+ */
 import type {
+  DescontoPizza,
   Ingrediente,
   Pizza,
   TamanhosDisponiveis,
@@ -13,6 +24,7 @@ const TAMANHOS_PADRAO: readonly TamanhosDisponiveis[] = [
   'G',
 ];
 
+/** @brief Normaliza uma lista de ingredientes de origem não confiável (cache/JSON), descartando itens inválidos. */
 function normalizarIngredientes(
   ingredientes: unknown,
 ): Ingrediente[] {
@@ -39,6 +51,7 @@ function normalizarIngredientes(
     .filter((ingrediente) => ingrediente.nome.trim() !== '');
 }
 
+/** @brief Normaliza os tamanhos disponíveis de uma pizza, caindo para os tamanhos padrão (P/M/G) quando inválidos. */
 function normalizarTamanhos(
   tamanhos: unknown,
 ): TamanhosDisponiveis[] {
@@ -61,6 +74,56 @@ function normalizarTamanhos(
   return [...new Set(tamanhosValidos)];
 }
 
+/** @brief Normaliza o desconto temporário de uma pizza de origem não confiável (cache/JSON), descartando-o se inválido. */
+function normalizarDesconto(
+  desconto: unknown,
+): DescontoPizza | null {
+  if (
+    typeof desconto !== 'object' ||
+    desconto === null
+  ) {
+    return null;
+  }
+
+  const bruto = desconto as Record<string, unknown>;
+
+  const percentual =
+    typeof bruto.percentual === 'number'
+      ? bruto.percentual
+      : Number(bruto.percentual);
+
+  const inicio =
+    typeof bruto.inicio === 'string'
+      ? bruto.inicio
+      : '';
+
+  const fim =
+    typeof bruto.fim === 'string'
+      ? bruto.fim
+      : '';
+
+  if (
+    !Number.isFinite(percentual) ||
+    percentual <= 0 ||
+    !inicio ||
+    !fim
+  ) {
+    return null;
+  }
+
+  return {
+    percentual: Math.min(90, Math.max(1, Math.round(percentual))),
+    inicio,
+    fim,
+  };
+}
+
+/**
+ * @brief Normaliza os dados de uma pizza, preenchendo valores padrão sensatos para campos ausentes ou inválidos.
+ * @param pizza Dados brutos (parciais) da pizza.
+ * @param indice Posição da pizza na lista, usada para gerar nome/slug/id de fallback.
+ * @return A pizza normalizada.
+ */
 function normalizarPizza(
   pizza: Partial<Pizza>,
   indice: number,
@@ -113,9 +176,13 @@ function normalizarPizza(
 
     ingredientes:
       normalizarIngredientes(pizza.ingredientes),
+
+    desconto:
+      normalizarDesconto(pizza.desconto),
   };
 }
 
+/** @brief Normaliza uma lista de pizzas de origem não confiável (cache/JSON). */
 function normalizarPizzas(
   pizzas: unknown,
 ): Pizza[] {
@@ -131,6 +198,10 @@ function normalizarPizzas(
   );
 }
 
+/**
+ * @brief Busca as pizzas do cardápio, usando o cache local quando disponível e buscando do servidor caso contrário.
+ * @return Lista de pizzas normalizada.
+ */
 export async function buscarPizzas(): Promise<Pizza[]> {
   const cache = localStorage.getItem(STORAGE_KEY);
 
@@ -172,6 +243,7 @@ export async function buscarPizzas(): Promise<Pizza[]> {
   return pizzas;
 }
 
+/** @brief Normaliza e salva a lista de pizzas no cache local (localStorage). @param pizzas Pizzas a salvar. */
 export function salvarPizzas(
   pizzas: Pizza[],
 ): void {

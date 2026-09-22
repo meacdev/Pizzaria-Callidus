@@ -1,3 +1,12 @@
+/**
+ * @file PizzaPersonalizacao.tsx
+ * @brief Página/seção de personalização de uma pizza (tamanho, ingredientes, adicionais e borda) e adição ao carrinho.
+ *
+ * @details
+ * O preço final é recalculado a cada mudança de tamanho, adicionais ou borda
+ * via `calcularPrecoPizza` (@see precoPizza.utils). Ao confirmar, o item
+ * personalizado é enviado ao carrinho global (@see carrinho.store).
+ */
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type {
@@ -13,9 +22,16 @@ interface PizzaPersonalizacaoProps {
     readonly extras: readonly Extra[];
 }
 
+/** @brief Tamanhos padrão oferecidos quando a pizza não define `tamanhosDisponiveis`. */
 const TAMANHOS_PADRAO: readonly TamanhosDisponiveis[] =
     ['P', 'M', 'G'];
 
+/**
+ * @brief Formulário de personalização de uma pizza: tamanho, remoção de
+ * ingredientes, adicionais e borda recheada, com cálculo de preço em tempo real.
+ * @param pizza Pizza sendo personalizada.
+ * @param extras Lista de adicionais disponíveis para seleção.
+ */
 export function PizzaPersonalizacao({
     pizza,
     extras,
@@ -59,6 +75,7 @@ export function PizzaPersonalizacao({
         null,
     );
 
+    /** @brief Alterna a remoção de um ingrediente (adiciona/remove seu id de `ingredientesRemovidos`). */
     function alternarIngrediente(
         id: string,
     ) {
@@ -81,6 +98,7 @@ export function PizzaPersonalizacao({
         );
     }
 
+    /** @brief Alterna a seleção de um adicional (adiciona/remove seu id de `extrasSelecionados`). */
     function alternarExtra(
         id: string,
     ) {
@@ -119,6 +137,7 @@ export function PizzaPersonalizacao({
         ],
     );
 
+    /** @brief Monta o item personalizado (tamanho, ingredientes, extras, borda e preço) e o adiciona ao carrinho, voltando ao cardápio. */
     function handleAdicionarAoCarrinho() {
         adicionarAoCarrinho({
             id: crypto.randomUUID(),

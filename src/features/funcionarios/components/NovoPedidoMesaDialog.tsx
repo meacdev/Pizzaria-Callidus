@@ -1,3 +1,12 @@
+/**
+ * @file NovoPedidoMesaDialog.tsx
+ * @brief Modal para o garçom montar um novo pedido de uma mesa (pizzas, bebidas ou combos) e adicioná-lo à comanda.
+ *
+ * @details
+ * Usa @see useSeletorItens para controlar as quantidades escolhidas e
+ * calcula o total (com gorjeta opcional) antes de confirmar. O pedido só
+ * é enviado à cozinha depois, junto com o resto da comanda da mesa.
+ */
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ModalOverlay } from './ModalOverlay';
@@ -10,6 +19,7 @@ import type { GorjetaPedidoPayload } from '../../pizzaria/types/pedidoPayload';
 
 type CategoriaCardapio = 'pizza' | 'bebida' | 'combo';
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
@@ -174,6 +184,12 @@ interface NovoPedidoMesaDialogProps {
     readonly onConfirmar: (itens: readonly ItemSelecionado[], gorjeta: GorjetaPedidoPayload | null) => void;
 }
 
+/**
+ * @brief Modal de montagem de um novo pedido para uma mesa.
+ * @param mesa Número da mesa.
+ * @param onFechar Callback chamado ao cancelar/fechar o modal.
+ * @param onConfirmar Callback chamado ao confirmar, com os itens escolhidos e a gorjeta (se houver).
+ */
 export function NovoPedidoMesaDialog({ mesa, onFechar, onConfirmar }: Readonly<NovoPedidoMesaDialogProps>) {
     const [categoria, setCategoria] = useState<CategoriaCardapio>('pizza');
     const [gorjetaPercentual, setGorjetaPercentual] = useState(0);

@@ -1,5 +1,10 @@
+/**
+ * @file NotFoundPage.tsx
+ * @brief Página exibida para rotas não encontradas (fallback 404).
+ */
 import { Link } from 'react-router';
 
+/** @brief Página de erro 404, com link de volta para a página inicial. */
 export function NotFoundPage() {
   return (
     <main className="principal">

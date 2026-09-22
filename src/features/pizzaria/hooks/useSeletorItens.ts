@@ -1,12 +1,16 @@
+/**
+ * @file useSeletorItens.ts
+ * @brief Hook compartilhado para montar um pedido "rápido" a partir do
+ * cardápio (pizza, bebida ou combo + quantidade), sem a personalização
+ * completa de pizza (tamanho/ingredientes/borda) do carrinho do site.
+ *
+ * @details
+ * Usado tanto pelo totem de autoatendimento quanto pelo formulário de
+ * "novo pedido" do garçom no balcão.
+ */
 import { useMemo, useState } from 'react';
 
-/**
- * Hook compartilhado para montar um pedido "rápido" a partir do cardápio
- * (pizza, bebida ou combo + quantidade), sem a personalização completa de
- * pizza (tamanho/ingredientes/borda) do carrinho do site. Usado tanto pelo
- * totem de autoatendimento quanto pelo formulário de "novo pedido" do
- * garçom no balcão.
- */
+/** @brief Item disponível para seleção (pizza, bebida ou combo). */
 export interface ItemSelecionavel {
   readonly chave: string;
   readonly tipo: 'pizza' | 'bebida' | 'combo';
@@ -15,10 +19,12 @@ export interface ItemSelecionavel {
   readonly precoUnitario: number;
 }
 
+/** @brief Item selecionável já com a quantidade escolhida pelo usuário. */
 export interface ItemSelecionado extends ItemSelecionavel {
   readonly quantidade: number;
 }
 
+/** @brief Retorna uma cópia do mapa de itens sem a chave informada. */
 function semAChave(mapa: Record<string, ItemSelecionado>, chave: string): Record<string, ItemSelecionado> {
   const resto: Record<string, ItemSelecionado> = {};
   for (const chaveAtual of Object.keys(mapa)) {
@@ -27,6 +33,13 @@ function semAChave(mapa: Record<string, ItemSelecionado>, chave: string): Record
   return resto;
 }
 
+/**
+ * @brief Gerencia a seleção de itens (pizza/bebida/combo) e suas
+ * quantidades para montagem de um pedido rápido.
+ * @return Itens selecionados, totais calculados e funções para
+ * adicionar, remover, zerar quantidade, definir quantidade e limpar
+ * a seleção.
+ */
 export function useSeletorItens() {
   const [itensPorChave, setItensPorChave] = useState<Record<string, ItemSelecionado>>({});
 

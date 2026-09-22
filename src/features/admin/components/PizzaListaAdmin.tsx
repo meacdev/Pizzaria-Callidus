@@ -1,19 +1,34 @@
+/**
+ * @file PizzaListaAdmin.tsx
+ * @brief Tabela de pizzas cadastradas no painel administrativo, com ações de editar/excluir.
+ *
+ * @details
+ * Usada em conjunto com @see PizzaForm (formulário de criação/edição) na
+ * página de administração de pizzas (PizzaAdminPage.tsx).
+ */
 import type { Pizza } from '../../pizzaria/types/pizza';
 import { nomeCategoria } from '../../pizzaria/utils/pizza.utils';
 import styles from '../pages/PizzaAdminPage.module.css';
 
+/** @brief Props da tabela: lista de pizzas e callbacks acionados ao clicar em editar/excluir uma linha. */
 interface PizzaListaAdminProps {
     pizzas: Pizza[];
     onEditar: (pizza: Pizza) => void;
     onExcluir: (pizza: Pizza) => void;
 }
 
+/**
+ * @brief Formata um preço (string vinda da API) como moeda BRL; mantém o valor bruto se não for um número válido.
+ * @param preco Preço em formato string.
+ * @return Preço formatado, ex.: "R$ 39,90".
+ */
 function formatarPreco(preco: string): string {
     const valor = Number(preco);
     if (Number.isNaN(valor)) return `R$ ${preco}`;
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
 
+/** @brief Tabela com as pizzas cadastradas, ou uma mensagem de estado vazio quando não há nenhuma. */
 export function PizzaListaAdmin({ pizzas, onEditar, onExcluir }: Readonly<PizzaListaAdminProps>) {
     if (pizzas.length === 0) {
         return <p className={styles.vazio}>Nenhuma pizza cadastrada ainda.</p>;

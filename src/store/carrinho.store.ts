@@ -1,7 +1,18 @@
+/**
+ * @file carrinho.store.ts
+ * @brief Store (zustand) do carrinho de compras do cliente.
+ *
+ * @details
+ * Persiste os itens do carrinho (pizza, bebida ou combo — @see ItemCarrinho)
+ * no localStorage (`pizzaria-carrinho`) e expõe as ações de
+ * adicionar/aumentar/diminuir/remover itens, além de utilitários de
+ * consulta usados pelo cardápio (@see obterQuantidade, @see estaNosCarrinho).
+ */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ItemCarrinho } from '../features/pizzaria/types/itemCarrinho';
 
+/** @brief Estado e ações do carrinho de compras. */
 interface CarrinhoState {
   readonly itens: readonly ItemCarrinho[];
 
@@ -32,6 +43,7 @@ interface CarrinhoState {
   readonly limparCarrinho: () => void;
 }
 
+/** @brief Store do carrinho de compras: itens, quantidades e persistência local. */
 export const useCarrinhoStore = create<CarrinhoState>()(
   persist(
     (set, get) => ({

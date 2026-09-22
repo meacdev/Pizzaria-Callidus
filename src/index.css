@@ -44,6 +44,33 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* =========================================
+   TEMA CLARO
+   =========================================
+   A paleta acima (em :root) é a original do projeto e continua sendo o
+   tema padrão ("escuro"). Este bloco sobrescreve só as variáveis de cor
+   quando o tema claro está ativo — aplicado pelo ThemeContext
+   (src/context/ThemeContext.tsx) via `data-tema="claro"` no <html>,
+   alternado pelo botão flutuante (@see .botao-tema-flutuante). */
+
+:root[data-tema="claro"] {
+  color-scheme: light;
+
+  --secondary: #fdf6f4;
+  --secondary-rgb: 253, 246, 244;
+
+  --text: #241410;
+  --muted: #7a655e;
+
+  --line: rgba(36, 20, 16, 0.12);
+
+  --background: var(--secondary);
+  --surface: #ffffff;
+  --surface-light: #fff0ec;
+
+  --shadow: 0 12px 32px rgba(36, 20, 16, 0.12);
+}
+
 
 /* =========================================
    RESET
@@ -196,6 +223,77 @@ button {
 .link-area-usuario.ativo {
   background: rgba(var(--primary-rgb), 0.1);
   border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* =========================================
+   AÇÕES DO CABEÇALHO (idioma + área do usuário)
+   ========================================= */
+
+.cabecalho-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Seletor de idioma da área do cliente */
+
+.seletor-idioma {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.seletor-idioma-botao {
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  border: 1.5px solid var(--line);
+  background: transparent;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.seletor-idioma-botao:hover,
+.seletor-idioma-botao[aria-expanded="true"] {
+  background: rgba(var(--primary-rgb), 0.1);
+  border-color: var(--primary);
+}
+
+.seletor-idioma-lista {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 6px;
+  z-index: 30;
+}
+
+.seletor-idioma-opcao {
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.seletor-idioma-opcao:hover {
+  background: rgba(var(--primary-rgb), 0.1);
+}
+
+.seletor-idioma-opcao-ativa {
   color: var(--primary);
 }
 
@@ -679,6 +777,178 @@ button {
   scroll-snap-align: start;
 }
 
+/* =========================================
+   CUPONS (carrossel na home e página /cupons)
+   ========================================= */
+
+.carrossel-cupons {
+  display: flex;
+
+  gap: 1rem;
+
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-snap-type: x mandatory;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  padding: 0.5rem 0.25rem 1rem;
+}
+
+.carrossel-cupons::-webkit-scrollbar {
+  display: none;
+}
+
+.card-cupom {
+  flex: 0 0 240px;
+
+  max-width: 85vw;
+
+  scroll-snap-align: start;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 16px;
+
+  border: 1px dashed var(--primary);
+  border-radius: 12px;
+
+  background: var(--surface);
+}
+
+.card-cupom-pagina {
+  flex: none;
+  max-width: 360px;
+}
+
+.card-cupom-desconto {
+  align-self: flex-start;
+
+  padding: 3px 10px;
+
+  border-radius: 999px;
+
+  background: var(--primary);
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.card-cupom-titulo {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.card-cupom-descricao {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.card-cupom-validade {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.card-cupom-codigo {
+  margin-top: 4px;
+
+  padding: 6px 10px;
+
+  border-radius: 8px;
+  border: 1px dashed var(--line);
+
+  background: var(--surface-light);
+  color: var(--text);
+
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* =========================================
+   DESTAQUE: PIZZA MAIS VENDIDA
+   ========================================= */
+
+.destaque-mais-vendida {
+  padding-top: 0;
+}
+
+.destaque-mais-vendida-link {
+  display: flex;
+
+  gap: 24px;
+
+  align-items: center;
+
+  padding: 20px;
+
+  border-radius: 16px;
+  border: 1px solid var(--line);
+
+  background: linear-gradient(120deg, var(--surface), var(--surface-light));
+
+  text-decoration: none;
+}
+
+.destaque-mais-vendida-imagem {
+  flex: 0 0 180px;
+
+  width: 180px;
+  height: 180px;
+
+  border-radius: 12px;
+  overflow: hidden;
+
+  background: var(--surface-light);
+}
+
+.destaque-mais-vendida-imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.destaque-mais-vendida-conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+.destaque-mais-vendida-conteudo h2 {
+  margin: 4px 0 0;
+  color: var(--text);
+}
+
+.destaque-mais-vendida-quantidade {
+  margin-top: 6px;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .destaque-mais-vendida-link {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .destaque-mais-vendida-imagem {
+    width: 100%;
+  }
+}
+
 .botao-carrossel {
   position: relative;
 
@@ -795,6 +1065,8 @@ button {
    ========================================= */
 
 .thumb {
+  position: relative;
+
   width: calc(100% - 10px);
 
   min-width: 0;
@@ -811,6 +1083,27 @@ button {
   border-radius: 10px;
 
   overflow: hidden;
+}
+
+/* Selo "-X%" no canto do card de uma pizza em promoção (@see PizzaCard.tsx). */
+.selo-promocao {
+  position: absolute;
+
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+
+  padding: 4px 9px;
+
+  border-radius: 999px;
+
+  background: var(--danger);
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .thumb img {
@@ -922,6 +1215,24 @@ button {
 
   font-weight: 700;
 
+  white-space: nowrap;
+}
+
+/* Preço com desconto (@see PizzaCard.tsx): preço original riscado acima do preço promocional. */
+.preco-promocao {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.preco-promocao .preco {
+  color: var(--danger);
+}
+
+.preco-riscado {
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: line-through;
   white-space: nowrap;
 }
 
@@ -4566,4 +4877,46 @@ button {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+/* =========================================
+   BOTÃO FLUTUANTE DE TEMA (claro/escuro)
+   ========================================= */
+
+.botao-tema-flutuante {
+  position: fixed;
+  /* Fica à esquerda de propósito: o devtools do React Query (só em
+     desenvolvimento) já ocupa o canto inferior direito. */
+  left: 20px;
+  bottom: 20px;
+  z-index: 40;
+
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  box-shadow: var(--shadow);
+
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.botao-tema-flutuante:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+@media (max-width: 480px) {
+  .botao-tema-flutuante {
+    left: 14px;
+    bottom: 14px;
+    width: 46px;
+    height: 46px;
+    font-size: 19px;
+  }
 }

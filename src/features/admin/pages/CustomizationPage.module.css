@@ -297,3 +297,62 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Editor de cupons (@see CampoCupons.tsx) */
+.listaCupons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.cupomItem {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 1rem;
+    background: #1a0d0a;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.cupomLinhaAcoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.botaoRemoverCupom {
+    all: unset;
+    color: #ff8f8f;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+}
+
+.botaoRemoverCupom:hover {
+    color: #ff5c5c;
+    text-decoration: underline;
+}
+
+.botaoAdicionarCupom {
+    all: unset;
+    border: 1.5px dashed rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    padding: 0.7rem;
+    text-align: center;
+    color: #d7c9c4;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.botaoAdicionarCupom:hover {
+    border-color: #ff2a2a;
+    color: #fff;
+}

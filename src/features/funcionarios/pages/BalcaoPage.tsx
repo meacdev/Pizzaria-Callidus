@@ -1,3 +1,14 @@
+/**
+ * @file BalcaoPage.tsx
+ * @brief Painel do balcão/garçom (rota /admin/balcao): mesas do salão, comandas e pedidos do site/totem.
+ *
+ * @details
+ * Protegida por @see RoleRoute (cargo "garcom"). Usa @see
+ * PainelLayout.tsx para o cabeçalho. Combina três fluxos: (1) lançar e
+ * acompanhar comandas por mesa (@see comanda.service.ts), (2) conferir e
+ * enviar para a cozinha os pedidos feitos pelo site/totem, e (3) marcar
+ * como entregues os pedidos prontos (@see pedido.service.ts).
+ */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import styled from 'styled-components';
@@ -13,6 +24,7 @@ import { NUMEROS_DAS_MESAS } from '../../pizzaria/constants/mesas';
 import type { ItemSelecionado } from '../../pizzaria/hooks/useSeletorItens';
 import type { GorjetaPedidoPayload } from '../../pizzaria/types/pedidoPayload';
 
+/** @brief Itens lançados numa comanda pelo garçom, ainda não enviados para a cozinha. */
 interface RascunhoComanda {
     readonly id: string;
     readonly comandaId: string;
@@ -21,22 +33,27 @@ interface RascunhoComanda {
     readonly criadoEm: string;
 }
 
+/** @brief Formas de pagamento oferecidas ao fechar uma comanda de mesa. */
 const FORMAS_PAGAMENTO_COMANDA: readonly { valor: string; rotulo: string }[] = [
     { valor: 'dinheiro', rotulo: 'Dinheiro' },
     { valor: 'cartao', rotulo: 'Cartão' },
     { valor: 'pix', rotulo: 'Pix' },
 ];
 
+/** @brief Estado visual de uma mesa no mapa do salão. */
 type StatusMesa = 'vazia' | 'aberta' | 'pronta';
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
 
+/** @brief Reduz um id (pedido ou comanda) às 8 primeiras posições, em maiúsculas, para exibição. */
 function idCurto(id: string): string {
     return id.slice(0, 8).toUpperCase();
 }
 
+/** @brief Soma o valor dos itens de um rascunho de comanda com a gorjeta, se houver. @return Total do rascunho. */
 function totalRascunho(rascunho: RascunhoComanda): number {
     const subtotal = rascunho.itens.reduce((soma, item) => soma + item.precoUnitario * item.quantidade, 0);
     return Number((subtotal + (rascunho.gorjeta?.valor ?? 0)).toFixed(2));
@@ -482,6 +499,7 @@ const Erro = styled.p`
     color: #ffb0b0;
 `;
 
+/** @brief Página do painel do balcão/garçom: mapa de mesas com comandas, e pedidos do site/totem para conferir e entregar. */
 export function BalcaoPage() {
     const { funcionario, sair } = useFuncionarioAuth();
     const navigate = useNavigate();

@@ -1,3 +1,9 @@
+/**
+ * @file ResumoPedido.tsx
+ * @brief Resumo lateral de um pedido: lista de itens, taxa de entrega, gorjeta e total.
+ */
+
+/** @brief Item exibido no resumo do pedido (versão simplificada de um item do carrinho). */
 export interface ItemResumoPedido {
   readonly id: string;
   readonly nome: string;
@@ -12,11 +18,13 @@ interface ResumoPedidoProps {
   readonly gorjeta?: number;
 }
 
+/** @brief Formata um valor numérico em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
 }
 
 
+/** @brief Painel lateral com o resumo do pedido: itens, taxa de entrega (opcional), gorjeta (opcional) e total. */
 export function ResumoPedido({ itens, total, taxaEntrega = 0, gorjeta = 0 }: ResumoPedidoProps) {
   return (
     <aside className="resumo-pedido">

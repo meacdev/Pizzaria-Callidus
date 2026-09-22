@@ -1,3 +1,7 @@
+/**
+ * @file ListaBebidas.tsx
+ * @brief Grade de bebidas do cardápio (@see BebidaCard), com mensagem para lista vazia.
+ */
 import type { Bebida } from '../types/bebida';
 import { BebidaCard } from './BebidaCard';
 
@@ -6,6 +10,7 @@ interface ListaBebidasProps {
   readonly titulo?: string;
 }
 
+/** @brief Seção com a grade de bebidas disponíveis no cardápio. */
 export function ListaBebidas({
   bebidas,
   titulo = 'Bebidas',

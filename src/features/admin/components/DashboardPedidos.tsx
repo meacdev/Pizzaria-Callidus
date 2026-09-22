@@ -1,14 +1,27 @@
+/**
+ * @file DashboardPedidos.tsx
+ * @brief Painel de métricas de pedidos do admin: faturamento e ticket médio de hoje, e comparativo mensal.
+ *
+ * @details
+ * As métricas em si vêm prontas de {@see usePedidosAdmin}; este componente
+ * só formata e exibe os cards. Os indicadores mensais são estimativas
+ * (mock).
+ */
 import type { MetricasPedidos } from '../hooks/usePedidosAdmin';
 import styles from '../pages/PedidosAdminPage.module.css';
 
+/** @brief Propriedades do componente {@link DashboardPedidos}. */
 interface DashboardPedidosProps {
+  /** @brief Métricas calculadas de pedidos (faturamento, ticket médio, variação mensal, etc.). */
   metricas: MetricasPedidos;
 }
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(preco: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
 }
 
+/** @brief Grade de cards com as principais métricas de pedidos do dia e do mês. */
 export function DashboardPedidos({ metricas }: Readonly<DashboardPedidosProps>) {
   const {
     faturamentoHoje,

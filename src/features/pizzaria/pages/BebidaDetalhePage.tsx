@@ -1,3 +1,8 @@
+/**
+ * @file BebidaDetalhePage.tsx
+ * @brief Página de detalhe de uma bebida (rota /bebida/:id), com escolha
+ * de quantidade e adição ao carrinho.
+ */
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { Loading } from '../../../component/Loading';
@@ -5,6 +10,7 @@ import { MensagemErro } from '../../../component/MensagemErro';
 import { useCarrinhoStore } from '../../../store/carrinho.store';
 import { useBebidaPorId } from '../hooks/useBebidas';
 
+/** @brief Formata um valor numérico como preço em reais (BRL). */
 function formatarPreco(preco: number): string {
     return new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -12,6 +18,7 @@ function formatarPreco(preco: number): string {
     }).format(preco);
 }
 
+/** @brief Página de detalhe de uma bebida, com seletor de quantidade e adição ao carrinho. */
 export function BebidaDetalhePage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();

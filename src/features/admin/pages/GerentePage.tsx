@@ -1,3 +1,14 @@
+/**
+ * @file GerentePage.tsx
+ * @brief Painel gerencial (/gerente): relatório de vendas por período, comparativo presencial x entrega e rastreamento de pedidos.
+ *
+ * @details
+ * Busca o relatório (@see relatorio.service) para o período selecionado
+ * (dia/semana/mês/ano ou intervalo de datas customizado) e permite
+ * exportá-lo em PDF (@see relatorioPdf.utils). Também expõe o fechamento
+ * diário (@see FechamentoDiarioModal) e a lista de rastreamento de
+ * pedidos (@see RastreamentoPedidos).
+ */
 import { useState } from 'react';
 import styled from 'styled-components';
 import { PainelLayout } from '../../funcionarios/components/PainelLayout';
@@ -7,6 +18,8 @@ import { intervaloPeriodoAtual, PERIODO_LABEL } from '../utils/periodo.utils';
 import { gerarRelatorioVendasPdf } from '../utils/relatorioPdf.utils';
 import { FechamentoDiarioModal } from '../components/FechamentoDiarioModal';
 import { RastreamentoPedidos } from '../components/RastreamentoPedidos';
+import { GraficoVendasPorDia } from '../components/GraficoVendasPorDia';
+import { GraficoTopPizzas } from '../components/GraficoTopPizzas';
 import type { PeriodoRelatorio, RelatorioVendas } from '../types/relatorio';
 
 const PERIODOS: PeriodoRelatorio[] = ['dia', 'semana', 'mes', 'ano'];
@@ -280,14 +293,17 @@ const Vazio = styled.div`
     background: rgba(0, 0, 0, 0.08);
 `;
 
+/** @brief Formata um valor em reais (BRL). */
 function formatarPreco(valor: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
 
+/** @brief Converte uma Date para o formato "aaaa-mm-dd" esperado por um `<input type="date">`. */
 function paraInputData(data: Date): string {
     return data.toISOString().slice(0, 10);
 }
 
+/** @brief Página do painel gerencial: relatórios de vendas, comparativo de canais e rastreamento de pedidos. */
 export function GerentePage() {
     const { funcionario } = useFuncionarioAuth();
 
@@ -341,6 +357,7 @@ export function GerentePage() {
         gerarRelatorioVendasPdf(relatorio, periodo, inicio, fim);
     }
 
+    const ticketMedio = relatorio && relatorio.totalPedidos > 0 ? relatorio.totalVendas / relatorio.totalPedidos : 0;
     const totalCanais = relatorio ? relatorio.presencial.quantidade + relatorio.entrega.quantidade : 0;
     const percentualPresencial = totalCanais > 0 ? (relatorio!.presencial.quantidade / totalCanais) * 100 : 0;
     const percentualEntrega = totalCanais > 0 ? (relatorio!.entrega.quantidade / totalCanais) * 100 : 0;
@@ -431,7 +448,35 @@ export function GerentePage() {
                                     <IndicadorLabel>Total em vendas</IndicadorLabel>
                                     <IndicadorValor>{formatarPreco(relatorio.totalVendas)}</IndicadorValor>
                                 </Indicador>
+                                <Indicador>
+                                    <IndicadorLabel>Ticket médio</IndicadorLabel>
+                                    <IndicadorValor>{formatarPreco(ticketMedio)}</IndicadorValor>
+                                </Indicador>
+                                <Indicador>
+                                    <IndicadorLabel>Faturamento da loja</IndicadorLabel>
+                                    <IndicadorValor>{formatarPreco(relatorio.faturamentoLoja)}</IndicadorValor>
+                                </Indicador>
                             </Resumo>
+
+                            <div style={{ marginTop: '1.5rem' }}>
+                                <CabecalhoSecao>
+                                    <h2 style={{ fontSize: '1.1rem' }}>Vendas por dia</h2>
+                                    <span>Total vendido em cada dia do período</span>
+                                </CabecalhoSecao>
+                                <Card>
+                                    <GraficoVendasPorDia serie={relatorio.serieDiaria} />
+                                </Card>
+                            </div>
+
+                            <div style={{ marginTop: '1.5rem' }}>
+                                <CabecalhoSecao>
+                                    <h2 style={{ fontSize: '1.1rem' }}>Ranking de pizzas</h2>
+                                    <span>As 5 pizzas mais vendidas do período</span>
+                                </CabecalhoSecao>
+                                <Card>
+                                    <GraficoTopPizzas itens={relatorio.topPizzas} />
+                                </Card>
+                            </div>
 
                             <div style={{ marginTop: '1.5rem' }}>
                                 <CabecalhoSecao>

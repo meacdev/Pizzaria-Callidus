@@ -1,3 +1,15 @@
+/**
+ * @file router.tsx
+ * @brief Definição de todas as rotas da aplicação (loja, totem, área de
+ * funcionários e painel administrativo).
+ *
+ * @details
+ * Organizado em três grandes grupos: as rotas da loja dentro de
+ * `Layout` (@see Layout.tsx), o totem de autoatendimento em tela cheia
+ * (@see TotemPage.tsx) e as rotas de funcionários/admin, protegidas por
+ * guards específicos (@see ClienteAutenticadoRoute, @see RoleRoute,
+ * @see FuncionarioAutenticadoRoute, @see ProtectedRoute).
+ */
 import { createBrowserRouter } from 'react-router';
 
 // Loja
@@ -16,6 +28,7 @@ import { AcompanhamentoPedidoPage } from '../features/pizzaria/pages/Acompanhame
 import { EntregadorPage } from '../features/entregador/pages/EntregadorPage';
 import { TotemPage } from '../features/totem/pages/TotemPage';
 import { UsuarioPage } from '../features/clientes/pages/UsuarioPage';
+import { CuponsPage } from '../features/cupons/pages/CuponsPage';
 import { ComprasPage } from '../features/clientes/pages/ComprasPage';
 import { ReservarMesaPage } from '../features/clientes/pages/ReservarMesaPage';
 import { ClienteAutenticadoRoute } from '../features/clientes/guards/ClienteAutenticadoRoute';
@@ -37,6 +50,7 @@ import { ReservasPage } from '../features/funcionarios/pages/ReservasPage';
 import { RoleRoute } from '../features/funcionarios/guards/RoleRoute';
 import { FuncionarioAutenticadoRoute } from '../features/funcionarios/guards/FuncionarioAutenticadoRoute';
 
+/** @brief Router da aplicação (react-router), com todas as rotas da loja, totem, funcionários e admin. */
 export const router = createBrowserRouter(
   [
     {
@@ -45,6 +59,7 @@ export const router = createBrowserRouter(
       children: [
         { index: true, Component: HomePage },
         { path: 'cardapio', Component: CardapioPage },
+        { path: 'cupons', Component: CuponsPage },
         { path: 'categoria', Component: CategoriaPage },
         { path: 'pizza/:slug', Component: PizzaDetalhePage },
         { path: 'bebida/:id', Component: BebidaDetalhePage },

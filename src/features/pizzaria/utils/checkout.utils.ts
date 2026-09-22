@@ -1,9 +1,18 @@
+/**
+ * @file checkout.utils.ts
+ * @brief Máscaras de entrada e validação do formulário de checkout (@see DadosCheckout).
+ */
 import type { DadosCheckout, ErrosCheckout } from '../types/checkout';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const REGEX_TELEFONE = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
 const REGEX_CEP = /^\d{5}-\d{3}$/;
 
+/**
+ * @brief Aplica a máscara de telefone brasileiro `(DD) DDDDD-DDDD` enquanto o usuário digita.
+ * @param valor Valor atual do campo (pode conter caracteres não numéricos).
+ * @return Telefone formatado com a máscara aplicada até onde houver dígitos.
+ */
 export function mascararTelefone(valor: string): string {
   const digitos = valor.replace(/\D/g, '').slice(0, 11);
   if (digitos.length <= 2) return digitos.replace(/^(\d*)/, '($1');
@@ -12,12 +21,22 @@ export function mascararTelefone(valor: string): string {
   return digitos.replace(/^(\d{2})(\d{5})(\d*)/, '($1) $2-$3');
 }
 
+/**
+ * @brief Aplica a máscara de CEP `DDDDD-DDD` enquanto o usuário digita.
+ * @param valor Valor atual do campo (pode conter caracteres não numéricos).
+ * @return CEP formatado com a máscara aplicada até onde houver dígitos.
+ */
 export function mascararCep(valor: string): string {
   const digitos = valor.replace(/\D/g, '').slice(0, 8);
   if (digitos.length <= 5) return digitos;
   return digitos.replace(/^(\d{5})(\d*)/, '$1-$2');
 }
 
+/**
+ * @brief Aplica a máscara de CPF `DDD.DDD.DDD-DD` enquanto o usuário digita.
+ * @param valor Valor atual do campo (pode conter caracteres não numéricos).
+ * @return CPF formatado com a máscara aplicada até onde houver dígitos.
+ */
 export function mascararCpf(valor: string): string {
   const digitos = valor.replace(/\D/g, '').slice(0, 11);
   return digitos
@@ -26,10 +45,17 @@ export function mascararCpf(valor: string): string {
     .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
 }
 
+/** @brief Verifica se um campo de texto está vazio (considerando apenas espaços em branco como vazio). */
 function campoObrigatorio(valor: string): boolean {
   return valor.trim().length === 0;
 }
 
+/**
+ * @brief Calcula um dígito verificador de CPF pelo algoritmo padrão (módulo 11).
+ * @param base Sequência de dígitos usada como base do cálculo.
+ * @param pesoInicial Peso do primeiro dígito da base (decrescente a cada posição).
+ * @return Dígito verificador calculado (0 quando o resto é menor que 2).
+ */
 function calcularDigitoVerificadorCpf(base: string, pesoInicial: number): number {
   const soma = base
     .split('')
@@ -38,6 +64,11 @@ function calcularDigitoVerificadorCpf(base: string, pesoInicial: number): number
   return resto < 2 ? 0 : 11 - resto;
 }
 
+/**
+ * @brief Valida um CPF conferindo formato, dígitos repetidos e os dois dígitos verificadores.
+ * @param cpf CPF a validar, com ou sem máscara.
+ * @return `true` se o CPF é válido.
+ */
 export function validarCPF(cpf: string): boolean {
   const digitos = cpf.replace(/\D/g, '');
 
@@ -50,6 +81,11 @@ export function validarCPF(cpf: string): boolean {
   return digitos.slice(9) === `${primeiroDigito}${segundoDigito}`;
 }
 
+/**
+ * @brief Valida todos os campos do formulário de checkout (dados do cliente, endereço e pagamento).
+ * @param dados Dados preenchidos no checkout.
+ * @return Mapa de erros por campo; vazio quando o formulário é válido.
+ */
 export function validarFormularioCheckout(dados: DadosCheckout): ErrosCheckout {
   const erros: ErrosCheckout = {};
   const { cliente, endereco } = dados;

@@ -1,18 +1,34 @@
+/**
+ * @file relatorioPdf.utils.ts
+ * @brief Geração do relatório gerencial de vendas em PDF, a partir dos dados calculados pelo back-end.
+ *
+ * @details
+ * @see relatorio.ts para o formato dos dados (@see RelatorioVendas) e
+ * @see periodo.utils.ts para os rótulos de período usados no cabeçalho.
+ */
 import { jsPDF } from 'jspdf';
 import type { RelatorioVendas } from '../types/relatorio';
 import type { PeriodoRelatorio } from '../types/relatorio';
 import { PERIODO_LABEL } from './periodo.utils';
 
+/** @brief Formata uma data como data curta em pt-BR (ex.: "11/09/2026"). */
 function formatarData(data: Date): string {
     return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' }).format(data);
 }
 
+/** @brief Formata um valor numérico como moeda BRL. */
 function formatarPreco(valor: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 }
 
-/** Gera e baixa o relatório gerencial de vendas em PDF a partir dos dados
- * já calculados pelo back-end (GET /api/relatorios/vendas). */
+/**
+ * @brief Gera e baixa o relatório gerencial de vendas em PDF a partir dos dados
+ * já calculados pelo back-end (GET /api/relatorios/vendas).
+ * @param relatorio Dados já calculados do relatório de vendas.
+ * @param periodo Tipo de período do relatório (dia/semana/mês/ano), usado no cabeçalho.
+ * @param inicio Data de início do período.
+ * @param fim Data de fim do período.
+ */
 export function gerarRelatorioVendasPdf(
     relatorio: RelatorioVendas,
     periodo: PeriodoRelatorio,

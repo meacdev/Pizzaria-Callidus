@@ -1,3 +1,11 @@
+/**
+ * @file CarrosselPizza.tsx
+ * @brief Carrossel horizontal de pizzas com setas de navegação (@see PizzaCard).
+ *
+ * @details
+ * Controla o scroll do container via ref, habilitando/desabilitando os
+ * botões de navegação conforme a posição atual de rolagem.
+ */
 import { useEffect, useRef, useState } from 'react';
 import { PizzaCard } from './PizzaCard';
 import type { Pizza } from '../types/pizza';
@@ -9,6 +17,7 @@ interface CarrosselPizzaProps {
   readonly mensagemVazia?: string;
 }
 
+/** @brief Carrossel horizontal de pizzas, com rolagem suave e botões de avançar/voltar. */
 export function CarrosselPizza({
   pizzas,
   titulo,
@@ -18,6 +27,8 @@ export function CarrosselPizza({
   const carrosselRef = useRef<HTMLDivElement>(null);
   const [inicio, setInicio] = useState(true);
   const [fim, setFim] = useState(false);
+
+  /** @brief Atualiza os estados `inicio`/`fim` conforme a posição atual de rolagem do carrossel. */
   const verificarPosicao = () => {
     const carrossel = carrosselRef.current;
     if (!carrossel) {
@@ -31,6 +42,7 @@ export function CarrosselPizza({
     setFim(estaNoFim);
   };
 
+  /** @brief Rola o carrossel para a direita em 80% da largura visível. */
   const avancar = () => {
     const carrossel = carrosselRef.current;
     if (!carrossel) {
@@ -42,6 +54,7 @@ export function CarrosselPizza({
     });
   };
 
+  /** @brief Rola o carrossel para a esquerda em 80% da largura visível. */
   const voltar = () => {
     const carrossel = carrosselRef.current;
     if (!carrossel) {
